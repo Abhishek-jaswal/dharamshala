@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsub();
   }, []);
 
-  const loginWithOAuth = async (providerName: 'google' | 'github') => {
+  const loginWithOAuth = async (providerName: 'google') => {
     try {
       const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
 
@@ -50,14 +50,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const loginWithGoogle = () => loginWithOAuth('google');
-  const loginWithGithub = () => loginWithOAuth('github');
 
   const logout = () => {
     getPb().authStore.clear();
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithGithub, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );
