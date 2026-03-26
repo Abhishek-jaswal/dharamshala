@@ -8,7 +8,7 @@ const AuthContext = createContext<any>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pbRef = useRef<PocketBase | null>(null);
-  const [user, setUser]       = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loginWithOAuth = async (providerName: 'google' | 'github') => {
     try {
-      const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
+      const pbUrl = process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
       const res = await fetch(`${pbUrl}/api/collections/users/auth-methods`);
       const authMethods = await res.json();
       const providers: any[] = authMethods.authProviders ?? [];
@@ -60,7 +60,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const loginWithGoogle = () => loginWithOAuth('google');
-  const loginWithGithub = () => loginWithOAuth('github');
   const logout = () => { getPb().authStore.clear(); setProfile(null); };
   const refreshProfile = () => { if (user?.id) fetchProfile(user.id); };
 
@@ -68,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider value={{
       user, profile, loading, profileLoading,
       isNewUser: !!(user && !profile && !profileLoading),
-      loginWithGoogle, loginWithGithub, logout, refreshProfile,
+      loginWithGoogle, logout, refreshProfile,
     }}>
       {children}
     </AuthContext.Provider>
