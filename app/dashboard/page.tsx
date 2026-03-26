@@ -1,318 +1,268 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 
+const T = {
+  en: {
+    toggle: 'हिंदी में बदलें',
+    title: 'Dashboard',
+    welcome: (name:string) => `Welcome, ${name} 👋`,
+    subtitle: 'Your profile is all set.',
+    logout: 'Logout',
+    labels: {
+      name:'Full Name', email:'Email', dob:'Date of Birth',
+      contact:'Contact', skills:'Skills', interests:'Interests',
+      location:'Location', aadhaar:'Aadhaar Card', verified:'Verified',
+      member:'Member Since',
+    },
+    noAadhaar: 'Not uploaded',
+    viewAadhaar: 'View Aadhaar',
+    loading: 'Loading…',
+    incomplete: 'Complete your profile',
+    goOnboard: 'Fill profile →',
+  },
+  hi: {
+    toggle: 'Switch to English',
+    title: 'डैशबोर्ड',
+    welcome: (name:string) => `नमस्ते, ${name} 👋`,
+    subtitle: 'आपकी प्रोफ़ाइल तैयार है।',
+    logout: 'लॉग आउट',
+    labels: {
+      name:'पूरा नाम', email:'ईमेल', dob:'जन्म तिथि',
+      contact:'संपर्क', skills:'कौशल', interests:'रुचियाँ',
+      location:'स्थान', aadhaar:'आधार कार्ड', verified:'सत्यापित',
+      member:'सदस्य बने',
+    },
+    noAadhaar: 'अपलोड नहीं हुआ',
+    viewAadhaar: 'आधार देखें',
+    loading: 'लोड हो रहा है…',
+    incomplete: 'प्रोफ़ाइल पूरी करें',
+    goOnboard: 'प्रोफ़ाइल भरें →',
+  },
+};
+
 export default function DashboardPage() {
-  const { user, loading, logout } = useAuth();
+  const { user, profile, loading, profileLoading, logout, isNewUser } = useAuth();
   const router = useRouter();
+  const [lang, setLang] = useState<'en'|'hi'>('en');
+  const [aadhaarUrl, setAadhaarUrl] = useState('');
+  const t = T[lang];
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+    if (!loading && !user) router.push('/login');
+  }, [user, loading]);
+
+  useEffect(() => {
+    if (profile?.aadhaar) {
+      const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
+      setAadhaarUrl(`${pbUrl}/api/files/profiles/${profile.id}/${profile.aadhaar}`);
     }
-  }, [user, loading, router]);
+  }, [profile]);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
+  const handleLogout = () => { logout(); router.push('/login'); };
 
-  if (loading || !user) {
+  if (loading || profileLoading) {
     return (
-      <div className="dash-loading">
-        <div className="spinner" />
+      <div style={s.loadRoot}>
+        <div style={s.spinner}/>
+        <p style={{color:'#16a34a',fontWeight:600,marginTop:12}}>{t.loading}</p>
       </div>
     );
   }
 
-  const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
-  const avatar = user.avatar
-    ? `${pbUrl}/api/files/_pb_users_auth_/${user.id}/${user.avatar}`
+  const displayName = profile?.name || user?.name || user?.email?.split('@')[0] || 'User';
+  const initials = displayName.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2);
+  const avatarUrl = user?.avatar
+    ? `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/_pb_users_auth_/${user.id}/${user.avatar}`
     : null;
 
-  const initials = (user.name || user.email || 'U')
-    .split(' ')
-    .map((n: string) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-
   return (
-    <div className="dash-root">
-      {/* Header */}
-      <header className="dash-header">
-        <div className="dash-logo">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
-          <span>Dharamshala</span>
+    <div style={s.root}>
+      {/* ── header ── */}
+      <header style={s.header}>
+        <div style={s.logo}><span>🏠</span><span style={s.logoText}>Dharamshala</span></div>
+        <div style={s.headerRight}>
+          <button style={s.langBtn} onClick={()=>setLang(l=>l==='en'?'hi':'en')}>
+            🌐 {t.toggle}
+          </button>
+          <button style={s.logoutBtn} onClick={handleLogout}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            {t.logout}
+          </button>
         </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          Logout
-        </button>
       </header>
 
-      {/* Main */}
-      <main className="dash-main">
-        {/* Welcome card */}
-        <div className="profile-card">
-          <div className="profile-avatar">
-            {avatar ? (
-              <img src={avatar} alt="Avatar" />
-            ) : (
-              <span>{initials}</span>
-            )}
+      <main style={s.main}>
+
+        {/* ── no profile banner ── */}
+        {isNewUser && (
+          <div style={s.banner}>
+            <span>⚠️ {t.incomplete}</span>
+            <button style={s.bannerBtn} onClick={()=>router.push('/onboarding')}>
+              {t.goOnboard}
+            </button>
           </div>
-          <div className="profile-info">
-            <h1 className="profile-name">Welcome back, {user.name?.split(' ')[0] || 'User'} 👋</h1>
-            <p className="profile-email">{user.email}</p>
-            <span className="profile-badge">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        )}
+
+        {/* ── welcome card ── */}
+        <div style={s.welcomeCard}>
+          <div style={s.avatar}>
+            {avatarUrl
+              ? <img src={avatarUrl} alt="avatar" style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+              : <span style={s.initials}>{initials}</span>
+            }
+          </div>
+          <div>
+            <h1 style={s.welcomeName}>{t.welcome(displayName)}</h1>
+            <p style={s.welcomeSub}>{t.subtitle}</p>
+            <span style={s.badge}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="#16a34a">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Verified
+              {t.labels.verified}
             </span>
           </div>
         </div>
 
-        {/* Info grid */}
-        <div className="info-grid">
-          <div className="info-card">
-            <div className="info-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </div>
-            <div>
-              <p className="info-label">Full Name</p>
-              <p className="info-value">{user.name || '—'}</p>
-            </div>
-          </div>
+        {/* ── info grid ── */}
+        {profile && (
+          <div style={s.grid}>
+            <InfoCard icon="👤" label={t.labels.name}     value={profile.name || '—'} />
+            <InfoCard icon="📧" label={t.labels.email}    value={user?.email || '—'} />
+            <InfoCard icon="🎂" label={t.labels.dob}      value={profile.dob ? new Date(profile.dob).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'} />
+            <InfoCard icon="📱" label={t.labels.contact}  value={profile.contact ? `+91 ${profile.contact}` : '—'} />
+            <InfoCard icon="📍" label={t.labels.location} value={profile.location || '—'} />
+            <InfoCard icon="🗓️" label={t.labels.member}  value={user?.created ? new Date(user.created).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'} />
 
-          <div className="info-card">
-            <div className="info-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-            </div>
-            <div>
-              <p className="info-label">Email</p>
-              <p className="info-value">{user.email || '—'}</p>
-            </div>
-          </div>
+            {/* skills */}
+            {profile.skills && (
+              <div style={{...s.card, gridColumn:'1 / -1'}}>
+                <div style={s.cardHeader}>
+                  <span style={s.cardIcon}>💡</span>
+                  <span style={s.cardLabel}>{t.labels.skills}</span>
+                </div>
+                <div style={s.tagRow}>
+                  {profile.skills.split(', ').filter(Boolean).map((sk:string,i:number)=>(
+                    <span key={i} style={s.tagChip}>{sk}</span>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          <div className="info-card">
-            <div className="info-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-            </div>
-            <div>
-              <p className="info-label">Member Since</p>
-              <p className="info-value">
-                {new Date(user.created).toLocaleDateString('en-IN', {
-                  day: 'numeric', month: 'long', year: 'numeric'
-                })}
-              </p>
-            </div>
-          </div>
+            {/* interests */}
+            {profile.interests && (
+              <div style={{...s.card, gridColumn:'1 / -1'}}>
+                <div style={s.cardHeader}>
+                  <span style={s.cardIcon}>❤️</span>
+                  <span style={s.cardLabel}>{t.labels.interests}</span>
+                </div>
+                <div style={s.tagRow}>
+                  {profile.interests.split(', ').filter(Boolean).map((it:string,i:number)=>(
+                    <span key={i} style={{...s.tagChip, background:'#fef9c3', color:'#a16207'}}>{it}</span>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          <div className="info-card">
-            <div className="info-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
-            <div>
-              <p className="info-label">User ID</p>
-              <p className="info-value id-value">{user.id}</p>
+            {/* aadhaar */}
+            <div style={{...s.card, gridColumn:'1 / -1'}}>
+              <div style={s.cardHeader}>
+                <span style={s.cardIcon}>🪪</span>
+                <span style={s.cardLabel}>{t.labels.aadhaar}</span>
+              </div>
+              {aadhaarUrl ? (
+                <div style={s.aadhaarWrap}>
+                  <img src={aadhaarUrl} alt="Aadhaar" style={s.aadhaarImg}/>
+                  <a href={aadhaarUrl} target="_blank" rel="noreferrer" style={s.aadhaarLink}>
+                    🔍 {t.viewAadhaar}
+                  </a>
+                </div>
+              ) : (
+                <p style={{color:'#86b899',fontSize:'0.9rem'}}>{t.noAadhaar}</p>
+              )}
             </div>
           </div>
-        </div>
+        )}
       </main>
 
       <style>{`
-        .dash-root {
-          min-height: 100vh;
-          background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 60%, #bbf7d0 100%);
-          font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .dash-loading {
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #f0fdf4;
-        }
-
-        .spinner {
-          width: 36px; height: 36px;
-          border: 3px solid #bbf7d0;
-          border-top-color: #16a34a;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Header */
-        .dash-header {
-          position: sticky; top: 0; z-index: 10;
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 16px 32px;
-          background: rgba(255,255,255,0.75);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(187,247,208,0.6);
-          box-shadow: 0 2px 16px rgba(22,163,74,0.06);
-        }
-
-        .dash-logo {
-          display: flex; align-items: center; gap: 10px;
-          font-size: 1.1rem; font-weight: 800; color: #14532d;
-        }
-        .dash-logo svg {
-          background: linear-gradient(135deg, #16a34a, #22c55e);
-          padding: 6px; border-radius: 10px;
-          box-shadow: 0 4px 12px rgba(22,163,74,0.3);
-        }
-
-        .logout-btn {
-          display: flex; align-items: center; gap: 8px;
-          padding: 9px 18px;
-          background: white;
-          color: #16a34a;
-          border: 1.5px solid #d1fae5;
-          border-radius: 10px;
-          font-family: inherit;
-          font-size: 0.88rem; font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .logout-btn:hover {
-          background: #f0fdf4;
-          border-color: #4ade80;
-          box-shadow: 0 2px 12px rgba(22,163,74,0.15);
-        }
-
-        /* Main */
-        .dash-main {
-          max-width: 860px;
-          margin: 40px auto;
-          padding: 0 24px;
-        }
-
-        /* Profile card */
-        .profile-card {
-          display: flex; align-items: center; gap: 24px;
-          background: rgba(255,255,255,0.9);
-          border: 1px solid rgba(255,255,255,0.95);
-          border-radius: 24px;
-          padding: 32px;
-          margin-bottom: 24px;
-          box-shadow: 0 8px 32px rgba(22,163,74,0.10);
-          animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .profile-avatar {
-          width: 84px; height: 84px; flex-shrink: 0;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #16a34a, #4ade80);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1.6rem; font-weight: 800; color: white;
-          box-shadow: 0 4px 20px rgba(22,163,74,0.35);
-          overflow: hidden;
-        }
-        .profile-avatar img {
-          width: 100%; height: 100%; object-fit: cover;
-        }
-
-        .profile-name {
-          font-size: 1.5rem; font-weight: 800; color: #14532d;
-          margin-bottom: 4px;
-        }
-
-        .profile-email {
-          font-size: 0.9rem; color: #4b7a5a;
-          margin-bottom: 10px;
-        }
-
-        .profile-badge {
-          display: inline-flex; align-items: center; gap: 5px;
-          background: #dcfce7; color: #16a34a;
-          font-size: 0.75rem; font-weight: 700;
-          padding: 4px 12px; border-radius: 20px;
-          border: 1px solid #bbf7d0;
-          text-transform: uppercase; letter-spacing: 0.05em;
-        }
-
-        /* Info grid */
-        .info-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 16px;
-        }
-
-        .info-card {
-          display: flex; align-items: center; gap: 16px;
-          background: rgba(255,255,255,0.88);
-          border: 1px solid rgba(255,255,255,0.95);
-          border-radius: 18px;
-          padding: 20px 24px;
-          box-shadow: 0 4px 16px rgba(22,163,74,0.07);
-          animation: fadeIn 0.5s ease both;
-        }
-        .info-card:nth-child(2) { animation-delay: 0.05s; }
-        .info-card:nth-child(3) { animation-delay: 0.10s; }
-        .info-card:nth-child(4) { animation-delay: 0.15s; }
-
-        .info-icon {
-          width: 42px; height: 42px; flex-shrink: 0;
-          background: #f0fdf4;
-          border: 1px solid #d1fae5;
-          border-radius: 12px;
-          display: flex; align-items: center; justify-content: center;
-          color: #16a34a;
-        }
-
-        .info-label {
-          font-size: 0.75rem; font-weight: 600;
-          color: #86b899; text-transform: uppercase;
-          letter-spacing: 0.06em; margin-bottom: 4px;
-        }
-
-        .info-value {
-          font-size: 0.95rem; font-weight: 600; color: #14532d;
-        }
-
-        .id-value {
-          font-size: 0.8rem; font-family: monospace;
-          color: #4b7a5a; word-break: break-all;
-        }
-
-        @media (max-width: 500px) {
-          .profile-card { flex-direction: column; text-align: center; }
-          .dash-header { padding: 14px 16px; }
-        }
       `}</style>
     </div>
   );
 }
+
+function InfoCard({ icon, label, value }: { icon:string; label:string; value:string }) {
+  return (
+    <div style={s.card}>
+      <div style={s.cardHeader}>
+        <span style={s.cardIcon}>{icon}</span>
+        <span style={s.cardLabel}>{label}</span>
+      </div>
+      <p style={s.cardValue}>{value}</p>
+    </div>
+  );
+}
+
+const s:Record<string,React.CSSProperties> = {
+  root:{minHeight:'100vh',background:'linear-gradient(160deg,#f0fdf4 0%,#dcfce7 60%,#bbf7d0 100%)',
+    fontFamily:"'Plus Jakarta Sans',sans-serif"},
+  loadRoot:{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',
+    justifyContent:'center',background:'#f0fdf4',fontFamily:"'Plus Jakarta Sans',sans-serif"},
+  spinner:{width:36,height:36,border:'3px solid #bbf7d0',borderTopColor:'#16a34a',
+    borderRadius:'50%',animation:'spin 0.7s linear infinite'},
+  header:{display:'flex',alignItems:'center',justifyContent:'space-between',
+    padding:'14px 32px',background:'rgba(255,255,255,0.78)',backdropFilter:'blur(14px)',
+    borderBottom:'1px solid #d1fae5',position:'sticky',top:0,zIndex:10},
+  logo:{display:'flex',alignItems:'center',gap:8,fontSize:'1.1rem'},
+  logoText:{fontWeight:800,color:'#14532d'},
+  headerRight:{display:'flex',alignItems:'center',gap:10},
+  langBtn:{padding:'7px 14px',background:'white',color:'#16a34a',
+    border:'1.5px solid #d1fae5',borderRadius:20,cursor:'pointer',
+    fontFamily:'inherit',fontSize:'0.82rem',fontWeight:600},
+  logoutBtn:{display:'flex',alignItems:'center',gap:7,padding:'9px 18px',
+    background:'white',color:'#16a34a',border:'1.5px solid #d1fae5',
+    borderRadius:10,cursor:'pointer',fontFamily:'inherit',fontSize:'0.88rem',fontWeight:600},
+  main:{maxWidth:860,margin:'36px auto',padding:'0 24px'},
+  banner:{display:'flex',alignItems:'center',justifyContent:'space-between',
+    background:'#fef9c3',border:'1.5px solid #fde68a',borderRadius:14,
+    padding:'14px 20px',marginBottom:20,color:'#92400e',fontWeight:600,fontSize:'0.9rem'},
+  bannerBtn:{padding:'8px 18px',background:'#f59e0b',color:'white',border:'none',
+    borderRadius:10,cursor:'pointer',fontFamily:'inherit',fontWeight:700,fontSize:'0.88rem'},
+  welcomeCard:{display:'flex',alignItems:'center',gap:24,
+    background:'rgba(255,255,255,0.92)',border:'1px solid rgba(255,255,255,0.95)',
+    borderRadius:24,padding:'28px 32px',marginBottom:24,
+    boxShadow:'0 8px 32px rgba(22,163,74,0.10)'},
+  avatar:{width:80,height:80,flexShrink:0,borderRadius:'50%',
+    background:'linear-gradient(135deg,#16a34a,#4ade80)',
+    display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden',
+    boxShadow:'0 4px 16px rgba(22,163,74,0.3)'},
+  initials:{fontSize:'1.5rem',fontWeight:800,color:'white'},
+  welcomeName:{fontSize:'1.4rem',fontWeight:800,color:'#14532d',marginBottom:4},
+  welcomeSub:{fontSize:'0.9rem',color:'#4b7a5a',marginBottom:10},
+  badge:{display:'inline-flex',alignItems:'center',gap:5,background:'#dcfce7',
+    color:'#16a34a',fontSize:'0.75rem',fontWeight:700,padding:'4px 12px',
+    borderRadius:20,border:'1px solid #bbf7d0'},
+  grid:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:16},
+  card:{background:'rgba(255,255,255,0.9)',border:'1px solid rgba(255,255,255,0.95)',
+    borderRadius:18,padding:'20px 22px',boxShadow:'0 4px 16px rgba(22,163,74,0.06)'},
+  cardHeader:{display:'flex',alignItems:'center',gap:10,marginBottom:10},
+  cardIcon:{fontSize:'1.2rem'},
+  cardLabel:{fontSize:'0.75rem',fontWeight:700,color:'#86b899',
+    textTransform:'uppercase',letterSpacing:'0.06em'},
+  cardValue:{fontSize:'0.97rem',fontWeight:600,color:'#14532d'},
+  tagRow:{display:'flex',flexWrap:'wrap',gap:8,marginTop:4},
+  tagChip:{padding:'6px 14px',background:'#dcfce7',color:'#15803d',
+    borderRadius:99,fontSize:'0.83rem',fontWeight:600,border:'1px solid #bbf7d0'},
+  aadhaarWrap:{display:'flex',flexDirection:'column',gap:12,alignItems:'flex-start'},
+  aadhaarImg:{maxWidth:320,borderRadius:12,border:'2px solid #d1fae5',boxShadow:'0 4px 16px rgba(0,0,0,0.08)'},
+  aadhaarLink:{color:'#16a34a',fontSize:'0.88rem',fontWeight:600,textDecoration:'none'},
+};
