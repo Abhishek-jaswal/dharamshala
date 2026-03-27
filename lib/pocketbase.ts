@@ -1,6 +1,5 @@
 import PocketBase from 'pocketbase';
 
-// SSR-safe singleton — only instantiated in the browser
 let _pb: PocketBase | null = null;
 
 export function getPb(): PocketBase {

@@ -1,21 +1,26 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { LangProvider } from '@/context/LangContext';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Dharamshala',
-  description: 'Dharamshala App',
+  title: 'UrbanServe — India\'s Multi-Service Super App',
+  description: 'Hire verified workers, find gig jobs, book manpower teams across India.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <AuthProvider>{children}</AuthProvider>
+      <body style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#fff' }}>
+        <AuthProvider>
+          <LangProvider>
+            <Navbar />
+            <main style={{ flex: 1 }}>{children}</main>
+            <Footer />
+          </LangProvider>
+        </AuthProvider>
       </body>
     </html>
   );
