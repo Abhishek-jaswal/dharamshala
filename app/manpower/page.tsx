@@ -5,23 +5,22 @@ import { WORK_TYPES, TEAM_SIZES, BOOKING_TYPES, DEMO_WORKERS } from '@/lib/data'
 
 const Card = ({ active, onClick, children }: any) => (
   <div onClick={onClick}
-    className={`cursor-pointer rounded-2xl border-2 text-center p-4 transition-all hover:-translate-y-0.5 ${
-      active ? 'border-green-500 bg-green-50' : 'border-green-100 bg-white hover:border-green-300'
-    }`}>{children}
+    className={`cursor-pointer rounded-2xl border-2 text-center p-4 transition-all hover:-translate-y-0.5 ${active ? 'border-green-500 bg-green-50' : 'border-green-100 bg-white hover:border-green-300'
+      }`}>{children}
   </div>
 );
 
-export function ManpowerPage() {
+function ManpowerPage() {
   const { lang } = useLang();
-  const [workType,    setWorkType]    = useState('');
-  const [teamSize,    setTeamSize]    = useState<any>(null);
-  const [engageType,  setEngageType]  = useState('daily');
+  const [workType, setWorkType] = useState('');
+  const [teamSize, setTeamSize] = useState<any>(null);
+  const [engageType, setEngageType] = useState('daily');
 
   const cost = () => {
     if (!teamSize || teamSize.count === 999) return lang === 'hi' ? 'कस्टम कोट' : 'Custom Quote';
-    const rate  = engageType === 'hourly' ? 120 : engageType === 'contract' ? 25000 : 750;
+    const rate = engageType === 'hourly' ? 120 : engageType === 'contract' ? 25000 : 750;
     const total = Math.round(rate * teamSize.multiplier);
-    const sfx   = engageType === 'hourly' ? '/hr' : engageType === 'contract' ? '/mo' : '/day';
+    const sfx = engageType === 'hourly' ? '/hr' : engageType === 'contract' ? '/mo' : '/day';
     return `₹${total.toLocaleString()}${sfx}`;
   };
 
@@ -85,10 +84,10 @@ export function ManpowerPage() {
           <h3 className="font-bold text-lg mb-5">📋 {lang === 'hi' ? 'बुकिंग सारांश' : 'Booking Summary'}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             {[
-              [lang === 'hi' ? 'कार्य प्रकार' : 'Work Type',    workType ? WORK_TYPES.find(w => w.id === workType)?.label : '—'],
-              [lang === 'hi' ? 'टीम का आकार' : 'Team Size',    teamSize ? (teamSize.count === 999 ? 'Full Team' : `${teamSize.count} Workers`) : '—'],
-              [lang === 'hi' ? 'एंगेजमेंट' : 'Engagement',      BOOKING_TYPES.find(b => b.id === engageType)?.label ?? '—'],
-              [lang === 'hi' ? 'अनुमानित लागत' : 'Est. Cost',  cost()],
+              [lang === 'hi' ? 'कार्य प्रकार' : 'Work Type', workType ? WORK_TYPES.find(w => w.id === workType)?.label : '—'],
+              [lang === 'hi' ? 'टीम का आकार' : 'Team Size', teamSize ? (teamSize.count === 999 ? 'Full Team' : `${teamSize.count} Workers`) : '—'],
+              [lang === 'hi' ? 'एंगेजमेंट' : 'Engagement', BOOKING_TYPES.find(b => b.id === engageType)?.label ?? '—'],
+              [lang === 'hi' ? 'अनुमानित लागत' : 'Est. Cost', cost()],
             ].map(([k, v]) => (
               <div key={String(k)}>
                 <div className="text-xs text-green-300 mb-1">{k}</div>
