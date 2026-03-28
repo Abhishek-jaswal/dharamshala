@@ -23,7 +23,7 @@ export default function OAuthCallbackPage() {
           `${window.location.origin}/oauth-callback`
         );
         localStorage.removeItem('pb_oauth_provider');
-        router.push('/dashboard');
+        router.push('/gigs');
       } catch (err) {
         console.error(err);
         setStatus('Login failed. Please try again.');

@@ -6,11 +6,14 @@ import { useLang } from '@/context/LangContext';
 import { Badge } from '@/components/Badge';
 
 const FilterTab = ({ active, onClick, children }: any) => (
-  <button onClick={onClick}
-    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors whitespace-nowrap ${
-      active ? 'bg-green-600 text-white border-green-600' : 'border-green-200 text-green-700 hover:bg-green-50'
-    }`}>{children}
-  </button>
+  <button onClick={onClick} style={{
+    fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 99,
+    border: '1px solid', whiteSpace: 'nowrap' as const, cursor: 'pointer', fontFamily: 'inherit',
+    borderColor: active ? '#16a34a' : '#d1fae5',
+    background: active ? '#16a34a' : '#fff',
+    color: active ? '#fff' : '#15803d',
+    transition: 'all 0.15s', flexShrink: 0,
+  }}>{children}</button>
 );
 
 export default function ServicesPage() {
@@ -19,36 +22,42 @@ export default function ServicesPage() {
   const shown = filter === 'all' ? CATEGORIES : CATEGORIES.filter(c => c.id === filter);
 
   return (
-    <div className="page-enter max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-green-900">{t.home.categoriesTitle}</h1>
-        <p className="text-green-500 text-sm mt-1">{t.home.categoriesSub}</p>
+    <div className="page-enter" style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 16px' }}>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#14532d' }}>{t.home.categoriesTitle}</h1>
+        <p style={{ color: '#16a34a', fontSize: 13, marginTop: 4 }}>{t.home.categoriesSub}</p>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-8">
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 32 }}>
         <FilterTab active={filter === 'all'} onClick={() => setFilter('all')}>{t.gigs.allCats}</FilterTab>
         {CATEGORIES.map(c => (
           <FilterTab key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)}>{c.icon} {c.label}</FilterTab>
         ))}
       </div>
 
-      <div className="space-y-12">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
         {shown.map(cat => (
           <div key={cat.id}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-xl">{cat.icon}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ width: 40, height: 40, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>{cat.icon}</div>
               <div>
-                <h3 className="font-bold text-green-900 text-lg">{cat.label}</h3>
-                <p className="text-xs text-green-400">{cat.count.toLocaleString()} workers available</p>
+                <h3 style={{ fontWeight: 700, color: '#14532d', fontSize: 17 }}>{cat.label}</h3>
+                <p style={{ fontSize: 12, color: '#86b899' }}>{cat.count.toLocaleString()} workers available</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
               {cat.subs.map(sub => (
-                <Link key={sub.name} href="/workers"
-                  className="bg-white border border-green-100 rounded-2xl p-4 text-center cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all duration-200 block">
-                  <div className="text-2xl mb-2">{sub.icon}</div>
-                  <div className="text-xs font-semibold text-green-800 leading-tight mb-1">{sub.name}</div>
-                  <div className="text-xs text-green-400">From ₹{sub.from}/{sub.unit}</div>
+                <Link key={sub.name} href="/workers" style={{
+                  background: '#fff', border: '1px solid #d1fae5', borderRadius: 16,
+                  padding: 16, textAlign: 'center' as const, cursor: 'pointer', textDecoration: 'none', display: 'block',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                  onMouseEnter={e => { const el = e.currentTarget; el.style.transform = 'translateY(-4px)'; el.style.boxShadow = '0 8px 24px rgba(22,163,74,0.12)'; }}
+                  onMouseLeave={e => { const el = e.currentTarget; el.style.transform = ''; el.style.boxShadow = ''; }}
+                >
+                  <div style={{ fontSize: 24, marginBottom: 8 }}>{sub.icon}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#14532d', lineHeight: 1.3, marginBottom: 4 }}>{sub.name}</div>
+                  <div style={{ fontSize: 11, color: '#86b899' }}>From ₹{sub.from}/{sub.unit}</div>
                 </Link>
               ))}
             </div>
