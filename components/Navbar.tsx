@@ -8,101 +8,109 @@ export function Navbar() {
   const { user, profile, logout } = useAuth();
   const pathname = usePathname();
   const router   = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const displayName = profile?.name || user?.name || user?.email?.split('@')[0] || 'User';
-  const initials    = displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0,2);
+  const name     = profile?.name || user?.name || user?.email?.split('@')[0] || 'User';
+  const initials = name.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2);
 
   const links = [
-    { href:'/',          label:'🏠 Home' },
-    { href:'/gigs',      label:'💼 Jobs' },
-    { href:'/dashboard', label:'👤 Profile' },
+    { href:'/',          icon:'🏠', label:'Home' },
+    { href:'/gigs',      icon:'💼', label:'Jobs' },
+    { href:'/pick-drop', icon:'🛵', label:'Pick & Drop' },
+    { href:'/dashboard', icon:'👤', label:'My Profile' },
   ];
 
+  const active = (href:string) => pathname === href;
+
   return (
-    <nav style={{ position:'sticky', top:0, zIndex:100, background:'#fff', borderBottom:'2px solid #e6f4ea', fontFamily:"'Outfit',sans-serif" }}>
-      <div style={{ maxWidth:1100, margin:'0 auto', padding:'0 16px', display:'flex', alignItems:'center', justifyContent:'space-between', height:58 }}>
+    <>
+      <nav style={{ position:'sticky', top:0, zIndex:200, background:'#fff', borderBottom:'1px solid #e2e8f0', fontFamily:"'Outfit',sans-serif" }}>
+        <div style={{ maxWidth:1400, margin:'0 auto', padding:'0 24px', display:'flex', alignItems:'center', justifyContent:'space-between', height:64 }}>
 
-        {/* Brand */}
-        <Link href="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-          <div style={{ width:36, height:36, background:'linear-gradient(135deg,#16a34a,#22c55e)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>🍃</div>
-          <span style={{ fontWeight:900, color:'#14532d', fontSize:20 }}>Urban<span style={{ color:'#16a34a' }}>Serve</span></span>
-        </Link>
+          {/* Brand */}
+          <Link href="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none', flexShrink:0 }}>
+            <div style={{ width:40, height:40, background:'linear-gradient(135deg,#16a34a,#22c55e)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, boxShadow:'0 2px 8px rgba(22,163,74,0.35)' }}>🍃</div>
+            <div>
+              <div style={{ fontWeight:900, color:'#0f172a', fontSize:18, lineHeight:1 }}>Urban<span style={{color:'#16a34a'}}>Serve</span></div>
+              <div style={{ fontSize:10, color:'#94a3b8', fontWeight:600, letterSpacing:'0.05em' }}>FIND WORK · HIRE PEOPLE</div>
+            </div>
+          </Link>
 
-        {/* Desktop links */}
-        <div className="desk-nav" style={{ display:'none' }}>
-          {links.map(l => (
-            <Link key={l.href} href={l.href}
-              style={{ padding:'7px 14px', borderRadius:10, fontSize:14, fontWeight:600, color:'#14532d', background: pathname===l.href ? '#f0fdf4' : 'transparent', textDecoration:'none', border: pathname===l.href ? '1.5px solid #d1fae5' : '1.5px solid transparent' }}>
-              {l.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Right */}
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          {user ? (
-            <>
-              <Link href="/dashboard" style={{ display:'flex', alignItems:'center', gap:8, padding:'6px 12px', borderRadius:12, border:'1.5px solid #e6f4ea', textDecoration:'none', background:'#fff' }}>
-                <div style={{ width:30, height:30, borderRadius:'50%', background:'#16a34a', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:13, fontWeight:700 }}>{initials}</div>
-                <span style={{ fontSize:14, fontWeight:700, color:'#14532d' }} className="desk-nav">{displayName.split(' ')[0]}</span>
+          {/* Desktop nav */}
+          <div className="desk-links" style={{ display:'none', alignItems:'center', gap:2 }}>
+            {links.map(l => (
+              <Link key={l.href} href={l.href} style={{
+                display:'flex', alignItems:'center', gap:6, padding:'8px 14px', borderRadius:10, fontSize:14, fontWeight:600, textDecoration:'none', transition:'all 0.15s',
+                color: active(l.href) ? '#16a34a' : '#475569',
+                background: active(l.href) ? '#f0fdf4' : 'transparent',
+              }}>
+                <span style={{ fontSize:16 }}>{l.icon}</span>{l.label}
+                {active(l.href) && <div style={{ width:4, height:4, background:'#16a34a', borderRadius:'50%', marginLeft:2 }} />}
               </Link>
-              <button onClick={() => { logout(); router.push('/'); }} className="desk-nav"
-                style={{ fontSize:13, padding:'7px 14px', borderRadius:10, border:'1.5px solid #fecaca', color:'#dc2626', background:'#fff', cursor:'pointer', fontFamily:'inherit', fontWeight:600 }}>
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="desk-nav"
-                style={{ fontSize:14, fontWeight:700, padding:'8px 18px', borderRadius:12, background:'#16a34a', color:'#fff', textDecoration:'none' }}>
-                Login / Sign Up
-              </Link>
-            </>
-          )}
-          {/* Hamburger */}
-          <button onClick={() => setMenuOpen(o => !o)} className="mob-btn"
-            style={{ background:'none', border:'none', fontSize:24, color:'#14532d', cursor:'pointer', padding:4, display:'none' }}>
-            {menuOpen ? '✕' : '☰'}
-          </button>
-        </div>
-      </div>
+            ))}
+          </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div style={{ background:'#fff', borderTop:'1.5px solid #e6f4ea', padding:'12px 16px 20px' }}>
-          {links.map(l => (
-            <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)}
-              style={{ display:'block', padding:'12px 14px', borderRadius:12, fontSize:15, fontWeight:600, color:'#14532d', background: pathname===l.href ? '#f0fdf4' : 'transparent', textDecoration:'none', marginBottom:4 }}>
-              {l.label}
-            </Link>
-          ))}
-          <div style={{ borderTop:'1.5px solid #e6f4ea', marginTop:10, paddingTop:10, display:'flex', gap:10 }}>
+          {/* Right */}
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             {user ? (
-              <button onClick={() => { logout(); router.push('/'); setMenuOpen(false); }}
-                style={{ flex:1, padding:'11px', border:'1.5px solid #fecaca', borderRadius:12, color:'#dc2626', background:'#fff', fontWeight:700, cursor:'pointer', fontFamily:'inherit', fontSize:14 }}>
-                Logout
-              </button>
+              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                <Link href="/gigs" style={{ background:'#16a34a', color:'#fff', fontWeight:700, padding:'8px 18px', borderRadius:10, textDecoration:'none', fontSize:13, display:'none' }} className="desk-links">
+                  + Post Job
+                </Link>
+                <Link href="/dashboard" style={{ display:'flex', alignItems:'center', gap:8, padding:'6px 12px 6px 6px', borderRadius:12, border:'1px solid #e2e8f0', textDecoration:'none', background:'#fff', transition:'border-color 0.15s' }}>
+                  <div style={{ width:32, height:32, borderRadius:'50%', background:'linear-gradient(135deg,#16a34a,#22c55e)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:13, fontWeight:800 }}>{initials}</div>
+                  <span style={{ fontSize:13, fontWeight:700, color:'#0f172a' }} className="desk-links">{name.split(' ')[0]}</span>
+                </Link>
+              </div>
             ) : (
-              <Link href="/login" onClick={() => setMenuOpen(false)}
-                style={{ flex:1, textAlign:'center', padding:'11px', background:'#16a34a', color:'#fff', borderRadius:12, fontWeight:800, textDecoration:'none', fontSize:14 }}>
-                Login / Sign Up
-              </Link>
+              <div style={{ display:'flex', gap:8 }}>
+                <Link href="/login" style={{ fontSize:14, fontWeight:700, padding:'9px 20px', borderRadius:10, background:'#16a34a', color:'#fff', textDecoration:'none', boxShadow:'0 2px 8px rgba(22,163,74,0.3)' }}>
+                  Sign In
+                </Link>
+              </div>
             )}
+            <button onClick={()=>setOpen(o=>!o)} className="mob-btn" style={{ background:'none', border:'1px solid #e2e8f0', borderRadius:10, width:40, height:40, fontSize:18, color:'#475569', cursor:'pointer', display:'none', alignItems:'center', justifyContent:'center' }}>
+              {open ? '✕' : '☰'}
+            </button>
           </div>
         </div>
-      )}
+
+        {/* Mobile menu */}
+        {open && (
+          <div className="slide-down" style={{ background:'#fff', borderTop:'1px solid #f1f5f9', padding:'12px 20px 20px' }}>
+            {links.map(l => (
+              <Link key={l.href} href={l.href} onClick={()=>setOpen(false)} style={{
+                display:'flex', alignItems:'center', gap:12, padding:'13px 14px', borderRadius:12, fontSize:15, fontWeight:600, textDecoration:'none', marginBottom:4,
+                color: active(l.href) ? '#16a34a' : '#334155',
+                background: active(l.href) ? '#f0fdf4' : 'transparent',
+              }}>
+                <span style={{ fontSize:20 }}>{l.icon}</span>{l.label}
+              </Link>
+            ))}
+            <div style={{ borderTop:'1px solid #f1f5f9', marginTop:12, paddingTop:12, display:'flex', gap:10 }}>
+              {user ? (
+                <>
+                  <Link href="/gigs" onClick={()=>setOpen(false)} style={{ flex:1, textAlign:'center' as const, padding:'11px', background:'#16a34a', color:'#fff', borderRadius:12, fontWeight:700, textDecoration:'none', fontSize:14 }}>+ Post Job</Link>
+                  <button onClick={()=>{logout();router.push('/');setOpen(false);}} style={{ flex:1, padding:'11px', border:'1px solid #fecaca', borderRadius:12, color:'#dc2626', background:'#fff', fontWeight:600, cursor:'pointer', fontFamily:'inherit', fontSize:14 }}>Logout</button>
+                </>
+              ) : (
+                <Link href="/login" onClick={()=>setOpen(false)} style={{ flex:1, textAlign:'center' as const, padding:'12px', background:'#16a34a', color:'#fff', borderRadius:12, fontWeight:800, textDecoration:'none', fontSize:15 }}>Sign In →</Link>
+              )}
+            </div>
+          </div>
+        )}
+      </nav>
 
       <style>{`
-        @media (min-width: 768px) {
-          .desk-nav { display: flex !important; gap: 4px; align-items: center; }
-          .mob-btn  { display: none !important; }
+        @media(min-width:900px){
+          .desk-links{display:flex!important;}
+          .mob-btn{display:none!important;}
         }
-        @media (max-width: 767px) {
-          .desk-nav { display: none !important; }
-          .mob-btn  { display: block !important; }
+        @media(max-width:899px){
+          .desk-links{display:none!important;}
+          .mob-btn{display:flex!important;}
         }
       `}</style>
-    </nav>
+    </>
   );
 }
