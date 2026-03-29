@@ -8,6 +8,11 @@ import { Footer } from '@/components/Footer';
 export const metadata: Metadata = {
   title: 'UrbanServe — India\'s Multi-Service Super App',
   description: 'Hire verified workers, find gig jobs, book manpower teams across India.',
+  icons: {
+    icon: '/leaf-icon.png',
+    apple: '/leaf-icon.png',
+    shortcut: '/leaf-icon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

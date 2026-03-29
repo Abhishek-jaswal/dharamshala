@@ -14,14 +14,131 @@ const Pill = ({ active, onClick, children }: any) => (
   </button>
 );
 
-// ── Applicants drawer for the job poster ────────────────────────────
-function ApplicantsDrawer({ job }: { job: any }) {
-  const [applicants, setApplicants] = useState<any[]>([]);
-  const [loading,    setLoading]    = useState(true);
-  const [open,       setOpen]       = useState(false);
-  const [count,      setCount]      = useState<number|null>(null);
+// ── Full profile modal shown when poster clicks applicant name ───────────────
+function ProfileModal({ person, onClose }: { person: any; onClose: () => void }) {
+  const p = person.profile;
+  const name    = p?.name     || person.expand?.applicant_id?.name || 'Unknown';
+  const phone   = p?.contact;
+  const skills  = p?.skills;
+  const location= p?.location;
+  const role    = p?.role;
+  const dob     = p?.dob ? new Date(p.dob).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : null;
+  const interests = p?.interests;
+  const initials = name.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2);
+  const applied  = new Date(person.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
 
-  // Just count on mount
+  return (
+    <div onClick={e=>{if(e.target===e.currentTarget)onClose();}}
+      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:600, display:'flex', alignItems:'center', justifyContent:'center', padding:16, backdropFilter:'blur(4px)' }}>
+      <div className="slide-down" style={{ background:'#fff', borderRadius:24, width:'100%', maxWidth:440, maxHeight:'90vh', overflowY:'auto' as const, boxShadow:'0 24px 80px rgba(0,0,0,0.25)' }}>
+
+        {/* Header */}
+        <div style={{ background:'linear-gradient(135deg,#0f4c25,#16a34a)', padding:'32px 28px 28px', borderRadius:'24px 24px 0 0', position:'relative' }}>
+          <button onClick={onClose} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, width:32, height:32, fontSize:16, cursor:'pointer', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+          <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+            <div style={{ width:68, height:68, borderRadius:'50%', background:'rgba(255,255,255,0.2)', border:'3px solid rgba(255,255,255,0.4)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:26, fontWeight:900, flexShrink:0 }}>
+              {initials}
+            </div>
+            <div>
+              <div style={{ fontWeight:900, color:'#fff', fontSize:22 }}>{name}</div>
+              {role && <div style={{ color:'rgba(255,255,255,0.75)', fontSize:13, marginTop:3, textTransform:'capitalize' as const }}>👤 {role}</div>}
+              {location && <div style={{ color:'rgba(255,255,255,0.65)', fontSize:13, marginTop:2 }}>📍 {location}</div>}
+            </div>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding:'24px 28px', display:'flex', flexDirection:'column', gap:20 }}>
+
+          {/* Applied note */}
+          <div style={{ background:'#f0fdf4', border:'1px solid #d1fae5', borderRadius:12, padding:'10px 14px', fontSize:13, color:'#16a34a', fontWeight:600 }}>
+            ✅ Applied on {applied}
+          </div>
+
+          {/* Contact buttons — most important, shown first */}
+          <div>
+            <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>CONTACT</div>
+            {phone ? (
+              <div style={{ display:'flex', gap:10 }}>
+                <a href={`tel:${phone}`} style={{ flex:1, textDecoration:'none' }}>
+                  <button style={{ width:'100%', background:'#16a34a', color:'#fff', border:'none', borderRadius:12, padding:'14px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8, boxShadow:'0 4px 14px rgba(22,163,74,0.3)' }}>
+                    📞 Call Now
+                  </button>
+                </a>
+                <a href={`https://wa.me/91${phone}?text=Hi ${name}, I saw your job application on UrbanServe. Are you still available?`} target="_blank" rel="noreferrer" style={{ flex:1, textDecoration:'none' }}>
+                  <button style={{ width:'100%', background:'#dcfce7', color:'#16a34a', border:'1.5px solid #d1fae5', borderRadius:12, padding:'14px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
+                    💬 WhatsApp
+                  </button>
+                </a>
+              </div>
+            ) : (
+              <div style={{ background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'12px 14px', color:'#dc2626', fontSize:13, fontWeight:600 }}>
+                ⚠️ This person has not added a phone number yet.
+              </div>
+            )}
+            {phone && (
+              <div style={{ marginTop:8, background:'#f8fafc', borderRadius:10, padding:'10px 14px', fontSize:13, color:'#64748b', textAlign:'center' as const }}>
+                📱 {phone}
+              </div>
+            )}
+          </div>
+
+          {/* Info rows */}
+          <div>
+            <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>PROFILE DETAILS</div>
+            <div style={{ display:'flex', flexDirection:'column', gap:0, background:'#f8fafc', borderRadius:14, overflow:'hidden' }}>
+              {[
+                ['📍', 'Location', location],
+                ['🎂', 'Date of Birth', dob],
+                ['👤', 'Role', role],
+              ].filter(([,,v])=>v).map(([icon,label,val])=>(
+                <div key={label as string} style={{ display:'flex', gap:12, padding:'12px 16px', borderBottom:'1px solid #f1f5f9', alignItems:'center' }}>
+                  <span style={{ fontSize:18, flexShrink:0 }}>{icon}</span>
+                  <span style={{ color:'#94a3b8', fontSize:13, minWidth:90 }}>{label}</span>
+                  <span style={{ fontWeight:700, color:'#0f172a', fontSize:13 }}>{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Skills */}
+          {skills && (
+            <div>
+              <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>🛠 SKILLS</div>
+              <div style={{ display:'flex', flexWrap:'wrap' as const, gap:8 }}>
+                {skills.split(', ').filter(Boolean).map((s:string)=>(
+                  <span key={s} style={{ background:'#f0fdf4', border:'1px solid #d1fae5', color:'#16a34a', borderRadius:99, padding:'5px 14px', fontSize:13, fontWeight:600 }}>{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Interests */}
+          {interests && (
+            <div>
+              <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>❤️ INTERESTS</div>
+              <div style={{ display:'flex', flexWrap:'wrap' as const, gap:8 }}>
+                {interests.split(', ').filter(Boolean).map((s:string)=>(
+                  <span key={s} style={{ background:'#fef9ee', border:'1px solid #fde68a', color:'#d97706', borderRadius:99, padding:'5px 14px', fontSize:13, fontWeight:600 }}>{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Applicants drawer for the job poster ────────────────────────────────────
+function ApplicantsDrawer({ job }: { job: any }) {
+  const [applicants,  setApplicants]  = useState<any[]>([]);
+  const [loading,     setLoading]     = useState(true);
+  const [open,        setOpen]        = useState(false);
+  const [count,       setCount]       = useState<number|null>(null);
+  const [viewProfile, setViewProfile] = useState<any|null>(null);
+
+  // Count on mount
   useEffect(() => {
     getPb().collection('applications').getList(1,1,{ filter:`job_id="${job.id}"` })
       .then(r => setCount(r.totalItems)).catch(()=>setCount(0));
@@ -33,11 +150,12 @@ function ApplicantsDrawer({ job }: { job: any }) {
       const apps = await getPb().collection('applications').getList(1, 100, {
         filter: `job_id="${job.id}"`, sort:'-created',
       });
+      // Fetch each applicant's profile (has phone, skills, location etc.)
       const rich = await Promise.all(apps.items.map(async (app:any) => {
         try {
           const profile = await getPb().collection('profiles').getFirstListItem(`user_id="${app.applicant_id}"`);
           return { ...app, profile };
-        } catch { return app; }
+        } catch { return { ...app, profile: null }; }
       }));
       setApplicants(rich);
     } catch { setApplicants([]); }
@@ -48,78 +166,81 @@ function ApplicantsDrawer({ job }: { job: any }) {
 
   return (
     <div>
-      <button onClick={toggle} style={{ width:'100%', background: open ? '#0f172a' : '#f0fdf4', border:`1.5px solid ${open?'#0f172a':'#d1fae5'}`, borderRadius:12, padding:'12px', fontSize:14, fontWeight:700, color: open?'#fff':'#16a34a', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
-        <span>👥</span>
+      {/* Toggle button */}
+      <button onClick={toggle} style={{ width:'100%', background: open ? '#0f172a' : '#f0fdf4', border:`1.5px solid ${open?'#0f172a':'#d1fae5'}`, borderRadius:12, padding:'13px', fontSize:14, fontWeight:700, color: open?'#fff':'#16a34a', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8, transition:'all 0.2s' }}>
+        <span style={{ fontSize:18 }}>👥</span>
         {open ? '▲ Hide Applicants' : `See Who Applied${count!==null ? ` (${count})` : ''}`}
+        {count! > 0 && !open && <span style={{ background:'#16a34a', color:'#fff', borderRadius:99, padding:'1px 8px', fontSize:12, fontWeight:800 }}>{count}</span>}
       </button>
 
+      {/* Applicants list */}
       {open && (
-        <div className="slide-down" style={{ marginTop:12 }}>
+        <div className="slide-down" style={{ marginTop:12, display:'flex', flexDirection:'column', gap:10 }}>
           {loading ? (
-            <div style={{ textAlign:'center', padding:'28px', color:'#94a3b8', fontSize:14 }}>
+            <div style={{ textAlign:'center', padding:'28px' }}>
               <div className="spinner" style={{ margin:'0 auto 12px' }} />
-              Loading applicants…
+              <p style={{ color:'#94a3b8', fontSize:14 }}>Loading applicants…</p>
             </div>
           ) : applicants.length === 0 ? (
             <div style={{ textAlign:'center', padding:'28px 20px', background:'#f8fafc', borderRadius:12, border:'1px dashed #e2e8f0' }}>
               <div style={{ fontSize:40, marginBottom:10 }}>⏳</div>
               <div style={{ color:'#64748b', fontSize:14, fontWeight:600 }}>No applications yet</div>
-              <div style={{ color:'#94a3b8', fontSize:13, marginTop:4 }}>Share this job to get applicants!</div>
+              <div style={{ color:'#94a3b8', fontSize:13, marginTop:4 }}>Share your job to get applicants!</div>
             </div>
-          ) : (
-            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-              {applicants.map((app:any, i:number) => {
-                const name     = app.profile?.name || 'Unknown';
-                const phone    = app.profile?.contact;
-                const skills   = app.profile?.skills;
-                const location = app.profile?.location;
-                const applied  = new Date(app.created).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-                return (
-                  <div key={i} style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:14, padding:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:12, flex:1, minWidth:0 }}>
-                      <div style={{ width:44, height:44, borderRadius:'50%', background:'linear-gradient(135deg,#16a34a,#22c55e)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:800, fontSize:16, flexShrink:0 }}>
-                        {name[0]?.toUpperCase()}
-                      </div>
-                      <div style={{ minWidth:0 }}>
-                        <div style={{ fontWeight:800, color:'#0f172a', fontSize:15 }}>{name}</div>
-                        {location && <div style={{ color:'#64748b', fontSize:12, marginTop:1 }}>📍 {location}</div>}
-                        {skills && <div style={{ color:'#94a3b8', fontSize:12, marginTop:1 }}>🛠 {skills}</div>}
-                        <div style={{ color:'#cbd5e1', fontSize:11, marginTop:2 }}>Applied {applied}</div>
-                      </div>
+          ) : applicants.map((app:any, i:number) => {
+            const name    = app.profile?.name || 'Unknown';
+            const phone   = app.profile?.contact;
+            const skills  = app.profile?.skills;
+            const location= app.profile?.location;
+            const initials= name.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2);
+
+            return (
+              <div key={i} style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:16, padding:'16px 18px', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+                  {/* Clickable name/avatar → opens profile modal */}
+                  <button onClick={()=>setViewProfile(app)}
+                    style={{ display:'flex', alignItems:'center', gap:12, flex:1, minWidth:0, background:'none', border:'none', cursor:'pointer', textAlign:'left' as const, padding:0, fontFamily:'inherit' }}>
+                    <div style={{ width:46, height:46, borderRadius:'50%', background:'linear-gradient(135deg,#16a34a,#22c55e)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:800, fontSize:16, flexShrink:0 }}>
+                      {initials}
                     </div>
-                    <div style={{ display:'flex', flexDirection:'column', gap:8, flexShrink:0 }}>
-                      {phone ? (
-                        <a href={`tel:${phone}`} style={{ textDecoration:'none' }}>
-                          <button style={{ background:'#16a34a', color:'#fff', border:'none', borderRadius:10, padding:'10px 20px', fontWeight:800, fontSize:14, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:6 }}>
-                            📞 Call
-                          </button>
-                        </a>
-                      ) : (
-                        <div style={{ color:'#94a3b8', fontSize:12, textAlign:'center' as const }}>No phone</div>
-                      )}
-                      {phone && (
-                        <a href={`https://wa.me/91${phone}`} target="_blank" rel="noreferrer" style={{ textDecoration:'none' }}>
-                          <button style={{ background:'#dcfce7', color:'#16a34a', border:'1px solid #d1fae5', borderRadius:10, padding:'8px 16px', fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit', width:'100%' }}>
-                            💬 WhatsApp
-                          </button>
-                        </a>
-                      )}
+                    <div style={{ minWidth:0 }}>
+                      <div style={{ fontWeight:800, color:'#0f172a', fontSize:15, display:'flex', alignItems:'center', gap:6 }}>
+                        {name}
+                        <span style={{ fontSize:11, color:'#16a34a', fontWeight:600, background:'#f0fdf4', border:'1px solid #d1fae5', borderRadius:99, padding:'1px 7px' }}>View Profile →</span>
+                      </div>
+                      {location && <div style={{ color:'#64748b', fontSize:12, marginTop:2 }}>📍 {location}</div>}
+                      {skills   && <div style={{ color:'#94a3b8', fontSize:12, marginTop:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>🛠 {skills}</div>}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  </button>
+
+                  {/* Quick call button */}
+                  {phone ? (
+                    <a href={`tel:${phone}`} style={{ textDecoration:'none', flexShrink:0 }}>
+                      <button style={{ background:'#16a34a', color:'#fff', border:'none', borderRadius:10, padding:'10px 18px', fontWeight:800, fontSize:14, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:6 }}>
+                        📞 Call
+                      </button>
+                    </a>
+                  ) : (
+                    <span style={{ fontSize:12, color:'#94a3b8', flexShrink:0 }}>No phone</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
+
+      {/* Profile modal */}
+      {viewProfile && <ProfileModal person={viewProfile} onClose={()=>setViewProfile(null)} />}
     </div>
   );
 }
 
-// ── Job card ────────────────────────────────────────────────────────
+// ── Single job card ───────────────────────────────────────────────────────────
 function JobCard({ job, user }: { job:any; user:any }) {
   const [applied,  setApplied]  = useState(false);
   const [applying, setApplying] = useState(false);
+  const [checking, setChecking] = useState(!!user); // check PocketBase on mount
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
   const timeAgo = (() => {
@@ -129,19 +250,28 @@ function JobCard({ job, user }: { job:any; user:any }) {
     return `${Math.floor(d/86400)}d ago`;
   })();
 
+  // On mount: check if this user already applied to this job
+  useEffect(() => {
+    if (!user || isMyJob) { setChecking(false); return; }
+    getPb().collection('applications')
+      .getList(1, 1, { filter: `job_id="${job.id}" && applicant_id="${user.id}"` })
+      .then(res => { if (res.totalItems > 0) setApplied(true); })
+      .catch(() => {})
+      .finally(() => setChecking(false));
+  }, [user, job.id, isMyJob]);
+
   const handleApply = async () => {
     if (!user) { window.location.href = '/login'; return; }
     setApplying(true);
     try {
       await getPb().collection('applications').create({ job_id:job.id, applicant_id:user.id, status:'pending' });
       setApplied(true);
-    } catch { setApplied(true); }
+    } catch { setApplied(true); } // already applied = duplicate error, still mark applied
     finally { setApplying(false); }
   };
 
   return (
     <div className="hover-lift" style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:20, padding:22, boxShadow:'0 1px 4px rgba(0,0,0,0.05)', display:'flex', flexDirection:'column', gap:16 }}>
-      {/* Top */}
       <div style={{ display:'flex', justifyContent:'space-between', gap:8 }}>
         <div style={{ display:'flex', gap:12, flex:1, minWidth:0 }}>
           <div style={{ width:52, height:52, background:'#f0fdf4', border:'1px solid #d1fae5', borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:26, flexShrink:0 }}>
@@ -158,7 +288,6 @@ function JobCard({ job, user }: { job:any; user:any }) {
         </div>
       </div>
 
-      {/* Tags */}
       <div style={{ display:'flex', gap:6, flexWrap:'wrap' as const }}>
         {job.urgent && <span style={{ background:'#fef2f2', color:'#dc2626', border:'1px solid #fecaca', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:700 }}>🔥 Urgent</span>}
         <span style={{ background:'#f0fdf4', color:'#15803d', border:'1px solid #d1fae5', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:600 }}>📍 {job.location}</span>
@@ -166,7 +295,6 @@ function JobCard({ job, user }: { job:any; user:any }) {
         {cat && <span style={{ background:'#f8fafc', color:'#475569', border:'1px solid #e2e8f0', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:600 }}>{cat.icon} {cat.label}</span>}
       </div>
 
-      {/* Skills */}
       {job.skills && (
         <div style={{ display:'flex', gap:6, flexWrap:'wrap' as const }}>
           {job.skills.split(',').filter(Boolean).map((s:string) => (
@@ -175,41 +303,34 @@ function JobCard({ job, user }: { job:any; user:any }) {
         </div>
       )}
 
-      {/* Posted by */}
       {isMyJob && (
-        <div style={{ background:'#f0fdf4', borderRadius:10, padding:'8px 12px', fontSize:12, color:'#16a34a', fontWeight:700 }}>
-          ✅ Your Job Posting
-        </div>
+        <div style={{ background:'#f0fdf4', borderRadius:10, padding:'8px 12px', fontSize:12, color:'#16a34a', fontWeight:700 }}>✅ Your Job Posting</div>
       )}
 
-      {/* Action */}
-      {isMyJob ? (
-        <ApplicantsDrawer job={job} />
-      ) : (
-        <button onClick={handleApply} disabled={applied || applying}
-          style={{ width:'100%', padding:'14px', border:'none', borderRadius:12, fontWeight:800, fontSize:15, cursor: applied ? 'default' : 'pointer', fontFamily:'inherit', transition:'all 0.2s',
-            background: applied ? '#f0fdf4' : '#16a34a',
-            color:      applied ? '#16a34a' : '#fff',
-            boxShadow:  applied ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
-          }}>
-          {applying ? 'Applying…' : applied ? '✅ Applied Successfully!' : 'Apply Now →'}
+      {isMyJob ? <ApplicantsDrawer job={job} /> : (
+        <button onClick={handleApply} disabled={applied || applying || checking}
+          style={{ width:'100%', padding:'14px', border:'none', borderRadius:12, fontWeight:800, fontSize:15, cursor:(applied||checking)?'default':'pointer', fontFamily:'inherit', transition:'all 0.2s',
+            background: applied ? '#f0fdf4' : checking ? '#f8fafc' : '#16a34a',
+            color:      applied ? '#16a34a' : checking ? '#94a3b8' : '#fff',
+            boxShadow:  (applied||checking) ? 'none' : '0 4px 16px rgba(22,163,74,0.3)' }}>
+          {checking ? 'Loading…' : applying ? 'Applying…' : applied ? '✅ Already Applied' : 'Apply Now →'}
         </button>
       )}
     </div>
   );
 }
 
-// ── Main page ────────────────────────────────────────────────────────
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function GigsPage() {
   const { user }  = useAuth();
   const router    = useRouter();
-  const [jobs,        setJobs]      = useState<any[]>([]);
-  const [loading,     setLoading]   = useState(true);
-  const [catFilter,   setCatFilter] = useState('all');
-  const [typeFilter,  setTypeFilter]= useState('all');
-  const [search,      setSearch]    = useState('');
-  const [showPost,    setShowPost]  = useState(false);
-  const [posting,     setPosting]   = useState(false);
+  const [jobs,       setJobs]      = useState<any[]>([]);
+  const [loading,    setLoading]   = useState(true);
+  const [catFilter,  setCatFilter] = useState('all');
+  const [typeFilter, setTypeFilter]= useState('all');
+  const [search,     setSearch]    = useState('');
+  const [showPost,   setShowPost]  = useState(false);
+  const [posting,    setPosting]   = useState(false);
   const [form, setForm] = useState({ title:'', company:'', type:'Daily Wage', pay:'', location:'', skills:'', category:'', urgent:false });
 
   const fetchJobs = async () => {
@@ -245,24 +366,18 @@ export default function GigsPage() {
     finally { setPosting(false); }
   };
 
-  const inp: React.CSSProperties = { width:'100%', border:'1.5px solid #e2e8f0', borderRadius:10, padding:'12px 14px', fontSize:14, color:'#0f172a', fontFamily:'inherit', outline:'none', boxSizing:'border-box' as const, background:'#f8fafc', transition:'border-color 0.15s' };
+  const inp: React.CSSProperties = { width:'100%', border:'1.5px solid #e2e8f0', borderRadius:10, padding:'12px 14px', fontSize:14, color:'#0f172a', fontFamily:'inherit', outline:'none', boxSizing:'border-box' as const, background:'#f8fafc' };
 
   return (
     <div style={{ fontFamily:"'Outfit',sans-serif", background:'#f8fafc', minHeight:'100vh' }}>
-
-      {/* Header strip */}
       <div style={{ background:'linear-gradient(135deg,#0f4c25,#16a34a)', padding:'40px 24px 56px' }}>
         <div style={{ maxWidth:1400, margin:'0 auto', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16 }}>
           <div>
-            <h1 style={{ fontSize:'clamp(22px,3vw,36px)', fontWeight:900, color:'#fff', marginBottom:6 }}>
-              💼 Find Jobs
-            </h1>
-            <p style={{ color:'rgba(255,255,255,0.7)', fontSize:15 }}>
-              {jobs.length} jobs live right now — tap any card to apply
-            </p>
+            <h1 style={{ fontSize:'clamp(22px,3vw,36px)', fontWeight:900, color:'#fff', marginBottom:6 }}>💼 Find Jobs</h1>
+            <p style={{ color:'rgba(255,255,255,0.7)', fontSize:15 }}>{jobs.length} jobs live right now · Tap any card to apply</p>
           </div>
           <button onClick={() => user ? setShowPost(true) : router.push('/login')}
-            style={{ background:'#fff', color:'#16a34a', border:'none', borderRadius:14, padding:'14px 28px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 16px rgba(0,0,0,0.2)', display:'flex', alignItems:'center', gap:8 }}>
+            style={{ background:'#fff', color:'#16a34a', border:'none', borderRadius:14, padding:'14px 28px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 16px rgba(0,0,0,0.2)' }}>
             + Post a Job
           </button>
         </div>
@@ -277,18 +392,15 @@ export default function GigsPage() {
           <button style={{ background:'#16a34a', color:'#fff', border:'none', borderRadius:12, padding:'0 24px', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Search</button>
         </div>
 
-        {/* Category filter */}
         <div className="pill-scroll" style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:4, marginBottom:8 }}>
           <Pill active={catFilter==='all'} onClick={()=>setCatFilter('all')}>🌐 All Categories</Pill>
           {CATEGORIES.map(c => <Pill key={c.id} active={catFilter===c.id} onClick={()=>setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
         </div>
-        {/* Type filter */}
         <div className="pill-scroll" style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:16, marginBottom:28 }}>
           <Pill active={typeFilter==='all'} onClick={()=>setTypeFilter('all')}>All Types</Pill>
           {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter===tt} onClick={()=>setTypeFilter(tt)}>{tt}</Pill>)}
         </div>
 
-        {/* Jobs grid */}
         {loading ? (
           <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'80px 0', gap:16 }}>
             <div className="spinner" />
@@ -311,13 +423,13 @@ export default function GigsPage() {
       {showPost && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:16, zIndex:500, backdropFilter:'blur(4px)' }}
           onClick={e=>{if(e.target===e.currentTarget)setShowPost(false);}}>
-          <div className="slide-down" style={{ background:'#fff', borderRadius:24, padding:32, width:'100%', maxWidth:500, maxHeight:'90vh', overflowY:'auto' as const, boxShadow:'0 24px 80px rgba(0,0,0,0.25)' }}>
+          <div className="slide-down" style={{ background:'#fff', borderRadius:24, padding:32, width:'100%', maxWidth:500, maxHeight:'90vh', overflowY:'auto' as const }}>
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
               <div>
                 <h2 style={{ fontSize:22, fontWeight:900, color:'#0f172a' }}>📋 Post a Job</h2>
-                <p style={{ color:'#94a3b8', fontSize:13, marginTop:2 }}>Fill the details to find workers</p>
+                <p style={{ color:'#94a3b8', fontSize:13, marginTop:2 }}>Fill details to find workers fast</p>
               </div>
-              <button onClick={()=>setShowPost(false)} style={{ background:'#f1f5f9', border:'none', borderRadius:10, width:36, height:36, fontSize:18, cursor:'pointer', color:'#64748b', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
+              <button onClick={()=>setShowPost(false)} style={{ background:'#f1f5f9', border:'none', borderRadius:10, width:36, height:36, fontSize:18, cursor:'pointer', color:'#64748b' }}>✕</button>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
               {([['title','Job Title *','e.g. Need Plumber at Home'],['pay','Pay *','e.g. ₹500/day'],['location','Location *','City or Area'],['company','Company / Shop (optional)','Your business name']] as [string,string,string][]).map(([field,label,ph]) => (
@@ -347,7 +459,7 @@ export default function GigsPage() {
               </div>
               <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'12px 14px', background:'#fef2f2', borderRadius:12, border:'1px solid #fecaca' }}>
                 <input type="checkbox" checked={form.urgent} onChange={e=>setForm(f=>({...f,urgent:e.target.checked}))} style={{ accentColor:'#dc2626', width:18, height:18 }} />
-                <span style={{ fontSize:14, fontWeight:700, color:'#dc2626' }}>🔥 Mark as Urgent (gets more attention)</span>
+                <span style={{ fontSize:14, fontWeight:700, color:'#dc2626' }}>🔥 Mark as Urgent</span>
               </label>
             </div>
             <div style={{ display:'flex', gap:10, marginTop:24 }}>

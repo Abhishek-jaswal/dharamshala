@@ -10,15 +10,18 @@ export default function DashboardPage() {
   const router = useRouter();
   const [apps,       setApps]       = useState<any[]>([]);
   const [appsLoad,   setAppsLoad]   = useState(false);
-  const [available,  setAvailable]  = useState(true);
+  const [available,  setAvailable]  = useState<boolean>(false);
+  const [availLoaded, setAvailLoaded] = useState(false); // track if loaded from DB
   const [toggling,   setToggling]   = useState(false);
+  const [savedToast, setSavedToast] = useState(false);
   const [aadhaarUrl, setAadhaarUrl] = useState('');
 
   useEffect(() => { if (!loading && !user) router.push('/login'); }, [user, loading]);
 
   useEffect(() => {
     if (profile) {
-      setAvailable(profile.available ?? true);
+      setAvailable(profile.available === true); // explicit: only true if field is true
+      setAvailLoaded(true);
       if (profile.aadhaar) {
         const base = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
         setAadhaarUrl(`${base}/api/files/profiles/${profile.id}/${profile.aadhaar}`);
@@ -35,12 +38,20 @@ export default function DashboardPage() {
   }, [user]);
 
   const toggleAvailability = async () => {
-    if (!profile?.id) return;
+    if (!profile?.id) { alert('Please complete your profile first.'); return; }
     setToggling(true);
     const next = !available;
     setAvailable(next);
-    try { await getPb().collection('profiles').update(profile.id, { available:next }); }
-    catch { setAvailable(!next); }
+    try {
+      await getPb().collection('profiles').update(profile.id, { available: next });
+      // Show saved toast
+      setSavedToast(true);
+      setTimeout(() => setSavedToast(false), 2500);
+    } catch(e) {
+      console.error(e);
+      setAvailable(!next); // revert on error
+      alert('Could not save. Make sure the "profiles" collection has an "available" (bool) field in PocketBase.');
+    }
     finally { setToggling(false); }
   };
 
@@ -91,20 +102,26 @@ export default function DashboardPage() {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:20, alignItems:'start' }}>
 
           {/* ── Availability toggle ── */}
-          <div style={{ ...card, textAlign:'center' as const, padding:'36px 28px', gridColumn:'span 1' }}>
+          <div style={{ ...card, textAlign:'center' as const, padding:'36px 28px', gridColumn:'span 1', position:'relative' as const }}>
+            {/* Saved toast */}
+            {savedToast && (
+              <div className="slide-down" style={{ position:'absolute' as const, top:16, left:'50%', transform:'translateX(-50%)', background:'#16a34a', color:'#fff', borderRadius:99, padding:'8px 20px', fontSize:13, fontWeight:700, whiteSpace:'nowrap' as const, boxShadow:'0 4px 16px rgba(22,163,74,0.4)', zIndex:10 }}>
+                ✅ Saved to PocketBase!
+              </div>
+            )}
             <div style={{ fontWeight:900, color:'#0f172a', fontSize:18, marginBottom:6 }}>My Availability</div>
             <p style={{ color:'#64748b', fontSize:14, marginBottom:28, lineHeight:1.6 }}>
-              {available ? '✅ Visible — employers can contact you' : '❌ Hidden — nobody can see you'}
+              {available ? '✅ You are VISIBLE — employers can find and contact you' : '❌ You are HIDDEN — nobody can see or contact you'}
             </p>
-            <button onClick={toggleAvailability} disabled={toggling}
-              style={{ width:'100%', padding:'22px 24px', borderRadius:18, border:'none', cursor:toggling?'not-allowed':'pointer', fontFamily:'inherit', fontSize:18, fontWeight:900, transition:'all 0.3s',
-                background: available ? 'linear-gradient(135deg,#16a34a,#22c55e)' : '#f1f5f9',
-                color: available ? '#fff' : '#94a3b8',
-                boxShadow: available ? '0 8px 32px rgba(22,163,74,0.3)' : 'none',
+            <button onClick={toggleAvailability} disabled={toggling || !availLoaded}
+              style={{ width:'100%', padding:'22px 24px', borderRadius:18, border:'none', cursor:(toggling||!availLoaded)?'not-allowed':'pointer', fontFamily:'inherit', fontSize:18, fontWeight:900, transition:'all 0.3s',
+                background: !availLoaded ? '#f1f5f9' : available ? 'linear-gradient(135deg,#16a34a,#22c55e)' : '#f1f5f9',
+                color: !availLoaded ? '#cbd5e1' : available ? '#fff' : '#94a3b8',
+                boxShadow: (available && availLoaded) ? '0 8px 32px rgba(22,163,74,0.3)' : 'none',
               }}>
-              {toggling ? '...' : available ? '🟢  AVAILABLE' : '🔴  NOT AVAILABLE'}
+              {!availLoaded ? '⏳  Loading status…' : toggling ? 'Saving…' : available ? '🟢  I AM AVAILABLE' : '🔴  I AM NOT AVAILABLE'}
             </button>
-            <p style={{ marginTop:12, fontSize:12, color:'#94a3b8' }}>Tap to toggle your status</p>
+            <p style={{ marginTop:12, fontSize:12, color:'#94a3b8' }}>Tap to toggle · Saved automatically to database</p>
           </div>
 
           {/* ── Profile info ── */}
