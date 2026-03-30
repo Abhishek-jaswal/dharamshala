@@ -5,7 +5,7 @@ import { getPb } from '@/lib/pocketbase';
 const AuthContext = createContext<any>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser]       = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -13,7 +13,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchProfile = async (userId: string) => {
     setProfileLoading(true);
     try {
-      const pb  = getPb();
+      const pb = getPb();
       const rec = await pb.collection('profiles').getFirstListItem(`user_id="${userId}"`);
       setProfile(rec);
     } catch {
@@ -41,26 +41,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsub();
   }, []);
 
-  const loginWithOAuth = async (provider: 'google' | 'github') => {
+  const loginWithOAuth = async (provider: 'google') => {
     const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090';
-    const res   = await fetch(`${pbUrl}/api/collections/users/auth-methods`);
-    const data  = await res.json();
-    const p     = (data.authProviders ?? []).find((x: any) => x.name === provider);
+    const res = await fetch(`${pbUrl}/api/collections/users/auth-methods`);
+    const data = await res.json();
+    const p = (data.authProviders ?? []).find((x: any) => x.name === provider);
     if (!p) { alert(`${provider} OAuth not enabled in PocketBase.`); return; }
     localStorage.setItem('pb_oauth_provider', JSON.stringify(p));
     window.location.href = p.authUrl + encodeURIComponent(`${window.location.origin}/oauth-callback`);
   };
 
   const loginWithGoogle = () => loginWithOAuth('google');
-  const loginWithGithub = () => loginWithOAuth('github');
-  const logout          = () => { getPb().authStore.clear(); setProfile(null); };
-  const refreshProfile  = () => { if (user?.id) fetchProfile(user.id); };
+  const logout = () => { getPb().authStore.clear(); setProfile(null); };
+  const refreshProfile = () => { if (user?.id) fetchProfile(user.id); };
 
   return (
     <AuthContext.Provider value={{
       user, profile, loading, profileLoading,
       isNewUser: !!(user && !profile && !profileLoading),
-      loginWithGoogle, loginWithGithub, logout, refreshProfile,
+      loginWithGoogle, logout, refreshProfile,
     }}>
       {children}
     </AuthContext.Provider>
