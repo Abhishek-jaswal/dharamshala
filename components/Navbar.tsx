@@ -157,7 +157,7 @@ export function Navbar() {
                   }} />
                 )}
                 <span style={{
-                  fontSize: 22,
+                  fontSize: 30,
                   transform: isActive ? 'scale(1.12)' : 'scale(1)',
                   transition: 'transform 0.15s',
                   lineHeight: 1.2,

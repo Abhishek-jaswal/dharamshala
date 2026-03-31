@@ -234,7 +234,6 @@ function JobCard({ job, user }: { job: any; user: any }) {
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
   const [checking, setChecking] = useState(!!user);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [applicantCount, setApplicantCount] = useState<number | null>(null);
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
@@ -269,10 +268,8 @@ function JobCard({ job, user }: { job: any; user: any }) {
     try {
       await getPb().collection('applications').create({ job_id: job.id, applicant_id: user.id, status: 'pending' });
       setApplied(true);
-      setShowSuccess(true);
     } catch {
-      setApplied(true);
-      setShowSuccess(true);
+      setApplied(true); // duplicate = already applied, still mark applied
     } finally { setApplying(false); }
   };
 
@@ -335,15 +332,23 @@ function JobCard({ job, user }: { job: any; user: any }) {
         <ApplicantsDrawer job={job} />
       ) : (
         <>
-          {/* Apply button */}
+          {/* Already applied — show contact message, NO button */}
           {applied ? (
             <div style={{
-              width: '100%', padding: '13px', border: '1.5px solid #d1fae5',
-              borderRadius: 12, background: '#f0fdf4', color: '#6b9e7d',
-              fontWeight: 700, fontSize: 14, textAlign: 'center' as const,
-              letterSpacing: '0.01em',
+              background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)',
+              border: '1px solid #bbf7d0',
+              borderRadius: 16, padding: '18px 20px',
+              display: 'flex', gap: 14, alignItems: 'center',
             }}>
-              ✓ Applied
+              <span style={{ fontSize: 32, flexShrink: 0 }}>📬</span>
+              <div>
+                <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 3 }}>
+                  Application Sent!
+                </div>
+                <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.55 }}>
+                  The hiring person will review your profile and contact you soon. Make sure your phone number is up to date.
+                </div>
+              </div>
             </div>
           ) : (
             <button
@@ -361,24 +366,6 @@ function JobCard({ job, user }: { job: any; user: any }) {
             </button>
           )}
 
-          {/* Success message after applying */}
-          {showSuccess && (
-            <div className="slide-up" style={{
-              background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)',
-              border: '1px solid #bbf7d0', borderRadius: 14, padding: '16px 18px',
-              display: 'flex', gap: 12, alignItems: 'flex-start',
-            }}>
-              <span style={{ fontSize: 24, flexShrink: 0 }}>🎉</span>
-              <div>
-                <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 4 }}>
-                  Application Submitted!
-                </div>
-                <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.5 }}>
-                  The hiring person will review your profile and contact you directly. Make sure your phone number is updated in your profile.
-                </div>
-              </div>
-            </div>
-          )}
         </>
       )}
     </article>
@@ -537,7 +524,7 @@ export default function GigsPage() {
                 background: posting ? '#d1fae5' : '#16a34a', color: posting ? '#4b7a5a' : '#fff',
                 boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
               }}>
-                {posting ? 'Posting…' : ' Post Job Now'}
+                {posting ? 'Posting…' : '✅ Post Job Now'}
               </button>
             </div>
           </div>
