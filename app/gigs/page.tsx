@@ -5,121 +5,112 @@ import { useAuth } from '@/context/AuthContext';
 import { getPb } from '@/lib/pocketbase';
 import { CATEGORIES } from '@/lib/data';
 
-const JOB_TYPES = ['Daily Wage','Hourly','Part-Time','Contract','Full-Time','Team Hire'];
+const JOB_TYPES = ['Daily Wage', 'Hourly', 'Part-Time', 'Contract', 'Full-Time', 'Team Hire'];
 
 const Pill = ({ active, onClick, children }: any) => (
-  <button onClick={onClick} style={{ fontSize:13, fontWeight:600, padding:'9px 18px', borderRadius:99, border:'1.5px solid', whiteSpace:'nowrap' as const, cursor:'pointer', fontFamily:'inherit', transition:'all 0.15s',
-    borderColor: active ? '#16a34a' : '#e2e8f0', background: active ? '#16a34a' : '#fff', color: active ? '#fff' : '#475569' }}>
-    {children}
-  </button>
+  <button onClick={onClick} style={{
+    fontSize: 13, fontWeight: 600, padding: '9px 18px', borderRadius: 99,
+    border: '1.5px solid', whiteSpace: 'nowrap' as const, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+    borderColor: active ? '#16a34a' : '#e2e8f0',
+    background: active ? '#16a34a' : '#fff',
+    color: active ? '#fff' : '#475569',
+  }}>{children}</button>
 );
 
 // ── Full profile modal shown when poster clicks applicant name ───────────────
 function ProfileModal({ person, onClose }: { person: any; onClose: () => void }) {
   const p = person.profile;
-  const name    = p?.name     || person.expand?.applicant_id?.name || 'Unknown';
-  const phone   = p?.contact;
-  const skills  = p?.skills;
-  const location= p?.location;
-  const role    = p?.role;
-  const dob     = p?.dob ? new Date(p.dob).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : null;
+  const name = p?.name || person.expand?.applicant_id?.name || 'Unknown';
+  const phone = p?.contact;
+  const skills = p?.skills;
+  const location = p?.location;
+  const role = p?.role;
+  const dob = p?.dob ? new Date(p.dob).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
   const interests = p?.interests;
-  const initials = name.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2);
-  const applied  = new Date(person.created).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+  const applied = new Date(person.created).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
-    <div onClick={e=>{if(e.target===e.currentTarget)onClose();}}
-      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:600, display:'flex', alignItems:'center', justifyContent:'center', padding:16, backdropFilter:'blur(4px)' }}>
-      <div className="slide-down" style={{ background:'#fff', borderRadius:24, width:'100%', maxWidth:440, maxHeight:'90vh', overflowY:'auto' as const, boxShadow:'0 24px 80px rgba(0,0,0,0.25)' }}>
+    <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(4px)' }}>
+      <div className="slide-down" style={{ background: '#fff', borderRadius: 24, width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' as const, boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
 
-        {/* Header */}
-        <div style={{ background:'linear-gradient(135deg,#0f4c25,#16a34a)', padding:'32px 28px 28px', borderRadius:'24px 24px 0 0', position:'relative' }}>
-          <button onClick={onClose} style={{ position:'absolute', top:16, right:16, background:'rgba(255,255,255,0.2)', border:'none', borderRadius:8, width:32, height:32, fontSize:16, cursor:'pointer', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
-          <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-            <div style={{ width:68, height:68, borderRadius:'50%', background:'rgba(255,255,255,0.2)', border:'3px solid rgba(255,255,255,0.4)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:26, fontWeight:900, flexShrink:0 }}>
+        <div style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: '32px 28px 28px', borderRadius: '24px 24px 0 0', position: 'relative' }}>
+          <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 8, width: 32, height: 32, fontSize: 16, cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 68, height: 68, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '3px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 26, fontWeight: 900, flexShrink: 0 }}>
               {initials}
             </div>
             <div>
-              <div style={{ fontWeight:900, color:'#fff', fontSize:22 }}>{name}</div>
-              {role && <div style={{ color:'rgba(255,255,255,0.75)', fontSize:13, marginTop:3, textTransform:'capitalize' as const }}>👤 {role}</div>}
-              {location && <div style={{ color:'rgba(255,255,255,0.65)', fontSize:13, marginTop:2 }}>📍 {location}</div>}
+              <div style={{ fontWeight: 900, color: '#fff', fontSize: 22 }}>{name}</div>
+              {role && <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, marginTop: 3, textTransform: 'capitalize' as const }}>👤 {role}</div>}
+              {location && <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, marginTop: 2 }}>📍 {location}</div>}
             </div>
           </div>
         </div>
 
-        {/* Body */}
-        <div style={{ padding:'24px 28px', display:'flex', flexDirection:'column', gap:20 }}>
-
-          {/* Applied note */}
-          <div style={{ background:'#f0fdf4', border:'1px solid #d1fae5', borderRadius:12, padding:'10px 14px', fontSize:13, color:'#16a34a', fontWeight:600 }}>
+        <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 12, padding: '10px 14px', fontSize: 13, color: '#16a34a', fontWeight: 600 }}>
             ✅ Applied on {applied}
           </div>
 
-          {/* Contact buttons — most important, shown first */}
           <div>
-            <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>CONTACT</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>CONTACT</div>
             {phone ? (
-              <div style={{ display:'flex', gap:10 }}>
-                <a href={`tel:${phone}`} style={{ flex:1, textDecoration:'none' }}>
-                  <button style={{ width:'100%', background:'#16a34a', color:'#fff', border:'none', borderRadius:12, padding:'14px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8, boxShadow:'0 4px 14px rgba(22,163,74,0.3)' }}>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <a href={`tel:${phone}`} style={{ flex: 1, textDecoration: 'none' }}>
+                  <button style={{ width: '100%', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}>
                     📞 Call Now
                   </button>
                 </a>
-                <a href={`https://wa.me/91${phone}?text=Hi ${name}, I saw your job application on UrbanServe. Are you still available?`} target="_blank" rel="noreferrer" style={{ flex:1, textDecoration:'none' }}>
-                  <button style={{ width:'100%', background:'#dcfce7', color:'#16a34a', border:'1.5px solid #d1fae5', borderRadius:12, padding:'14px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
+                <a href={`https://wa.me/91${phone}?text=Hi ${encodeURIComponent(name)}, I saw your job application on UrbanServe. Are you still available?`} target="_blank" rel="noreferrer" style={{ flex: 1, textDecoration: 'none' }}>
+                  <button style={{ width: '100%', background: '#dcfce7', color: '#16a34a', border: '1.5px solid #d1fae5', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     💬 WhatsApp
                   </button>
                 </a>
               </div>
             ) : (
-              <div style={{ background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'12px 14px', color:'#dc2626', fontSize:13, fontWeight:600 }}>
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: '12px 14px', color: '#dc2626', fontSize: 13, fontWeight: 600 }}>
                 ⚠️ This person has not added a phone number yet.
               </div>
             )}
             {phone && (
-              <div style={{ marginTop:8, background:'#f8fafc', borderRadius:10, padding:'10px 14px', fontSize:13, color:'#64748b', textAlign:'center' as const }}>
+              <div style={{ marginTop: 8, background: '#f8fafc', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#64748b', textAlign: 'center' as const }}>
                 📱 {phone}
               </div>
             )}
           </div>
 
-          {/* Info rows */}
           <div>
-            <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>PROFILE DETAILS</div>
-            <div style={{ display:'flex', flexDirection:'column', gap:0, background:'#f8fafc', borderRadius:14, overflow:'hidden' }}>
-              {[
-                ['📍', 'Location', location],
-                ['🎂', 'Date of Birth', dob],
-                ['👤', 'Role', role],
-              ].filter(([,,v])=>v).map(([icon,label,val])=>(
-                <div key={label as string} style={{ display:'flex', gap:12, padding:'12px 16px', borderBottom:'1px solid #f1f5f9', alignItems:'center' }}>
-                  <span style={{ fontSize:18, flexShrink:0 }}>{icon}</span>
-                  <span style={{ color:'#94a3b8', fontSize:13, minWidth:90 }}>{label}</span>
-                  <span style={{ fontWeight:700, color:'#0f172a', fontSize:13 }}>{val}</span>
-                </div>
-              ))}
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>PROFILE DETAILS</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0, background: '#f8fafc', borderRadius: 14, overflow: 'hidden' }}>
+              {([['📍', 'Location', location], ['🎂', 'Date of Birth', dob], ['👤', 'Role', role]] as [string, string, string | null][])
+                .filter(([, , v]) => v).map(([icon, label, val]) => (
+                  <div key={label} style={{ display: 'flex', gap: 12, padding: '12px 16px', borderBottom: '1px solid #f1f5f9', alignItems: 'center' }}>
+                    <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>
+                    <span style={{ color: '#94a3b8', fontSize: 13, minWidth: 90 }}>{label}</span>
+                    <span style={{ fontWeight: 700, color: '#0f172a', fontSize: 13 }}>{val}</span>
+                  </div>
+                ))}
             </div>
           </div>
 
-          {/* Skills */}
           {skills && (
             <div>
-              <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>🛠 SKILLS</div>
-              <div style={{ display:'flex', flexWrap:'wrap' as const, gap:8 }}>
-                {skills.split(', ').filter(Boolean).map((s:string)=>(
-                  <span key={s} style={{ background:'#f0fdf4', border:'1px solid #d1fae5', color:'#16a34a', borderRadius:99, padding:'5px 14px', fontSize:13, fontWeight:600 }}>{s}</span>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>🛠 SKILLS</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8 }}>
+                {skills.split(', ').filter(Boolean).map((s: string) => (
+                  <span key={s} style={{ background: '#f0fdf4', border: '1px solid #d1fae5', color: '#16a34a', borderRadius: 99, padding: '5px 14px', fontSize: 13, fontWeight: 600 }}>{s}</span>
                 ))}
               </div>
             </div>
           )}
-
-          {/* Interests */}
           {interests && (
             <div>
-              <div style={{ fontSize:12, fontWeight:700, color:'#94a3b8', letterSpacing:'0.06em', marginBottom:10 }}>❤️ INTERESTS</div>
-              <div style={{ display:'flex', flexWrap:'wrap' as const, gap:8 }}>
-                {interests.split(', ').filter(Boolean).map((s:string)=>(
-                  <span key={s} style={{ background:'#fef9ee', border:'1px solid #fde68a', color:'#d97706', borderRadius:99, padding:'5px 14px', fontSize:13, fontWeight:600 }}>{s}</span>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>❤️ INTERESTS</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8 }}>
+                {interests.split(', ').filter(Boolean).map((s: string) => (
+                  <span key={s} style={{ background: '#fef9ee', border: '1px solid #fde68a', color: '#d97706', borderRadius: 99, padding: '5px 14px', fontSize: 13, fontWeight: 600 }}>{s}</span>
                 ))}
               </div>
             </div>
@@ -132,26 +123,24 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
 
 // ── Applicants drawer for the job poster ────────────────────────────────────
 function ApplicantsDrawer({ job }: { job: any }) {
-  const [applicants,  setApplicants]  = useState<any[]>([]);
-  const [loading,     setLoading]     = useState(true);
-  const [open,        setOpen]        = useState(false);
-  const [count,       setCount]       = useState<number|null>(null);
-  const [viewProfile, setViewProfile] = useState<any|null>(null);
+  const [applicants, setApplicants] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [count, setCount] = useState<number | null>(null);
+  const [viewProfile, setViewProfile] = useState<any | null>(null);
 
-  // Count on mount
   useEffect(() => {
-    getPb().collection('applications').getList(1,1,{ filter:`job_id="${job.id}"` })
-      .then(r => setCount(r.totalItems)).catch(()=>setCount(0));
+    getPb().collection('applications').getList(1, 1, { filter: `job_id="${job.id}"` })
+      .then(r => setCount(r.totalItems)).catch(() => setCount(0));
   }, [job.id]);
 
   const load = async () => {
     setLoading(true);
     try {
       const apps = await getPb().collection('applications').getList(1, 100, {
-        filter: `job_id="${job.id}"`, sort:'-created',
+        filter: `job_id="${job.id}"`, sort: '-created',
       });
-      // Fetch each applicant's profile (has phone, skills, location etc.)
-      const rich = await Promise.all(apps.items.map(async (app:any) => {
+      const rich = await Promise.all(apps.items.map(async (app: any) => {
         try {
           const profile = await getPb().collection('profiles').getFirstListItem(`user_id="${app.applicant_id}"`);
           return { ...app, profile };
@@ -162,66 +151,71 @@ function ApplicantsDrawer({ job }: { job: any }) {
     finally { setLoading(false); }
   };
 
-  const toggle = () => { if (!open) load(); setOpen(o=>!o); };
+  const toggle = () => { if (!open) load(); setOpen(o => !o); };
 
   return (
     <div>
-      {/* Toggle button */}
-      <button onClick={toggle} style={{ width:'100%', background: open ? '#0f172a' : '#f0fdf4', border:`1.5px solid ${open?'#0f172a':'#d1fae5'}`, borderRadius:12, padding:'13px', fontSize:14, fontWeight:700, color: open?'#fff':'#16a34a', cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8, transition:'all 0.2s' }}>
-        <span style={{ fontSize:18 }}>👥</span>
-        {open ? '▲ Hide Applicants' : `See Who Applied${count!==null ? ` (${count})` : ''}`}
-        {count! > 0 && !open && <span style={{ background:'#16a34a', color:'#fff', borderRadius:99, padding:'1px 8px', fontSize:12, fontWeight:800 }}>{count}</span>}
+      <button onClick={toggle} style={{
+        width: '100%',
+        background: open ? '#0f172a' : '#f0fdf4',
+        border: `1.5px solid ${open ? '#0f172a' : '#d1fae5'}`,
+        borderRadius: 12, padding: '13px', fontSize: 14, fontWeight: 700,
+        color: open ? '#fff' : '#16a34a', cursor: 'pointer', fontFamily: 'inherit',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s',
+      }}>
+        <span style={{ fontSize: 18 }}>👥</span>
+        {open ? '▲ Hide Applicants' : `See Who Applied${count !== null ? ` (${count})` : ''}`}
+        {(count ?? 0) > 0 && !open && (
+          <span style={{ background: '#16a34a', color: '#fff', borderRadius: 99, padding: '1px 8px', fontSize: 12, fontWeight: 800 }}>{count}</span>
+        )}
       </button>
 
-      {/* Applicants list */}
       {open && (
-        <div className="slide-down" style={{ marginTop:12, display:'flex', flexDirection:'column', gap:10 }}>
+        <div className="slide-down" style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
           {loading ? (
-            <div style={{ textAlign:'center', padding:'28px' }}>
-              <div className="spinner" style={{ margin:'0 auto 12px' }} />
-              <p style={{ color:'#94a3b8', fontSize:14 }}>Loading applicants…</p>
+            <div style={{ textAlign: 'center', padding: '28px' }}>
+              <div className="spinner" style={{ margin: '0 auto 12px' }} />
+              <p style={{ color: '#94a3b8', fontSize: 14 }}>Loading applicants…</p>
             </div>
           ) : applicants.length === 0 ? (
-            <div style={{ textAlign:'center', padding:'28px 20px', background:'#f8fafc', borderRadius:12, border:'1px dashed #e2e8f0' }}>
-              <div style={{ fontSize:40, marginBottom:10 }}>⏳</div>
-              <div style={{ color:'#64748b', fontSize:14, fontWeight:600 }}>No applications yet</div>
-              <div style={{ color:'#94a3b8', fontSize:13, marginTop:4 }}>Share your job to get applicants!</div>
+            <div style={{ textAlign: 'center', padding: '28px 20px', background: '#f8fafc', borderRadius: 12, border: '1px dashed #e2e8f0' }}>
+              <div style={{ fontSize: 40, marginBottom: 10 }}>⏳</div>
+              <div style={{ color: '#64748b', fontSize: 14, fontWeight: 600 }}>No applications yet</div>
+              <div style={{ color: '#94a3b8', fontSize: 13, marginTop: 4 }}>Share your job to get applicants!</div>
             </div>
-          ) : applicants.map((app:any, i:number) => {
-            const name    = app.profile?.name || 'Unknown';
-            const phone   = app.profile?.contact;
-            const skills  = app.profile?.skills;
-            const location= app.profile?.location;
-            const initials= name.split(' ').map((n:string)=>n[0]).join('').toUpperCase().slice(0,2);
+          ) : applicants.map((app: any, i: number) => {
+            const name = app.profile?.name || 'Unknown';
+            const phone = app.profile?.contact;
+            const skills = app.profile?.skills;
+            const location = app.profile?.location;
+            const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
 
             return (
-              <div key={i} style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:16, padding:'16px 18px', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-                  {/* Clickable name/avatar → opens profile modal */}
-                  <button onClick={()=>setViewProfile(app)}
-                    style={{ display:'flex', alignItems:'center', gap:12, flex:1, minWidth:0, background:'none', border:'none', cursor:'pointer', textAlign:'left' as const, padding:0, fontFamily:'inherit' }}>
-                    <div style={{ width:46, height:46, borderRadius:'50%', background:'linear-gradient(135deg,#16a34a,#22c55e)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:800, fontSize:16, flexShrink:0 }}>
+              <div key={i} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '16px 18px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <button onClick={() => setViewProfile(app)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, padding: 0, fontFamily: 'inherit' }}>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg,#16a34a,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16, flexShrink: 0 }}>
                       {initials}
                     </div>
-                    <div style={{ minWidth:0 }}>
-                      <div style={{ fontWeight:800, color:'#0f172a', fontSize:15, display:'flex', alignItems:'center', gap:6 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {name}
-                        <span style={{ fontSize:11, color:'#16a34a', fontWeight:600, background:'#f0fdf4', border:'1px solid #d1fae5', borderRadius:99, padding:'1px 7px' }}>View Profile →</span>
+                        <span style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 99, padding: '1px 7px' }}>View Profile →</span>
                       </div>
-                      {location && <div style={{ color:'#64748b', fontSize:12, marginTop:2 }}>📍 {location}</div>}
-                      {skills   && <div style={{ color:'#94a3b8', fontSize:12, marginTop:2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>🛠 {skills}</div>}
+                      {location && <div style={{ color: '#64748b', fontSize: 12, marginTop: 2 }}>📍 {location}</div>}
+                      {skills && <div style={{ color: '#94a3b8', fontSize: 12, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>🛠 {skills}</div>}
                     </div>
                   </button>
 
-                  {/* Quick call button */}
                   {phone ? (
-                    <a href={`tel:${phone}`} style={{ textDecoration:'none', flexShrink:0 }}>
-                      <button style={{ background:'#16a34a', color:'#fff', border:'none', borderRadius:10, padding:'10px 18px', fontWeight:800, fontSize:14, cursor:'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', gap:6 }}>
+                    <a href={`tel:${phone}`} style={{ textDecoration: 'none', flexShrink: 0 }}>
+                      <button style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}>
                         📞 Call
                       </button>
                     </a>
                   ) : (
-                    <span style={{ fontSize:12, color:'#94a3b8', flexShrink:0 }}>No phone</span>
+                    <span style={{ fontSize: 12, color: '#94a3b8', flexShrink: 0 }}>No phone</span>
                   )}
                 </div>
               </div>
@@ -230,113 +224,184 @@ function ApplicantsDrawer({ job }: { job: any }) {
         </div>
       )}
 
-      {/* Profile modal */}
-      {viewProfile && <ProfileModal person={viewProfile} onClose={()=>setViewProfile(null)} />}
+      {viewProfile && <ProfileModal person={viewProfile} onClose={() => setViewProfile(null)} />}
     </div>
   );
 }
 
 // ── Single job card ───────────────────────────────────────────────────────────
-function JobCard({ job, user }: { job:any; user:any }) {
-  const [applied,  setApplied]  = useState(false);
+function JobCard({ job, user }: { job: any; user: any }) {
+  const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
-  const [checking, setChecking] = useState(!!user); // check PocketBase on mount
+  const [checking, setChecking] = useState(!!user);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [applicantCount, setApplicantCount] = useState<number | null>(null);
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
+
   const timeAgo = (() => {
     const d = (Date.now() - new Date(job.created).getTime()) / 1000;
-    if (d < 3600) return `${Math.floor(d/60)}m ago`;
-    if (d < 86400) return `${Math.floor(d/3600)}h ago`;
-    return `${Math.floor(d/86400)}d ago`;
+    if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+    if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
+    return `${Math.floor(d / 86400)}d ago`;
   })();
 
-  // On mount: check if this user already applied to this job
+  // Check if already applied + fetch applicant count
   useEffect(() => {
     if (!user || isMyJob) { setChecking(false); return; }
     getPb().collection('applications')
       .getList(1, 1, { filter: `job_id="${job.id}" && applicant_id="${user.id}"` })
       .then(res => { if (res.totalItems > 0) setApplied(true); })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setChecking(false));
   }, [user, job.id, isMyJob]);
+
+  // Fetch applicant count for non-posters
+  useEffect(() => {
+    if (isMyJob) return;
+    getPb().collection('applications').getList(1, 1, { filter: `job_id="${job.id}"` })
+      .then(r => setApplicantCount(r.totalItems)).catch(() => setApplicantCount(0));
+  }, [job.id, isMyJob]);
 
   const handleApply = async () => {
     if (!user) { window.location.href = '/login'; return; }
     setApplying(true);
     try {
-      await getPb().collection('applications').create({ job_id:job.id, applicant_id:user.id, status:'pending' });
+      await getPb().collection('applications').create({ job_id: job.id, applicant_id: user.id, status: 'pending' });
       setApplied(true);
-    } catch { setApplied(true); } // already applied = duplicate error, still mark applied
-    finally { setApplying(false); }
+      setShowSuccess(true);
+    } catch {
+      setApplied(true);
+      setShowSuccess(true);
+    } finally { setApplying(false); }
   };
 
   return (
-    <div className="hover-lift" style={{ background:'#fff', border:'1px solid #e2e8f0', borderRadius:20, padding:22, boxShadow:'0 1px 4px rgba(0,0,0,0.05)', display:'flex', flexDirection:'column', gap:16 }}>
-      <div style={{ display:'flex', justifyContent:'space-between', gap:8 }}>
-        <div style={{ display:'flex', gap:12, flex:1, minWidth:0 }}>
-          <div style={{ width:52, height:52, background:'#f0fdf4', border:'1px solid #d1fae5', borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:26, flexShrink:0 }}>
+    <article className="hover-lift" aria-label={job.title} style={{
+      background: '#fff', border: '1px solid #e2e8f0', borderRadius: 20,
+      padding: 22, boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+      display: 'flex', flexDirection: 'column', gap: 16,
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 12, flex: 1, minWidth: 0 }}>
+          <div style={{ width: 52, height: 52, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>
             {cat?.icon || '💼'}
           </div>
-          <div style={{ minWidth:0 }}>
-            <div style={{ fontWeight:800, color:'#0f172a', fontSize:16, marginBottom:2 }}>{job.title}</div>
-            {job.company && <div style={{ color:'#94a3b8', fontSize:13 }}>{job.company}</div>}
+          <div style={{ minWidth: 0 }}>
+            <h2 style={{ fontWeight: 800, color: '#0f172a', fontSize: 16, marginBottom: 2 }}>{job.title}</h2>
+            {job.company && <div style={{ color: '#94a3b8', fontSize: 13 }}>{job.company}</div>}
           </div>
         </div>
-        <div style={{ textAlign:'right' as const, flexShrink:0 }}>
-          <div style={{ fontWeight:900, color:'#16a34a', fontSize:18 }}>{job.pay}</div>
-          <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>{timeAgo}</div>
+        <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
+          <div style={{ fontWeight: 900, color: '#16a34a', fontSize: 18 }}>{job.pay}</div>
+          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{timeAgo}</div>
         </div>
       </div>
 
-      <div style={{ display:'flex', gap:6, flexWrap:'wrap' as const }}>
-        {job.urgent && <span style={{ background:'#fef2f2', color:'#dc2626', border:'1px solid #fecaca', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:700 }}>🔥 Urgent</span>}
-        <span style={{ background:'#f0fdf4', color:'#15803d', border:'1px solid #d1fae5', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:600 }}>📍 {job.location}</span>
-        <span style={{ background:'#f8fafc', color:'#475569', border:'1px solid #e2e8f0', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:600 }}>{job.type}</span>
-        {cat && <span style={{ background:'#f8fafc', color:'#475569', border:'1px solid #e2e8f0', borderRadius:99, padding:'3px 10px', fontSize:12, fontWeight:600 }}>{cat.icon} {cat.label}</span>}
+      {/* Tags */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
+        {job.urgent && <span style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>🔥 Urgent</span>}
+        <span style={{ background: '#f0fdf4', color: '#15803d', border: '1px solid #d1fae5', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>📍 {job.location}</span>
+        <span style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>{job.type}</span>
+        {cat && <span style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>{cat.icon} {cat.label}</span>}
       </div>
 
+      {/* Skills */}
       {job.skills && (
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' as const }}>
-          {job.skills.split(',').filter(Boolean).map((s:string) => (
-            <span key={s} style={{ fontSize:11, background:'#eff6ff', color:'#3b82f6', borderRadius:6, padding:'3px 8px', fontWeight:600 }}>{s.trim()}</span>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
+          {job.skills.split(',').filter(Boolean).map((s: string) => (
+            <span key={s} style={{ fontSize: 11, background: '#eff6ff', color: '#3b82f6', borderRadius: 6, padding: '3px 8px', fontWeight: 600 }}>{s.trim()}</span>
           ))}
         </div>
       )}
 
-      {isMyJob && (
-        <div style={{ background:'#f0fdf4', borderRadius:10, padding:'8px 12px', fontSize:12, color:'#16a34a', fontWeight:700 }}>✅ Your Job Posting</div>
+      {/* Applicant count badge (non-poster) */}
+      {!isMyJob && applicantCount !== null && applicantCount > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b' }}>
+          <span style={{ background: '#f1f5f9', borderRadius: 99, padding: '3px 10px', fontWeight: 600 }}>
+            👥 {applicantCount} {applicantCount === 1 ? 'person' : 'people'} applied
+          </span>
+        </div>
       )}
 
-      {isMyJob ? <ApplicantsDrawer job={job} /> : (
-        <button onClick={handleApply} disabled={applied || applying || checking}
-          style={{ width:'100%', padding:'14px', border:'none', borderRadius:12, fontWeight:800, fontSize:15, cursor:(applied||checking)?'default':'pointer', fontFamily:'inherit', transition:'all 0.2s',
-            background: applied ? '#f0fdf4' : checking ? '#f8fafc' : '#16a34a',
-            color:      applied ? '#16a34a' : checking ? '#94a3b8' : '#fff',
-            boxShadow:  (applied||checking) ? 'none' : '0 4px 16px rgba(22,163,74,0.3)' }}>
-          {checking ? 'Loading…' : applying ? 'Applying…' : applied ? '✅ Already Applied' : 'Apply Now →'}
-        </button>
+      {/* My job badge */}
+      {isMyJob && (
+        <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ Your Job Posting</div>
       )}
-    </div>
+
+      {/* Action area */}
+      {isMyJob ? (
+        <ApplicantsDrawer job={job} />
+      ) : (
+        <>
+          {/* Apply button */}
+          {applied ? (
+            <div style={{
+              width: '100%', padding: '13px', border: '1.5px solid #d1fae5',
+              borderRadius: 12, background: '#f0fdf4', color: '#6b9e7d',
+              fontWeight: 700, fontSize: 14, textAlign: 'center' as const,
+              letterSpacing: '0.01em',
+            }}>
+              ✓ Applied
+            </div>
+          ) : (
+            <button
+              onClick={handleApply}
+              disabled={applying || checking}
+              style={{
+                width: '100%', padding: '14px', border: 'none', borderRadius: 12,
+                fontWeight: 800, fontSize: 15, fontFamily: 'inherit', transition: 'all 0.2s',
+                cursor: (applying || checking) ? 'not-allowed' : 'pointer',
+                background: checking ? '#f8fafc' : '#16a34a',
+                color: checking ? '#94a3b8' : '#fff',
+                boxShadow: checking ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
+              }}>
+              {checking ? 'Loading…' : applying ? 'Applying…' : 'Apply Now →'}
+            </button>
+          )}
+
+          {/* Success message after applying */}
+          {showSuccess && (
+            <div className="slide-up" style={{
+              background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)',
+              border: '1px solid #bbf7d0', borderRadius: 14, padding: '16px 18px',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+            }}>
+              <span style={{ fontSize: 24, flexShrink: 0 }}>🎉</span>
+              <div>
+                <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 4 }}>
+                  Application Submitted!
+                </div>
+                <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.5 }}>
+                  The hiring person will review your profile and contact you directly. Make sure your phone number is updated in your profile.
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </article>
   );
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function GigsPage() {
-  const { user }  = useAuth();
-  const router    = useRouter();
-  const [jobs,       setJobs]      = useState<any[]>([]);
-  const [loading,    setLoading]   = useState(true);
-  const [catFilter,  setCatFilter] = useState('all');
-  const [typeFilter, setTypeFilter]= useState('all');
-  const [search,     setSearch]    = useState('');
-  const [showPost,   setShowPost]  = useState(false);
-  const [posting,    setPosting]   = useState(false);
-  const [form, setForm] = useState({ title:'', company:'', type:'Daily Wage', pay:'', location:'', skills:'', category:'', urgent:false });
+  const { user } = useAuth();
+  const router = useRouter();
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [catFilter, setCatFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [showPost, setShowPost] = useState(false);
+  const [posting, setPosting] = useState(false);
+  const [form, setForm] = useState({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
 
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const res = await getPb().collection('jobs').getList(1, 100, { sort:'-created' });
+      const res = await getPb().collection('jobs').getList(1, 100, { sort: '-created' });
       setJobs(res.items);
     } catch { setJobs([]); }
     finally { setLoading(false); }
@@ -345,13 +410,13 @@ export default function GigsPage() {
   useEffect(() => { fetchJobs(); }, []);
   useEffect(() => {
     const pb = getPb();
-    try { pb.collection('jobs').subscribe('*', ()=>fetchJobs()); } catch {}
-    return () => { try { pb.collection('jobs').unsubscribe('*'); } catch {} };
+    try { pb.collection('jobs').subscribe('*', () => fetchJobs()); } catch { }
+    return () => { try { pb.collection('jobs').unsubscribe('*'); } catch { } };
   }, []);
 
   const filtered = jobs
-    .filter(j => catFilter==='all' || j.category===catFilter)
-    .filter(j => typeFilter==='all' || j.type===typeFilter)
+    .filter(j => catFilter === 'all' || j.category === catFilter)
+    .filter(j => typeFilter === 'all' || j.type === typeFilter)
     .filter(j => !search || j.title?.toLowerCase().includes(search.toLowerCase()) || j.location?.toLowerCase().includes(search.toLowerCase()));
 
   const handlePost = async () => {
@@ -359,61 +424,63 @@ export default function GigsPage() {
     if (!form.title || !form.pay || !form.location) { alert('Please fill: Job title, Pay, and Location'); return; }
     setPosting(true);
     try {
-      await getPb().collection('jobs').create({ ...form, posted_by:user.id });
+      await getPb().collection('jobs').create({ ...form, posted_by: user.id });
       setShowPost(false);
-      setForm({ title:'', company:'', type:'Daily Wage', pay:'', location:'', skills:'', category:'', urgent:false });
-    } catch(e) { console.error(e); }
+      setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
+    } catch (e) { console.error(e); }
     finally { setPosting(false); }
   };
 
-  const inp: React.CSSProperties = { width:'100%', border:'1.5px solid #e2e8f0', borderRadius:10, padding:'12px 14px', fontSize:14, color:'#0f172a', fontFamily:'inherit', outline:'none', boxSizing:'border-box' as const, background:'#f8fafc' };
+  const inp: React.CSSProperties = { width: '100%', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: 14, color: '#0f172a', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, background: '#f8fafc' };
 
   return (
-    <div style={{ fontFamily:"'Outfit',sans-serif", background:'#f8fafc', minHeight:'100vh' }}>
-      <div style={{ background:'linear-gradient(135deg,#0f4c25,#16a34a)', padding:'40px 24px 56px' }}>
-        <div style={{ maxWidth:1400, margin:'0 auto', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16 }}>
+    <div style={{ fontFamily: "'Outfit',sans-serif", background: '#f8fafc', minHeight: '100vh' }}>
+      {/* Hero */}
+      <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: '40px 24px 56px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontSize:'clamp(22px,3vw,36px)', fontWeight:900, color:'#fff', marginBottom:6 }}>💼 Find Jobs</h1>
-            <p style={{ color:'rgba(255,255,255,0.7)', fontSize:15 }}>{jobs.length} jobs live right now · Tap any card to apply</p>
+            <h1 style={{ fontSize: 'clamp(22px,3vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 6 }}>💼 Find Jobs</h1>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>{jobs.length} jobs live right now · Tap any card to apply</p>
           </div>
           <button onClick={() => user ? setShowPost(true) : router.push('/login')}
-            style={{ background:'#fff', color:'#16a34a', border:'none', borderRadius:14, padding:'14px 28px', fontWeight:800, fontSize:15, cursor:'pointer', fontFamily:'inherit', boxShadow:'0 4px 16px rgba(0,0,0,0.2)' }}>
+            style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 14, padding: '14px 28px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
             + Post a Job
           </button>
         </div>
-      </div>
+      </header>
 
-      <div style={{ maxWidth:1400, margin:'-24px auto 0', padding:'0 24px 48px' }}>
+      <div style={{ maxWidth: 1400, margin: '-24px auto 0', padding: '0 24px 48px' }}>
         {/* Search */}
-        <div style={{ background:'#fff', borderRadius:16, padding:6, boxShadow:'0 4px 20px rgba(0,0,0,0.1)', marginBottom:24, display:'flex', gap:0 }}>
-          <input value={search} onChange={e=>setSearch(e.target.value)}
+        <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
+          <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
+          <input id="job-search" value={search} onChange={e => setSearch(e.target.value)}
             placeholder="🔍  Search jobs, skills, or city..."
-            style={{ flex:1, border:'none', background:'transparent', padding:'14px 18px', fontSize:16, fontFamily:'inherit', outline:'none', color:'#0f172a' }} />
-          <button style={{ background:'#16a34a', color:'#fff', border:'none', borderRadius:12, padding:'0 24px', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Search</button>
+            style={{ flex: 1, border: 'none', background: 'transparent', padding: '14px 18px', fontSize: 16, fontFamily: 'inherit', outline: 'none', color: '#0f172a' }} />
+          <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Search</button>
         </div>
 
-        <div className="pill-scroll" style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:4, marginBottom:8 }}>
-          <Pill active={catFilter==='all'} onClick={()=>setCatFilter('all')}>🌐 All Categories</Pill>
-          {CATEGORIES.map(c => <Pill key={c.id} active={catFilter===c.id} onClick={()=>setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
+        <div className="pill-scroll" role="tablist" aria-label="Category filter" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
+          <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>🌐 All Categories</Pill>
+          {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
         </div>
-        <div className="pill-scroll" style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:16, marginBottom:28 }}>
-          <Pill active={typeFilter==='all'} onClick={()=>setTypeFilter('all')}>All Types</Pill>
-          {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter===tt} onClick={()=>setTypeFilter(tt)}>{tt}</Pill>)}
+        <div className="pill-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 16, marginBottom: 28 }}>
+          <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>All Types</Pill>
+          {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
         </div>
 
         {loading ? (
-          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'80px 0', gap:16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 0', gap: 16 }}>
             <div className="spinner" />
-            <p style={{ color:'#94a3b8', fontSize:15 }}>Loading jobs…</p>
+            <p style={{ color: '#94a3b8', fontSize: 15 }}>Loading jobs…</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign:'center', padding:'80px 0' }}>
-            <div style={{ fontSize:56, marginBottom:12 }}>🔍</div>
-            <p style={{ color:'#334155', fontWeight:700, fontSize:18 }}>No jobs found</p>
-            <p style={{ color:'#94a3b8', fontSize:14, marginTop:6 }}>{jobs.length===0 ? 'Be the first to post a job!' : 'Try different filters'}</p>
+          <div style={{ textAlign: 'center', padding: '80px 0' }}>
+            <div style={{ fontSize: 56, marginBottom: 12 }}>🔍</div>
+            <p style={{ color: '#334155', fontWeight: 700, fontSize: 18 }}>No jobs found</p>
+            <p style={{ color: '#94a3b8', fontSize: 14, marginTop: 6 }}>{jobs.length === 0 ? 'Be the first to post a job!' : 'Try different filters'}</p>
           </div>
         ) : (
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 18 }}>
             {filtered.map(job => <JobCard key={job.id} job={job} user={user} />)}
           </div>
         )}
@@ -421,53 +488,56 @@ export default function GigsPage() {
 
       {/* Post Job Modal */}
       {showPost && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:16, zIndex:500, backdropFilter:'blur(4px)' }}
-          onClick={e=>{if(e.target===e.currentTarget)setShowPost(false);}}>
-          <div className="slide-down" style={{ background:'#fff', borderRadius:24, padding:32, width:'100%', maxWidth:500, maxHeight:'90vh', overflowY:'auto' as const }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
+        <div role="dialog" aria-modal="true" aria-label="Post a Job"
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, zIndex: 500, backdropFilter: 'blur(4px)' }}
+          onClick={e => { if (e.target === e.currentTarget) setShowPost(false); }}>
+          <div className="slide-down" style={{ background: '#fff', borderRadius: 24, padding: 32, width: '100%', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto' as const }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <div>
-                <h2 style={{ fontSize:22, fontWeight:900, color:'#0f172a' }}>📋 Post a Job</h2>
-                <p style={{ color:'#94a3b8', fontSize:13, marginTop:2 }}>Fill details to find workers fast</p>
+                <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>📋 Post a Job</h2>
+                <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>Fill details to find workers fast</p>
               </div>
-              <button onClick={()=>setShowPost(false)} style={{ background:'#f1f5f9', border:'none', borderRadius:10, width:36, height:36, fontSize:18, cursor:'pointer', color:'#64748b' }}>✕</button>
+              <button onClick={() => setShowPost(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
             </div>
-            <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-              {([['title','Job Title *','e.g. Need Plumber at Home'],['pay','Pay *','e.g. ₹500/day'],['location','Location *','City or Area'],['company','Company / Shop (optional)','Your business name']] as [string,string,string][]).map(([field,label,ph]) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {([['title', 'Job Title *', 'e.g. Need Plumber at Home'], ['pay', 'Pay *', 'e.g. ₹500/day'], ['location', 'Location *', 'City or Area'], ['company', 'Company / Shop (optional)', 'Your business name']] as [string, string, string][]).map(([field, label, ph]) => (
                 <div key={field}>
-                  <label style={{ fontSize:13, fontWeight:700, color:'#475569', display:'block', marginBottom:6 }}>{label}</label>
-                  <input placeholder={ph} style={inp} value={(form as any)[field]} onChange={e=>setForm(f=>({...f,[field]:e.target.value}))} />
+                  <label htmlFor={`post-${field}`} style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>{label}</label>
+                  <input id={`post-${field}`} placeholder={ph} style={inp} value={(form as any)[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} />
                 </div>
               ))}
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize:13, fontWeight:700, color:'#475569', display:'block', marginBottom:6 }}>Job Type</label>
-                  <select style={inp} value={form.type} onChange={e=>setForm(f=>({...f,type:e.target.value}))}>
-                    {JOB_TYPES.map(tt=><option key={tt}>{tt}</option>)}
+                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Job Type</label>
+                  <select style={inp} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                    {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize:13, fontWeight:700, color:'#475569', display:'block', marginBottom:6 }}>Category</label>
-                  <select style={inp} value={form.category} onChange={e=>setForm(f=>({...f,category:e.target.value}))}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Category</label>
+                  <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
                     <option value="">— Select —</option>
-                    {CATEGORIES.map(c=><option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
+                    {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label style={{ fontSize:13, fontWeight:700, color:'#475569', display:'block', marginBottom:6 }}>Required Skills (optional)</label>
-                <input placeholder="e.g. Plumbing, Wiring" style={inp} value={form.skills} onChange={e=>setForm(f=>({...f,skills:e.target.value}))} />
+                <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Required Skills (optional)</label>
+                <input placeholder="e.g. Plumbing, Wiring" style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
               </div>
-              <label style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer', padding:'12px 14px', background:'#fef2f2', borderRadius:12, border:'1px solid #fecaca' }}>
-                <input type="checkbox" checked={form.urgent} onChange={e=>setForm(f=>({...f,urgent:e.target.checked}))} style={{ accentColor:'#dc2626', width:18, height:18 }} />
-                <span style={{ fontSize:14, fontWeight:700, color:'#dc2626' }}>🔥 Mark as Urgent</span>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
+                <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>🔥 Mark as Urgent</span>
               </label>
             </div>
-            <div style={{ display:'flex', gap:10, marginTop:24 }}>
-              <button onClick={()=>setShowPost(false)} style={{ flex:1, padding:'14px', border:'1.5px solid #e2e8f0', borderRadius:12, color:'#475569', fontWeight:600, fontSize:14, cursor:'pointer', background:'#fff', fontFamily:'inherit' }}>Cancel</button>
-              <button onClick={handlePost} disabled={posting} style={{ flex:2, padding:'14px', border:'none', borderRadius:12, fontWeight:800, fontSize:15, cursor:posting?'not-allowed':'pointer', fontFamily:'inherit',
-                background:posting?'#d1fae5':'#16a34a', color:posting?'#4b7a5a':'#fff',
-                boxShadow:posting?'none':'0 4px 16px rgba(22,163,74,0.3)' }}>
-                {posting ? 'Posting…' : '✅ Post Job Now'}
+            <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+              <button onClick={() => setShowPost(false)} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>Cancel</button>
+              <button onClick={handlePost} disabled={posting} style={{
+                flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+                background: posting ? '#d1fae5' : '#16a34a', color: posting ? '#4b7a5a' : '#fff',
+                boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
+              }}>
+                {posting ? 'Posting…' : ' Post Job Now'}
               </button>
             </div>
           </div>
