@@ -3,9 +3,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useLang } from '@/context/LangContext';
 
 export function Navbar() {
   const { user, profile, logout } = useAuth();
+  const { lang, toggle } = useLang();
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -14,10 +16,10 @@ export function Navbar() {
   const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
 
   const links = [
-    { href: '/', icon: '', label: 'Home' },
-    { href: '/gigs', icon: '', label: 'Jobs' },
-    { href: '/pick-drop', icon: '', label: 'Pick & Drop' },
-    { href: '/dashboard', icon: '', label: 'Profile' },
+    { href: '/', icon: '🏠', label: lang === 'hi' ? 'होम' : 'Home' },
+    { href: '/gigs', icon: '💼', label: lang === 'hi' ? 'नौकरी' : 'Jobs' },
+    { href: '/pick-drop', icon: '🛵', label: lang === 'hi' ? 'पिक-ड्रॉप' : 'Pick & Drop' },
+    { href: '/dashboard', icon: '👤', label: lang === 'hi' ? 'प्रोफाइल' : 'Profile' },
   ];
 
   const active = (href: string) =>
@@ -70,6 +72,20 @@ export function Navbar() {
 
           {/* Right side */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Language Toggle */}
+            <button
+              onClick={toggle}
+              title={lang === 'hi' ? 'Switch to English' : 'हिंदी में बदलें'}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                background: lang === 'hi' ? '#fff7ed' : '#f0fdf4',
+                border: `1.5px solid ${lang === 'hi' ? '#fed7aa' : '#d1fae5'}`,
+                borderRadius: 10, padding: '6px 12px', cursor: 'pointer',
+                fontSize: 13, fontWeight: 700, fontFamily: 'inherit',
+                color: lang === 'hi' ? '#c2410c' : '#15803d',
+              }}>
+              {lang === 'hi' ? '🇬🇧 EN' : '🇮🇳 हिंदी'}
+            </button>
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Link href="/gigs" className="desk-links" style={{
@@ -163,9 +179,10 @@ export function Navbar() {
                   lineHeight: 1.2,
                 }}>{l.icon}</span>
                 <span style={{
-                  fontSize: 10, fontWeight: isActive ? 800 : 500,
-                  color: isActive ? '#16a34a' : '#94a3b8',
+                  fontSize: 13, fontWeight: isActive ? 800 : 600,
+                  color: isActive ? '#16a34a' : '#64748b',
                   fontFamily: "'Outfit',sans-serif",
+                  letterSpacing: '-0.01em',
                 }}>{l.label}</span>
               </Link>
             );
@@ -185,7 +202,7 @@ export function Navbar() {
           .mob-bottom-nav {
             display:block !important;
             position:fixed; bottom:0; left:0; right:0;
-            height:calc(62px + env(safe-area-inset-bottom,0px));
+            height:calc(68px + env(safe-area-inset-bottom,0px));
             padding-bottom:env(safe-area-inset-bottom,0px);
             background:#fff;
             border-top:1px solid #e2e8f0;
