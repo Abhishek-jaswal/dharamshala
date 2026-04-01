@@ -1,0 +1,72 @@
+{
+    "name": "UrbanServe — Find Jobs & Hire Workers",
+    "short_name": "UrbanServe",
+    "description": "Find gig jobs or hire verified workers across India. Daily wage, hourly, pick & drop — all in one app.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#ffffff",
+    "theme_color": "#16a34a",
+    "lang": "en-IN",
+    "categories": [
+        "jobs",
+        "productivity",
+        "business"
+    ],
+    "icons": [
+        {
+            "src": "/leaf-icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/leaf-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Find Jobs",
+            "short_name": "Jobs",
+            "description": "Browse available jobs near you",
+            "url": "/gigs",
+            "icons": [
+                {
+                    "src": "/leaf-icon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Post a Job",
+            "short_name": "Post",
+            "description": "Post a job and find workers fast",
+            "url": "/gigs",
+            "icons": [
+                {
+                    "src": "/leaf-icon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Pick & Drop",
+            "short_name": "Delivery",
+            "description": "Send a runner for pickup or delivery",
+            "url": "/pick-drop",
+            "icons": [
+                {
+                    "src": "/leaf-icon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}

@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LangContext';
 import { getPb } from '@/lib/pocketbase';
 import { CATEGORIES } from '@/lib/data';
+// import { shareJob, vibrate, vibrateCelebrate } from '@/lib/pwa';
 
 const JOB_TYPES = ['Daily Wage', 'Hourly', 'Part-Time', 'Contract', 'Full-Time', 'Team Hire'];
 
@@ -52,7 +53,7 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
 
         <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 12, padding: '10px 14px', fontSize: 13, color: '#16a34a', fontWeight: 600 }}>
-            Applied on {applied}
+            ✅ Applied on {applied}
           </div>
 
           <div>
@@ -234,8 +235,9 @@ function ApplicantsDrawer({ job }: { job: any }) {
 function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLoading: boolean; lang: string }) {
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
-  const [checking, setChecking] = useState(true); // always start true until we know auth + DB state
+  const [checking, setChecking] = useState(true);
   const [applicantCount, setApplicantCount] = useState<number | null>(null);
+  const [shareLabel, setShareLabel] = useState<string | null>(null);
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
 
@@ -270,9 +272,23 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
     try {
       await getPb().collection('applications').create({ job_id: job.id, applicant_id: user.id, status: 'pending' });
       setApplied(true);
+      // Haptic feedback — tiny 80ms buzz on success
+      if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(80);
     } catch {
       setApplied(true); // duplicate = already applied, still mark applied
     } finally { setApplying(false); }
+  };
+
+  const handleShare = async () => {
+    const text = `💼 ${job.title} — ${job.pay} | ${job.location}\n\nApply on UrbanServe 👇`;
+    const url = window.location.origin + '/gigs';
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({ title: `${job.title} — UrbanServe`, text, url }).catch(() => { });
+    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      setShareLabel(lang === 'hi' ? '✅ कॉपी हो गया!' : '✅ Copied!');
+      setTimeout(() => setShareLabel(null), 2000);
+    }
   };
 
   return (
@@ -326,12 +342,17 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
 
       {/* My job badge */}
       {isMyJob && (
-        <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ Your Job Posting</div>
+        <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ {lang === 'hi' ? 'आपकी जॉब पोस्टिंग' : 'Your Job Posting'}</div>
       )}
 
       {/* Action area */}
       {isMyJob ? (
-        <ApplicantsDrawer job={job} />
+        <>
+          <ApplicantsDrawer job={job} />
+          <button onClick={handleShare} style={{ width: '100%', marginTop: 8, padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.2s' }}>
+            {shareLabel ?? (lang === 'hi' ? '🔗 शेयर करें' : '🔗 Share Job')}
+          </button>
+        </>
       ) : (
         <>
           {applied ? (
@@ -372,6 +393,11 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
                   : (lang === 'hi' ? 'अभी आवेदन करें →' : 'Apply Now →')}
             </button>
           )}
+
+          {/* Share button — always visible for non-poster */}
+          <button onClick={handleShare} style={{ width: '100%', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 6, transition: 'all 0.2s' }}>
+            {shareLabel ?? (lang === 'hi' ? '🔗 शेयर करें' : '🔗 Share Job')}
+          </button>
 
         </>
       )}
@@ -575,7 +601,7 @@ export default function GigsPage() {
               }}>
                 {posting
                   ? (lang === 'hi' ? 'पोस्ट हो रहा है…' : 'Posting…')
-                  : (lang === 'hi' ? ' नौकरी पोस्ट करें' : ' Post Job Now')}
+                  : (lang === 'hi' ? '✅ नौकरी पोस्ट करें' : '✅ Post Job Now')}
               </button>
             </div>
           </div>
