@@ -24,7 +24,7 @@ body {
 /* ── Mobile bottom nav padding ─────────────────────────────── */
 @media(max-width:899px) {
   .mob-page-wrap {
-    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   }
 }
 
