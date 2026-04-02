@@ -14,7 +14,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfileLoading(true);
     try {
       const pb = getPb();
-      const rec = await pb.collection('profiles').getFirstListItem(`user_id="${userId}"`);
+      const rec = await pb.collection('profiles').getFirstListItem(`user="${userId}"`);
       setProfile(rec);
     } catch {
       setProfile(null);

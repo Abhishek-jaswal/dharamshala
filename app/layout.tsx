@@ -45,9 +45,12 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
   icons: {
-    icon: [{ url: '/leaf-icon.png', sizes: '192x192', type: 'image/png' }],
-    apple: [{ url: '/leaf-icon.png', sizes: '180x180', type: 'image/png' }],
-    shortcut: '/leaf-icon.png',
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: '/icon-192.png',
   },
   manifest: '/manifest.json',
   applicationName: 'UrbanServe',
@@ -76,9 +79,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="UrbanServe" />
-        <link rel="apple-touch-icon" href="/leaf-icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <meta name="msapplication-TileColor" content="#16a34a" />
-        <meta name="msapplication-TileImage" content="/leaf-icon.png" />
+        <meta name="msapplication-TileImage" content="/icon-192.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -87,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'Organization',
               name: 'UrbanServe',
               url: APP_URL,
-              logo: `${APP_URL}/leaf-icon.png`,
+              logo: `${APP_URL}/icon-512.png`,
               description: "India's simplest platform to find gig jobs and hire verified workers.",
               contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: 'support@urbanserve.in' },
             }),

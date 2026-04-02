@@ -22,7 +22,7 @@ const Pill = ({ active, onClick, children }: any) => (
 // ── Full profile modal shown when poster clicks applicant name ───────────────
 function ProfileModal({ person, onClose }: { person: any; onClose: () => void }) {
   const p = person.profile;
-  const name = p?.name || person.expand?.applicant_id?.name || 'Unknown';
+  const name = p?.name || person.expand?.applicant?.name || 'Unknown';
   const phone = p?.contact;
   const skills = p?.skills;
   const location = p?.location;
@@ -132,7 +132,7 @@ function ApplicantsDrawer({ job }: { job: any }) {
   const [viewProfile, setViewProfile] = useState<any | null>(null);
 
   useEffect(() => {
-    getPb().collection('applications').getList(1, 1, { filter: `job_id="${job.id}"` })
+    getPb().collection('applications').getList(1, 1, { filter: `job="${job.id}"` })
       .then(r => setCount(r.totalItems)).catch(() => setCount(0));
   }, [job.id]);
 
@@ -140,11 +140,11 @@ function ApplicantsDrawer({ job }: { job: any }) {
     setLoading(true);
     try {
       const apps = await getPb().collection('applications').getList(1, 100, {
-        filter: `job_id="${job.id}"`, sort: '-created',
+        filter: `job="${job.id}"`, sort: '-created',
       });
       const rich = await Promise.all(apps.items.map(async (app: any) => {
         try {
-          const profile = await getPb().collection('profiles').getFirstListItem(`user_id="${app.applicant_id}"`);
+          const profile = await getPb().collection('profiles').getFirstListItem(`user="${app.applicant}"`);
           return { ...app, profile };
         } catch { return { ...app, profile: null }; }
       }));
@@ -253,7 +253,7 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
     if (authLoading) return; // auth not ready yet, keep checking=true
     if (!user || isMyJob) { setChecking(false); return; }
     getPb().collection('applications')
-      .getList(1, 1, { filter: `job_id="${job.id}" && applicant_id="${user.id}"` })
+      .getList(1, 1, { filter: `job="${job.id}" && applicant="${user.id}"` })
       .then(res => { if (res.totalItems > 0) setApplied(true); })
       .catch(() => { })
       .finally(() => setChecking(false));
@@ -262,7 +262,7 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
   // Fetch applicant count for non-posters
   useEffect(() => {
     if (isMyJob) return;
-    getPb().collection('applications').getList(1, 1, { filter: `job_id="${job.id}"` })
+    getPb().collection('applications').getList(1, 1, { filter: `job="${job.id}"` })
       .then(r => setApplicantCount(r.totalItems)).catch(() => setApplicantCount(0));
   }, [job.id, isMyJob]);
 
@@ -270,7 +270,7 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
     if (!user) { window.location.href = '/login'; return; }
     setApplying(true);
     try {
-      await getPb().collection('applications').create({ job_id: job.id, applicant_id: user.id, status: 'pending' });
+      await getPb().collection('applications').create({ job: job.id, applicant: user.id, status: 'pending' });
       setApplied(true);
       // Haptic feedback — tiny 80ms buzz on success
       if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(80);

@@ -36,7 +36,7 @@ export default function DashboardPage() {
     if (!user) return;
     setAppsLoad(true);
     getPb().collection('applications').getList(1, 20, {
-      filter: `applicant_id="${user.id}"`, expand: 'job_id', sort: '-created',
+      filter: `applicant="${user.id}"`, expand: 'job', sort: '-created',
     }).then(r => setApps(r.items)).catch(() => setApps([])).finally(() => setAppsLoad(false));
   }, [user]);
 
@@ -261,7 +261,7 @@ export default function DashboardPage() {
                   return (
                     <div key={app.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', borderRadius: 12, padding: '13px 14px', gap: 12 }}>
                       <div>
-                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{app.expand?.job_id?.title || 'Job'}</div>
+                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{app.expand?.job?.title || 'Job'}</div>
                         <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>
                           {lang === 'hi' ? 'आवेदन किया ' : 'Applied '}
                           {new Date(app.created).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
