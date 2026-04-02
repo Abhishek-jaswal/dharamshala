@@ -52,7 +52,7 @@ export default function OnboardingPage() {
     try {
       const pb = getPb();
       const fd = new FormData();
-      fd.append('user_id', user.id); fd.append('name', ans.name); fd.append('dob', ans.dob);
+      fd.append('user', user.id); fd.append('name', ans.name); fd.append('dob', ans.dob);
       fd.append('contact', ans.contact); fd.append('skills', ans.skills.join(', '));
       fd.append('interests', ans.interests.join(', ')); fd.append('location', ans.location); fd.append('role', ans.role);
       if (ans.aadhaar) fd.append('aadhaar', ans.aadhaar);

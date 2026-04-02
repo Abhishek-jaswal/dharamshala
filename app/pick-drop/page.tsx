@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NOTE FOR SETUP: Create a PocketBase collection called "runners_live" with:
-//   user_id (text, required)
+//   user (Relation → users, required)
 //   name    (text)
 //   phone   (text)
 //   lat     (number, required)
@@ -58,11 +58,11 @@ function RunnerMode({ user, profile }: { user:any; profile:any }) {
           const task  = profile?.skills  || 'General';
           // Try update existing, else create
           try {
-            const existing = await pb.collection('runners_live').getFirstListItem(`user_id="${user.id}"`);
+            const existing = await pb.collection('runners_live').getFirstListItem(`user="${user.id}"`);
             await pb.collection('runners_live').update(existing.id, { lat, lng, available:true, last_seen:new Date().toISOString(), name, phone, task });
             setRecId(existing.id);
           } catch {
-            const rec = await pb.collection('runners_live').create({ user_id:user.id, name, phone, lat, lng, task, available:true, last_seen:new Date().toISOString() });
+            const rec = await pb.collection('runners_live').create({ user:user.id, name, phone, lat, lng, task, available:true, last_seen:new Date().toISOString() });
             setRecId(rec.id);
           }
           setOnline(true);
@@ -94,7 +94,7 @@ function RunnerMode({ user, profile }: { user:any; profile:any }) {
     try {
       if (recId) await getPb().collection('runners_live').update(recId, { available:false });
       else {
-        const existing = await getPb().collection('runners_live').getFirstListItem(`user_id="${user.id}"`);
+        const existing = await getPb().collection('runners_live').getFirstListItem(`user="${user.id}"`);
         await getPb().collection('runners_live').update(existing.id, { available:false });
       }
     } catch {}

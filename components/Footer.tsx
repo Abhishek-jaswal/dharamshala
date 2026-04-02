@@ -24,7 +24,7 @@ export function Footer() {
           </div>
           <div>
             <div style={{ fontWeight:700, color:'#94a3b8', fontSize:12, letterSpacing:'0.08em', marginBottom:16 }}>FOR EMPLOYERS</div>
-            {[['Post a Job','/gigs'],['Browse Workers','/workers'],['Hire Manpower','/manpower'],['Book Services','/services']].map(([l,h])=>(
+            {[['Post a Job','/gigs'],['Find Workers','/gigs'],['Pick & Drop','/pick-drop'],['My Dashboard','/dashboard']].map(([l,h])=>(
               <Link key={h} href={h} style={{ display:'block', color:'#64748b', fontSize:14, textDecoration:'none', marginBottom:10 }}>{l}</Link>
             ))}
           </div>
