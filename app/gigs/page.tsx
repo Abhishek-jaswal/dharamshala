@@ -607,7 +607,6 @@ export default function GigsPage() {
           </div>
         </div>
       )}
-    </div>
 
       <style>{`
         /* Gigs page responsive styles */
@@ -638,5 +637,6 @@ export default function GigsPage() {
           #job-search { font-size: 14px !important; padding: 12px 12px !important; }
         }
       `}</style>
+    </div>
   );
 }
