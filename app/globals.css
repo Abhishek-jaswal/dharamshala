@@ -24,7 +24,7 @@ body {
 /* ── Mobile bottom nav padding ─────────────────────────────── */
 @media(max-width:899px) {
   .mob-page-wrap {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -216,10 +216,9 @@ img {
   }
 }
 
-/* Touch-friendly minimum tap targets */
-button, a, [role="button"] {
-  min-height: 44px;
-  min-width: 44px;
+/* Touch-friendly tap targets — only on interactive elements, not layout */
+button:not([style*="width"]):not([style*="height"]):not(.filter-pill) {
+  min-height: 38px;
 }
 
 /* Prevent horizontal scroll on mobile */
@@ -237,7 +236,7 @@ html, body {
 /* Mobile page padding with safe area */
 @media (max-width: 899px) {
   .mob-page-wrap {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -247,19 +246,7 @@ html, body {
   header p  { font-size: 13px !important; }
 }
 
-/* Modals: full-screen on small phones */
-@media (max-width: 480px) {
-  .modal-sheet {
-    border-radius: 20px 20px 0 0 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    max-height: 92vh !important;
-    width: 100% !important;
-  }
-}
+
 
 /* Grid: single column on mobile */
 @media (max-width: 480px) {
@@ -281,12 +268,7 @@ input, select, textarea {
   }
 }
 
-/* Job card grid: full-width on mobile */
-@media (max-width: 640px) {
-  [style*="minmax(320px"] {
-    grid-template-columns: 1fr !important;
-  }
-}
+/* Job card grid is handled inline with minmax(min(100%, 320px), 1fr) */
 
 /* Pill scroll touch improvements */
 .pill-scroll {

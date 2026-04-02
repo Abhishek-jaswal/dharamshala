@@ -10,9 +10,9 @@ import { CATEGORIES } from '@/lib/data';
 const JOB_TYPES = ['Daily Wage', 'Hourly', 'Part-Time', 'Contract', 'Full-Time', 'Team Hire'];
 
 const Pill = ({ active, onClick, children }: any) => (
-  <button onClick={onClick} style={{
-    fontSize: 13, fontWeight: 600, padding: '9px 18px', borderRadius: 99,
-    border: '1.5px solid', whiteSpace: 'nowrap' as const, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+  <button onClick={onClick} className="filter-pill" style={{
+    fontWeight: 600, borderRadius: 99, border: '1.5px solid',
+    whiteSpace: 'nowrap' as const, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
     borderColor: active ? '#16a34a' : '#e2e8f0',
     background: active ? '#16a34a' : '#fff',
     color: active ? '#fff' : '#475569',
@@ -293,8 +293,8 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
 
   return (
     <article className="hover-lift" aria-label={job.title} style={{
-      background: '#fff', border: '1px solid #e2e8f0', borderRadius: 20,
-      padding: 22, boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+      background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
+      padding: 'clamp(14px,4vw,22px)' as any, boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
       display: 'flex', flexDirection: 'column', gap: 16,
     }}>
       {/* Header */}
@@ -461,10 +461,10 @@ export default function GigsPage() {
   return (
     <div style={{ fontFamily: "'Outfit',sans-serif", background: '#f8fafc', minHeight: '100vh' }}>
       {/* Hero */}
-      <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: '40px 24px 56px' }}>
+      <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: 'clamp(20px,4vw,40px) clamp(14px,4vw,24px) clamp(28px,5vw,56px)' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
           <div>
-            <h1 style={{ fontSize: 'clamp(22px,3vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 6 }}>
+            <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>
               {lang === 'hi' ? '💼 नौकरी खोजें' : '💼 Find Jobs'}
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
@@ -474,13 +474,13 @@ export default function GigsPage() {
             </p>
           </div>
           <button onClick={() => user ? setShowPost(true) : router.push('/login')}
-            style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 14, padding: '14px 28px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
+            className="post-job-hero-btn" style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
             {lang === 'hi' ? '+ नौकरी पोस्ट करें' : '+ Post a Job'}
           </button>
         </div>
       </header>
 
-      <div style={{ maxWidth: 1400, margin: '-24px auto 0', padding: '0 24px 48px' }}>
+      <div style={{ maxWidth: 1400, margin: '-20px auto 0', padding: '0 clamp(10px,4vw,24px) 48px' }}>
         {/* Search */}
         <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
           <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
@@ -523,7 +523,7 @@ export default function GigsPage() {
             </p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
             {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} lang={lang} />)}
           </div>
         )}
@@ -532,9 +532,9 @@ export default function GigsPage() {
       {/* Post Job Modal */}
       {showPost && (
         <div role="dialog" aria-modal="true" aria-label="Post a Job"
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, zIndex: 500, backdropFilter: 'blur(4px)' }}
+          className="modal-backdrop" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 0, zIndex: 500, backdropFilter: 'blur(4px)' }}
           onClick={e => { if (e.target === e.currentTarget) setShowPost(false); }}>
-          <div className="slide-down" style={{ background: '#fff', borderRadius: 24, padding: 32, width: '100%', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto' as const }}>
+          <div className="slide-up post-modal" style={{ background: '#fff', borderRadius: '20px 20px 0 0', padding: 'clamp(20px,5vw,32px)', width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' as const }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <div>
                 <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>
@@ -607,6 +607,36 @@ export default function GigsPage() {
           </div>
         </div>
       )}
+
+      <style>{`
+        /* Gigs page responsive styles */
+
+        /* Filter pills */
+        .filter-pill { font-size: 12px; padding: 7px 14px; }
+        @media (max-width: 480px) {
+          .filter-pill { font-size: 11px; padding: 6px 11px; }
+        }
+        @media (max-width: 360px) {
+          .filter-pill { font-size: 10px; padding: 5px 9px; }
+        }
+
+        /* Post job hero button */
+        .post-job-hero-btn { padding: 11px 20px; font-size: 14px; }
+        @media (max-width: 480px) {
+          .post-job-hero-btn { padding: 10px 16px; font-size: 13px; width: 100%; }
+        }
+
+        /* Modal backdrop — centered on desktop, bottom sheet on mobile */
+        @media (min-width: 540px) {
+          .modal-backdrop { align-items: center !important; padding: 16px !important; }
+          .post-modal { border-radius: 20px !important; }
+        }
+
+        /* Search bar */
+        @media (max-width: 480px) {
+          #job-search { font-size: 14px !important; padding: 12px 12px !important; }
+        }
+      `}</style>
     </div>
   );
 }
