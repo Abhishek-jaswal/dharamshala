@@ -16,10 +16,10 @@ export function Navbar() {
   const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
 
   const links = [
-    { href: '/',          icon: '🏠', label: lang === 'hi' ? 'होम'      : 'Home'      },
-    { href: '/gigs',      icon: '💼', label: lang === 'hi' ? 'नौकरी'    : 'Jobs'      },
-    { href: '/pick-drop', icon: '🛵', label: lang === 'hi' ? 'पिकअप'    : 'Pickup'    },
-    { href: '/dashboard', icon: '👤', label: lang === 'hi' ? 'प्रोफाइल' : 'Profile'   },
+    { href: '/', icon: '🏠', label: lang === 'hi' ? 'होम' : 'Home' },
+    { href: '/gigs', icon: '💼', label: lang === 'hi' ? 'नौकरी' : 'Jobs' },
+    { href: '/pick-drop', icon: '🛵', label: lang === 'hi' ? 'पिकअप' : 'Pickup' },
+    { href: '/dashboard', icon: '👤', label: lang === 'hi' ? 'प्रोफाइल' : 'Profile' },
   ];
 
   const active = (href: string) =>
