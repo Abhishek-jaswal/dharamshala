@@ -248,13 +248,31 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
     return `${Math.floor(d / 86400)}d ago`;
   })();
 
-  // Check if already applied — wait for auth to finish loading first
+  // Check if already applied — read localStorage first (instant), then confirm via API
   useEffect(() => {
-    if (authLoading) return; // auth not ready yet, keep checking=true
+    if (authLoading) return; // auth not ready yet
     if (!user || isMyJob) { setChecking(false); return; }
+
+    // ── 1. Instant cache check ────────────────────────────────
+    const cacheKey = `applied_${user.id}_${job.id}`;
+    if (typeof localStorage !== 'undefined' && localStorage.getItem(cacheKey) === '1') {
+      setApplied(true);
+      setChecking(false);
+      return; // already confirmed from cache, skip API call
+    }
+
+    // ── 2. API check (confirms server-side) ──────────────────
     getPb().collection('applications')
       .getList(1, 1, { filter: `job="${job.id}" && applicant="${user.id}"` })
-      .then(res => { if (res.totalItems > 0) setApplied(true); })
+      .then(res => {
+        if (res.totalItems > 0) {
+          setApplied(true);
+          // Persist to localStorage so next refresh is instant
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(cacheKey, '1');
+          }
+        }
+      })
       .catch(() => { })
       .finally(() => setChecking(false));
   }, [user, job.id, isMyJob, authLoading]);
@@ -272,10 +290,17 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
     try {
       await getPb().collection('applications').create({ job: job.id, applicant: user.id, status: 'pending' });
       setApplied(true);
+      // Persist so page refresh still shows "Applied"
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
+      }
       // Haptic feedback — tiny 80ms buzz on success
       if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(80);
     } catch {
-      setApplied(true); // duplicate = already applied, still mark applied
+      setApplied(true); // duplicate = already applied
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
+      }
     } finally { setApplying(false); }
   };
 
@@ -459,154 +484,156 @@ export default function GigsPage() {
   const inp: React.CSSProperties = { width: '100%', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: 14, color: '#0f172a', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, background: '#f8fafc' };
 
   return (
-    <div style={{ fontFamily: "'Outfit',sans-serif", background: '#f8fafc', minHeight: '100vh' }}>
-      {/* Hero */}
-      <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: 'clamp(20px,4vw,40px) clamp(14px,4vw,24px) clamp(28px,5vw,56px)' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div>
-            <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>
-              {lang === 'hi' ? '💼 नौकरी खोजें' : '💼 Find Jobs'}
-            </h1>
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
-              {lang === 'hi'
-                ? `${jobs.length} नौकरियां अभी उपलब्ध · किसी भी कार्ड पर टैप करें`
-                : `${jobs.length} jobs live right now · Tap any card to apply`}
-            </p>
+    <>
+      <div style={{ fontFamily: "'Outfit',sans-serif", background: '#f8fafc', minHeight: '100vh' }}>
+        {/* Hero */}
+        <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: 'clamp(20px,4vw,40px) clamp(14px,4vw,24px) clamp(28px,5vw,56px)' }}>
+          <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+            <div>
+              <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>
+                {lang === 'hi' ? '💼 नौकरी खोजें' : '💼 Find Jobs'}
+              </h1>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
+                {lang === 'hi'
+                  ? `${jobs.length} नौकरियां अभी उपलब्ध · किसी भी कार्ड पर टैप करें`
+                  : `${jobs.length} jobs live right now · Tap any card to apply`}
+              </p>
+            </div>
+            <button onClick={() => user ? setShowPost(true) : router.push('/login')}
+              className="post-job-hero-btn" style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
+              {lang === 'hi' ? '+ नौकरी पोस्ट करें' : '+ Post a Job'}
+            </button>
           </div>
-          <button onClick={() => user ? setShowPost(true) : router.push('/login')}
-            className="post-job-hero-btn" style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
-            {lang === 'hi' ? '+ नौकरी पोस्ट करें' : '+ Post a Job'}
-          </button>
-        </div>
-      </header>
+        </header>
 
-      <div style={{ maxWidth: 1400, margin: '-20px auto 0', padding: '0 clamp(10px,4vw,24px) 48px' }}>
-        {/* Search */}
-        <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
-          <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
-          <input id="job-search" value={search} onChange={e => setSearch(e.target.value)}
-            placeholder={lang === 'hi' ? '🔍  नौकरी, कौशल या शहर खोजें...' : '🔍  Search jobs, skills, or city...'}
-            style={{ flex: 1, border: 'none', background: 'transparent', padding: '14px 18px', fontSize: 16, fontFamily: 'inherit', outline: 'none', color: '#0f172a' }} />
-          <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-            {lang === 'hi' ? 'खोजें' : 'Search'}
-          </button>
-        </div>
-
-        <div className="pill-scroll" role="tablist" aria-label="Category filter" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
-          <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>
-            {lang === 'hi' ? '🌐 सभी श्रेणियां' : '🌐 All Categories'}
-          </Pill>
-          {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
-        </div>
-        <div className="pill-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 16, marginBottom: 28 }}>
-          <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>
-            {lang === 'hi' ? 'सभी प्रकार' : 'All Types'}
-          </Pill>
-          {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
-        </div>
-
-        {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 0', gap: 16 }}>
-            <div className="spinner" />
-            <p style={{ color: '#94a3b8', fontSize: 15 }}>{lang === 'hi' ? 'नौकरियां लोड हो रही हैं…' : 'Loading jobs…'}</p>
+        <div style={{ maxWidth: 1400, margin: '-20px auto 0', padding: '0 clamp(10px,4vw,24px) 48px' }}>
+          {/* Search */}
+          <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
+            <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
+            <input id="job-search" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder={lang === 'hi' ? '🔍  नौकरी, कौशल या शहर खोजें...' : '🔍  Search jobs, skills, or city...'}
+              style={{ flex: 1, border: 'none', background: 'transparent', padding: '14px 18px', fontSize: 16, fontFamily: 'inherit', outline: 'none', color: '#0f172a' }} />
+            <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+              {lang === 'hi' ? 'खोजें' : 'Search'}
+            </button>
           </div>
-        ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <div style={{ fontSize: 56, marginBottom: 12 }}>🔍</div>
-            <p style={{ color: '#334155', fontWeight: 700, fontSize: 18 }}>
-              {lang === 'hi' ? 'कोई नौकरी नहीं मिली' : 'No jobs found'}
-            </p>
-            <p style={{ color: '#94a3b8', fontSize: 14, marginTop: 6 }}>
-              {jobs.length === 0
-                ? (lang === 'hi' ? 'पहली नौकरी पोस्ट करें!' : 'Be the first to post a job!')
-                : (lang === 'hi' ? 'अलग फिल्टर आज़माएं' : 'Try different filters')}
-            </p>
+
+          <div className="pill-scroll" role="tablist" aria-label="Category filter" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
+            <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>
+              {lang === 'hi' ? '🌐 सभी श्रेणियां' : '🌐 All Categories'}
+            </Pill>
+            {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
           </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
-            {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} lang={lang} />)}
+          <div className="pill-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 16, marginBottom: 28 }}>
+            <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>
+              {lang === 'hi' ? 'सभी प्रकार' : 'All Types'}
+            </Pill>
+            {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 0', gap: 16 }}>
+              <div className="spinner" />
+              <p style={{ color: '#94a3b8', fontSize: 15 }}>{lang === 'hi' ? 'नौकरियां लोड हो रही हैं…' : 'Loading jobs…'}</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '80px 0' }}>
+              <div style={{ fontSize: 56, marginBottom: 12 }}>🔍</div>
+              <p style={{ color: '#334155', fontWeight: 700, fontSize: 18 }}>
+                {lang === 'hi' ? 'कोई नौकरी नहीं मिली' : 'No jobs found'}
+              </p>
+              <p style={{ color: '#94a3b8', fontSize: 14, marginTop: 6 }}>
+                {jobs.length === 0
+                  ? (lang === 'hi' ? 'पहली नौकरी पोस्ट करें!' : 'Be the first to post a job!')
+                  : (lang === 'hi' ? 'अलग फिल्टर आज़माएं' : 'Try different filters')}
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
+              {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} lang={lang} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Post Job Modal */}
+        {showPost && (
+          <div role="dialog" aria-modal="true" aria-label="Post a Job"
+            className="modal-backdrop" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 0, zIndex: 500, backdropFilter: 'blur(4px)' }}
+            onClick={e => { if (e.target === e.currentTarget) setShowPost(false); }}>
+            <div className="slide-up post-modal" style={{ background: '#fff', borderRadius: '20px 20px 0 0', padding: 'clamp(20px,5vw,32px)', width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' as const }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+                <div>
+                  <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>
+                    {lang === 'hi' ? '📋 नौकरी पोस्ट करें' : '📋 Post a Job'}
+                  </h2>
+                  <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>
+                    {lang === 'hi' ? 'जल्दी से वर्कर खोजने के लिए भरें' : 'Fill details to find workers fast'}
+                  </p>
+                </div>
+                <button onClick={() => setShowPost(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {([
+                  ['title', lang === 'hi' ? 'नौकरी का शीर्षक *' : 'Job Title *', lang === 'hi' ? 'जैसे: घर में प्लंबर चाहिए' : 'e.g. Need Plumber at Home'],
+                  ['pay', lang === 'hi' ? 'वेतन *' : 'Pay *', lang === 'hi' ? 'जैसे: ₹500/दिन' : 'e.g. ₹500/day'],
+                  ['location', lang === 'hi' ? 'स्थान *' : 'Location *', lang === 'hi' ? 'शहर या क्षेत्र' : 'City or Area'],
+                  ['company', lang === 'hi' ? 'कंपनी / दुकान (वैकल्पिक)' : 'Company / Shop (optional)', lang === 'hi' ? 'आपका बिज़नेस नाम' : 'Your business name'],
+                ] as [string, string, string][]).map(([field, label, ph]) => (
+                  <div key={field}>
+                    <label htmlFor={`post-${field}`} style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>{label}</label>
+                    <input id={`post-${field}`} placeholder={ph} style={inp} value={(form as any)[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} />
+                  </div>
+                ))}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
+                      {lang === 'hi' ? 'नौकरी का प्रकार' : 'Job Type'}
+                    </label>
+                    <select style={inp} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                      {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
+                      {lang === 'hi' ? 'श्रेणी' : 'Category'}
+                    </label>
+                    <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                      <option value="">{lang === 'hi' ? '— चुनें —' : '— Select —'}</option>
+                      {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
+                    {lang === 'hi' ? 'आवश्यक कौशल (वैकल्पिक)' : 'Required Skills (optional)'}
+                  </label>
+                  <input placeholder={lang === 'hi' ? 'जैसे: प्लंबिंग, वायरिंग' : 'e.g. Plumbing, Wiring'} style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
+                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
+                  <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>
+                    {lang === 'hi' ? '🔥 अत्यावश्यक चिह्नित करें' : '🔥 Mark as Urgent'}
+                  </span>
+                </label>
+              </div>
+              <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
+                <button onClick={() => setShowPost(false)} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
+                  {lang === 'hi' ? 'रद्द करें' : 'Cancel'}
+                </button>
+                <button onClick={handlePost} disabled={posting} style={{
+                  flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+                  background: posting ? '#d1fae5' : '#16a34a', color: posting ? '#4b7a5a' : '#fff',
+                  boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
+                }}>
+                  {posting
+                    ? (lang === 'hi' ? 'पोस्ट हो रहा है…' : 'Posting…')
+                    : (lang === 'hi' ? '✅ नौकरी पोस्ट करें' : '✅ Post Job Now')}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
-
-      {/* Post Job Modal */}
-      {showPost && (
-        <div role="dialog" aria-modal="true" aria-label="Post a Job"
-          className="modal-backdrop" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 0, zIndex: 500, backdropFilter: 'blur(4px)' }}
-          onClick={e => { if (e.target === e.currentTarget) setShowPost(false); }}>
-          <div className="slide-up post-modal" style={{ background: '#fff', borderRadius: '20px 20px 0 0', padding: 'clamp(20px,5vw,32px)', width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' as const }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-              <div>
-                <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>
-                  {lang === 'hi' ? '📋 नौकरी पोस्ट करें' : '📋 Post a Job'}
-                </h2>
-                <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>
-                  {lang === 'hi' ? 'जल्दी से वर्कर खोजने के लिए भरें' : 'Fill details to find workers fast'}
-                </p>
-              </div>
-              <button onClick={() => setShowPost(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {([
-                ['title', lang === 'hi' ? 'नौकरी का शीर्षक *' : 'Job Title *', lang === 'hi' ? 'जैसे: घर में प्लंबर चाहिए' : 'e.g. Need Plumber at Home'],
-                ['pay', lang === 'hi' ? 'वेतन *' : 'Pay *', lang === 'hi' ? 'जैसे: ₹500/दिन' : 'e.g. ₹500/day'],
-                ['location', lang === 'hi' ? 'स्थान *' : 'Location *', lang === 'hi' ? 'शहर या क्षेत्र' : 'City or Area'],
-                ['company', lang === 'hi' ? 'कंपनी / दुकान (वैकल्पिक)' : 'Company / Shop (optional)', lang === 'hi' ? 'आपका बिज़नेस नाम' : 'Your business name'],
-              ] as [string, string, string][]).map(([field, label, ph]) => (
-                <div key={field}>
-                  <label htmlFor={`post-${field}`} style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>{label}</label>
-                  <input id={`post-${field}`} placeholder={ph} style={inp} value={(form as any)[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} />
-                </div>
-              ))}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                    {lang === 'hi' ? 'नौकरी का प्रकार' : 'Job Type'}
-                  </label>
-                  <select style={inp} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
-                    {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                    {lang === 'hi' ? 'श्रेणी' : 'Category'}
-                  </label>
-                  <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                    <option value="">{lang === 'hi' ? '— चुनें —' : '— Select —'}</option>
-                    {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                  {lang === 'hi' ? 'आवश्यक कौशल (वैकल्पिक)' : 'Required Skills (optional)'}
-                </label>
-                <input placeholder={lang === 'hi' ? 'जैसे: प्लंबिंग, वायरिंग' : 'e.g. Plumbing, Wiring'} style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
-              </div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
-                <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>
-                  {lang === 'hi' ? '🔥 अत्यावश्यक चिह्नित करें' : '🔥 Mark as Urgent'}
-                </span>
-              </label>
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-              <button onClick={() => setShowPost(false)} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
-                {lang === 'hi' ? 'रद्द करें' : 'Cancel'}
-              </button>
-              <button onClick={handlePost} disabled={posting} style={{
-                flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-                background: posting ? '#d1fae5' : '#16a34a', color: posting ? '#4b7a5a' : '#fff',
-                boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
-              }}>
-                {posting
-                  ? (lang === 'hi' ? 'पोस्ट हो रहा है…' : 'Posting…')
-                  : (lang === 'hi' ? '✅ नौकरी पोस्ट करें' : '✅ Post Job Now')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <style>{`
         /* Gigs page responsive styles */
@@ -637,6 +664,6 @@ export default function GigsPage() {
           #job-search { font-size: 14px !important; padding: 12px 12px !important; }
         }
       `}</style>
-    </div>
+    </>
   );
 }
