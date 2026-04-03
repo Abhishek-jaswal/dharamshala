@@ -26,7 +26,7 @@ export default function HomePage() {
           <div style={{ maxWidth: 700 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.15)', borderRadius: 99, padding: '6px 16px', marginBottom: 20 }}>
               <span className="live-dot" style={{ width: 8, height: 8, background: '#4ade80', borderRadius: '50%', display: 'inline-block' }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>LIVE · 12,000+ WORKERS ONLINE NOW</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>LIVE </span>
             </div>
             <h1 style={{ fontSize: 'clamp(36px,5vw,64px)', fontWeight: 900, color: '#fff', lineHeight: 1.1, marginBottom: 16 }}>
               Hire Workers.<br />Find Jobs.<br />
@@ -178,3 +178,12 @@ export default function HomePage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
