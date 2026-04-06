@@ -148,7 +148,7 @@ export default function HomePage() {
               { icon: '🔒', title: 'Verified Workers', desc: 'Every worker is ID-verified with Aadhaar and skill-tested.', color: '#f0fdf4' },
               { icon: '📞', title: 'Direct Contact', desc: 'Call or message directly. Zero commission on connections.', color: '#eff6ff' },
               { icon: '⚡', title: 'Instant Booking', desc: 'Post a job or apply in under 60 seconds. Always.', color: '#fef9ee' },
-              { icon: '🌍', title: '50+ Cities', desc: 'Available across major cities and towns in India.', color: '#fdf4ff' },
+              { icon: '🌍', title: '+1 Cities', desc: 'Available across major cities and towns in India.', color: '#fdf4ff' },
             ].map(f => (
               <div key={f.title} style={{ background: f.color, borderRadius: 20, padding: '28px 24px' }}>
                 <div style={{ fontSize: 36, marginBottom: 14 }}>{f.icon}</div>
