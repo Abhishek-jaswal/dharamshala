@@ -7,7 +7,7 @@ const STATS = [
   { icon: '👷', val: '20+', label: 'Workers Available' },
   { icon: '💼', val: '2+', label: 'Jobs Posted' },
   { icon: '⭐', val: '4.8', label: 'Average Rating' },
-  { icon: '🏙️', val: '1', label: 'Cities Covered' },
+  { icon: '🏙️', val: '1+', label: 'Cities Covered' },
 ];
 
 export default function HomePage() {
