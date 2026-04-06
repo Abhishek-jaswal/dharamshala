@@ -4,10 +4,10 @@ import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES } from '@/lib/data';
 
 const STATS = [
-  { icon: '👷', val: '12,000+', label: 'Workers Available' },
-  { icon: '💼', val: '4,200+', label: 'Jobs Posted' },
+  { icon: '👷', val: '20+', label: 'Workers Available' },
+  { icon: '💼', val: '2+', label: 'Jobs Posted' },
   { icon: '⭐', val: '4.8', label: 'Average Rating' },
-  { icon: '🏙️', val: '50+', label: 'Cities Covered' },
+  { icon: '🏙️', val: '1+', label: 'Cities Covered' },
 ];
 
 export default function HomePage() {
@@ -40,19 +40,19 @@ export default function HomePage() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
               <Link href={user ? '/gigs' : '/login'}
                 style={{ background: '#fff', color: '#16a34a', fontWeight: 800, fontSize: 17, padding: '16px 36px', borderRadius: 14, textDecoration: 'none', boxShadow: '0 8px 32px rgba(0,0,0,0.2)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                💼 Find Jobs
+                Get Worker Now ⚡
               </Link>
               <Link href={user ? '/gigs' : '/login'}
                 style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', fontWeight: 700, fontSize: 17, padding: '16px 36px', borderRadius: 14, textDecoration: 'none', border: '2px solid rgba(255,255,255,0.4)', backdropFilter: 'blur(8px)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                📋 Hire Someone
+                Post Job in 30 Sec 🚀
               </Link>
             </div>
           </div>
         </div>
 
         {/* Stats bar */}
-        {/* <div style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(8px)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)' }}>
+        <div style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(8px)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}>
             {STATS.map(s => (
               <div key={s.label} style={{ padding: '18px 16px', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
                 <div style={{ fontSize: 22, marginBottom: 4 }}>{s.icon}</div>
@@ -61,7 +61,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
