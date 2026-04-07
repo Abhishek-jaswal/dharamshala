@@ -18,6 +18,7 @@ export function Navbar() {
   const links = [
     { href: '/', icon: '🏠', label: lang === 'hi' ? 'होम' : 'Home' },
     { href: '/gigs', icon: '💼', label: lang === 'hi' ? 'नौकरी' : 'Jobs' },
+    { href: '/workers', icon: '👷', label: lang === 'hi' ? 'वर्कर' : 'Workers' },
     { href: '/pick-drop', icon: '🛵', label: lang === 'hi' ? 'पिकअप' : 'Pickup' },
     { href: '/dashboard', icon: '👤', label: lang === 'hi' ? 'प्रोफाइल' : 'Profile' },
   ];
