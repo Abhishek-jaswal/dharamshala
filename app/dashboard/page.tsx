@@ -72,6 +72,13 @@ export default function DashboardPage() {
     rejected: { label: lang === 'hi' ? '❌ अस्वीकृत' : '❌ Rejected', bg: '#fef2f2', color: '#dc2626' },
   };
 
+  const roleLabels: Record<string, string> = {
+    worker: lang === 'hi' ? 'काम की तलाश' : 'Looking for Work',
+    employer: lang === 'hi' ? 'नौकरी देने वाला' : 'Hiring Workers',
+    both: lang === 'hi' ? 'दोनों' : 'Both',
+  };
+  const roleLabel = profile?.role ? roleLabels[profile.role as keyof typeof roleLabels] : '';
+
   const card: React.CSSProperties = { background: '#fff', border: '1px solid #e2e8f0', borderRadius: 20, padding: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' };
 
   return (
@@ -198,6 +205,9 @@ export default function DashboardPage() {
                   ['👤', lang === 'hi' ? 'नाम' : 'Name', profile.name],
                   ['📱', lang === 'hi' ? 'फोन' : 'Phone', profile.contact ? `+91 ${profile.contact}` : null],
                   ['📍', lang === 'hi' ? 'स्थान' : 'Location', profile.location],
+                  ['🔧', lang === 'hi' ? 'ट्रेड' : 'Trade', profile.trade],
+                  ['🧑‍🔧', lang === 'hi' ? 'अनुभव स्तर' : 'Experience Level', profile.experience_level ? (profile.experience_level === 'experienced' ? (lang === 'hi' ? 'अनुभवी (5+ वर्ष)' : 'Experienced (5+ yrs)') : (lang === 'hi' ? 'ताज़ा (5 वर्ष से कम)' : 'Fresher (<5 yrs)')) : null],
+                  ['💼', lang === 'hi' ? 'भूमिका' : 'Role', roleLabel],
                   ['🎂', lang === 'hi' ? 'जन्म तिथि' : 'DOB', profile.dob ? new Date(profile.dob).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : null],
                 ] as [string, string, string | null][]).filter(([, , v]) => v).map(([icon, label, val]) => (
                   <div key={label} style={{ display: 'flex', gap: 12, padding: '11px 0', borderBottom: '1px solid #f8fafc' }}>

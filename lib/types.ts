@@ -16,6 +16,8 @@ export type Profile = {
   verified: boolean;
   verified_at?: string;
   rating: number;
+  trade?: string;
+  experience_level?: 'experienced' | 'fresher';
   created: string;
   updated: string;
   // aadhaar is a hidden field — never returned in list responses

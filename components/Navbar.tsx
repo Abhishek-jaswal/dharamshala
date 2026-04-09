@@ -3,11 +3,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { useLang } from '@/context/LangContext';
 
 export function Navbar() {
   const { user, profile, logout } = useAuth();
-  const { lang, toggle } = useLang();
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -16,11 +14,11 @@ export function Navbar() {
   const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
 
   const links = [
-    { href: '/', icon: '🏠', label: lang === 'hi' ? 'होम' : 'Home' },
-    { href: '/gigs', icon: '💼', label: lang === 'hi' ? 'नौकरी' : 'Jobs' },
-    { href: '/workers', icon: '👷', label: lang === 'hi' ? 'वर्कर' : 'Workers' },
-    { href: '/pick-drop', icon: '🛵', label: lang === 'hi' ? 'पिकअप' : 'Pickup' },
-    { href: '/dashboard', icon: '👤', label: lang === 'hi' ? 'प्रोफाइल' : 'Profile' },
+    { href: '/', icon: '🏠', label: 'Home' },
+    { href: '/gigs', icon: '💼', label: 'Jobs' },
+    { href: '/workers', icon: '👷', label: 'Workers' },
+    { href: '/pick-drop', icon: '🛵', label: 'Pickup' },
+    { href: '/dashboard', icon: '👤', label: 'Profile' },
   ];
 
   const active = (href: string) =>
@@ -64,25 +62,14 @@ export function Navbar() {
                 color: active(l.href) ? '#16a34a' : '#475569',
                 background: active(l.href) ? '#f0fdf4' : 'transparent',
               }}>
-
+                {l.label}
                 {active(l.href) && <div style={{ width: 4, height: 4, background: '#16a34a', borderRadius: '50%', marginLeft: 2 }} />}
               </Link>
             ))}
           </div>
 
-          {/* Right: lang + user */}
+          {/* Right: user */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <button onClick={toggle} style={{
-              display: 'flex', alignItems: 'center', gap: 4,
-              background: lang === 'hi' ? '#fff7ed' : '#f0fdf4',
-              border: `1.5px solid ${lang === 'hi' ? '#fed7aa' : '#d1fae5'}`,
-              borderRadius: 8, padding: '5px 9px', cursor: 'pointer',
-              fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
-              color: lang === 'hi' ? '#c2410c' : '#15803d',
-            }}>
-              {lang === 'hi' ? '🇬🇧 EN' : '🇮🇳 हि'}
-            </button>
-
             {user ? (
               <>
                 <Link href="/gigs" className="desk-post-btn" style={{
