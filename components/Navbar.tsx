@@ -64,7 +64,7 @@ export function Navbar() {
                 color: active(l.href) ? '#16a34a' : '#475569',
                 background: active(l.href) ? '#f0fdf4' : 'transparent',
               }}>
-                <span style={{ fontSize: 16 }}>{l.icon}</span>{l.label}
+
                 {active(l.href) && <div style={{ width: 4, height: 4, background: '#16a34a', borderRadius: '50%', marginLeft: 2 }} />}
               </Link>
             ))}

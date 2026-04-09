@@ -232,14 +232,25 @@ function ApplicantsDrawer({ job }: { job: any }) {
 }
 
 // ── Single job card ───────────────────────────────────────────────────────────
-function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLoading: boolean; lang: string }) {
+function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any; user: any; authLoading: boolean; lang: string; onDelete?: (jobId: string) => void; onEdit?: (job: any) => void }) {
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
   const [checking, setChecking] = useState(true);
   const [applicantCount, setApplicantCount] = useState<number | null>(null);
   const [shareLabel, setShareLabel] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
+
+  // Determine job status based on applicant count
+  const getJobStatus = () => {
+    if (job.status === 'filled') return { label: 'Hired', icon: '✅', color: '#16a34a', bg: '#f0fdf4' };
+    if (job.status === 'closed') return { label: 'Closed', icon: '❌', color: '#dc2626', bg: '#fef2f2' };
+    if (applicantCount && applicantCount > 0) return { label: 'Under Review', icon: '👀', color: '#f59e0b', bg: '#fef9e7' };
+    return { label: 'Pending', icon: '⏳', color: '#64748b', bg: '#f8fafc' };
+  };
+
+  const jobStatus = getJobStatus();
 
   const timeAgo = (() => {
     const d = (Date.now() - new Date(job.created).getTime()) / 1000;
@@ -370,13 +381,43 @@ function JobCard({ job, user, authLoading, lang }: { job: any; user: any; authLo
         <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ {lang === 'hi' ? 'आपकी जॉब पोस्टिंग' : 'Your Job Posting'}</div>
       )}
 
+      {/* Job status display */}
+      {isMyJob && applicantCount !== null && (
+        <div style={{ background: jobStatus.bg, borderRadius: 10, padding: '8px 12px', fontSize: 12, color: jobStatus.color, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span>{jobStatus.icon}</span>
+          <span>
+            {jobStatus.label}
+            {applicantCount > 0 && ` · ${applicantCount} applicant${applicantCount !== 1 ? 's' : ''}`}
+          </span>
+        </div>
+      )}
+
       {/* Action area */}
       {isMyJob ? (
         <>
           <ApplicantsDrawer job={job} />
-          <button onClick={handleShare} style={{ width: '100%', marginTop: 8, padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.2s' }}>
-            {shareLabel ?? (lang === 'hi' ? '🔗 शेयर करें' : '🔗 Share Job')}
-          </button>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
+            <button onClick={handleShare} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.2s' }}>
+              {shareLabel ?? (lang === 'hi' ? '🔗 शेयर करें' : '🔗 Share')}
+            </button>
+            <button onClick={() => onEdit?.(job)} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #3b82f6', borderRadius: 10, background: '#eff6ff', color: '#3b82f6', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              ✏️ {lang === 'hi' ? 'संपादन' : 'Edit'}
+            </button>
+            <button onClick={async () => {
+              if (!confirm(lang === 'hi' ? 'क्या आप यह नौकरी हटाना चाहते हैं?' : 'Are you sure you want to delete this job?')) return;
+              setDeleting(true);
+              try {
+                await getPb().collection('jobs').delete(job.id);
+                onDelete?.(job.id);
+              } catch (e) {
+                alert(lang === 'hi' ? 'नौकरी हटाने में विफल' : 'Failed to delete job');
+              } finally {
+                setDeleting(false);
+              }
+            }} disabled={deleting} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #dc2626', borderRadius: 10, background: '#fef2f2', color: '#dc2626', fontSize: 13, fontWeight: 600, cursor: deleting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: deleting ? 0.6 : 1 }}>
+              🗑️ {deleting ? (lang === 'hi' ? 'हटा रहे हैं…' : 'Deleting…') : (lang === 'hi' ? 'हटाएं' : 'Delete')}
+            </button>
+          </div>
         </>
       ) : (
         <>
@@ -443,6 +484,7 @@ export default function GigsPage() {
   const [search, setSearch] = useState('');
   const [showPost, setShowPost] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [editingJob, setEditingJob] = useState<any | null>(null);
   const [form, setForm] = useState({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
 
   const fetchJobs = async () => {
@@ -474,11 +516,37 @@ export default function GigsPage() {
     }
     setPosting(true);
     try {
-      await getPb().collection('jobs').create({ ...form, posted_by: user.id });
+      if (editingJob) {
+        // Update existing job
+        await getPb().collection('jobs').update(editingJob.id, { ...form });
+        setEditingJob(null);
+      } else {
+        // Create new job
+        await getPb().collection('jobs').create({ ...form, posted_by: user.id });
+      }
       setShowPost(false);
       setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); alert(lang === 'hi' ? 'विफल' : 'Failed'); }
     finally { setPosting(false); }
+  };
+
+  const handleDeleteJob = (jobId: string) => {
+    setJobs(jobs.filter(j => j.id !== jobId));
+  };
+
+  const handleEditJob = (job: any) => {
+    setForm({
+      title: job.title,
+      company: job.company || '',
+      type: job.type,
+      pay: job.pay,
+      location: job.location,
+      skills: job.skills || '',
+      category: job.category || '',
+      urgent: job.urgent || false,
+    });
+    setEditingJob(job);
+    setShowPost(true);
   };
 
   const inp: React.CSSProperties = { width: '100%', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: 14, color: '#0f172a', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, background: '#f8fafc' };
@@ -550,7 +618,7 @@ export default function GigsPage() {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
-              {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} lang={lang} />)}
+              {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} lang={lang} onDelete={handleDeleteJob} onEdit={handleEditJob} />)}
             </div>
           )}
         </div>
@@ -564,13 +632,17 @@ export default function GigsPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
                 <div>
                   <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>
-                    {lang === 'hi' ? '📋 नौकरी पोस्ट करें' : '📋 Post a Job'}
+                    {editingJob
+                      ? (lang === 'hi' ? '✏️ नौकरी संपादित करें' : '✏️ Edit Job')
+                      : (lang === 'hi' ? '📋 नौकरी पोस्ट करें' : '📋 Post a Job')}
                   </h2>
                   <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>
-                    {lang === 'hi' ? 'जल्दी से वर्कर खोजने के लिए भरें' : 'Fill details to find workers fast'}
+                    {editingJob
+                      ? (lang === 'hi' ? 'परिवर्तन करें और सहेजें' : 'Make changes and save')
+                      : (lang === 'hi' ? 'जल्दी से वर्कर खोजने के लिए भरें' : 'Fill details to find workers fast')}
                   </p>
                 </div>
-                <button onClick={() => setShowPost(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
+                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false }); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {([
@@ -617,7 +689,7 @@ export default function GigsPage() {
                 </label>
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-                <button onClick={() => setShowPost(false)} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
+                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false }); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
                   {lang === 'hi' ? 'रद्द करें' : 'Cancel'}
                 </button>
                 <button onClick={handlePost} disabled={posting} style={{
@@ -626,8 +698,10 @@ export default function GigsPage() {
                   boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
                 }}>
                   {posting
-                    ? (lang === 'hi' ? 'पोस्ट हो रहा है…' : 'Posting…')
-                    : (lang === 'hi' ? '✅ नौकरी पोस्ट करें' : '✅ Post Job Now')}
+                    ? (lang === 'hi' ? 'हो रहा है…' : 'Saving…')
+                    : editingJob
+                      ? (lang === 'hi' ? '✅ अपडेट करें' : '✅ Update Job')
+                      : (lang === 'hi' ? '✅ नौकरी पोस्ट करें' : '✅ Post Job Now')}
                 </button>
               </div>
             </div>
