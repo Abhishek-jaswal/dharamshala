@@ -1,7 +1,9 @@
 'use client';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES } from '@/lib/data';
+import WorkersList from '@/components/WorkersList';
 
 const STATS = [
   { icon: '👷', val: '12,000+', label: 'Workers Available' },
@@ -12,6 +14,7 @@ const STATS = [
 
 export default function HomePage() {
   const { user } = useAuth();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   return (
     <div style={{ fontFamily: "'Outfit',sans-serif", background: '#f8fafc' }}>
@@ -102,14 +105,25 @@ export default function HomePage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 14 }}>
             {CATEGORIES.slice(0, 8).map(cat => (
-              <Link key={cat.id} href={user ? '/gigs' : '/login'}
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
                 className="hover-lift"
-                style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 18, padding: '24px 20px', textDecoration: 'none', display: 'block', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+                style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 18, padding: '24px 20px', textDecoration: 'none', display: 'block', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', fontWeight: 'inherit', borderStyle: 'solid', transition: 'all 0.3s ease' }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as any).style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+                  (e.currentTarget as any).style.transform = 'translateY(-4px)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as any).style.boxShadow = '0 1px 4px rgba(0,0,0,0.05)';
+                  (e.currentTarget as any).style.transform = 'translateY(0)';
+                }}
+              >
                 <div style={{ width: 52, height: 52, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, marginBottom: 14 }}>{cat.icon}</div>
-                <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 15, marginBottom: 4 }}>{cat.label}</div>
-                <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10 }}>{cat.tagline}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#16a34a' }}>{cat.count.toLocaleString()} workers</div>
-              </Link>
+                <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 15, marginBottom: 4, textAlign: 'left' }}>{cat.label}</div>
+                <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 10, textAlign: 'left' }}>{cat.tagline}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#16a34a', textAlign: 'left' }}>➜ View {cat.count.toLocaleString()} workers</div>
+              </button>
             ))}
           </div>
         </div>
@@ -175,6 +189,14 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* Workers List Modal */}
+      {selectedCategory && (
+        <WorkersList
+          categoryId={selectedCategory}
+          onClose={() => setSelectedCategory(null)}
+        />
+      )}
     </div>
   );
 }
