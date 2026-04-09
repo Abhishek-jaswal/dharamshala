@@ -25,7 +25,7 @@ export const CATEGORIES = [
   },
   {
     id: 'repair', icon: '🔧', label: 'Repair & Tech',
-    tagline: 'Mobile, Laptop, Appliance Repair', count: 2100,
+    tagline: 'Mobile, Laptop, Appliance Repair,Car, Bike',
     subs: [
       { name: 'Mobile Repair', icon: '📱', from: 199, unit: 'job' },
       { name: 'Laptop / PC Repair', icon: '💻', from: 349, unit: 'job' },
@@ -37,7 +37,7 @@ export const CATEGORIES = [
   },
   {
     id: 'home-repair', icon: '🏗️', label: 'Home Repair',
-    tagline: 'Plumbers, Electricians, Carpenters', count: 2800,
+    tagline: 'Plumbers, Electricians, Carpenters',
     subs: [
       { name: 'Electrician', icon: '⚡', from: 299, unit: 'day' },
       { name: 'Plumber', icon: '🚿', from: 349, unit: 'day' },
@@ -61,7 +61,7 @@ export const CATEGORIES = [
   },
   {
     id: 'manpower', icon: '👷', label: 'Manpower Supply',
-    tagline: 'Labour Teams for Any Scale', count: 5000,
+    tagline: 'Labour Teams for Any Scale',
     subs: [
       { name: 'Construction Labour', icon: '🏗️', from: 700, unit: 'day' },
       { name: 'Factory Worker', icon: '🏭', from: 650, unit: 'day' },
@@ -73,7 +73,7 @@ export const CATEGORIES = [
   },
   {
     id: 'shop-office', icon: '🏪', label: 'Shop & Office',
-    tagline: 'Cashiers, Sales Staff, Office Boys', count: 1900,
+    tagline: 'Cashiers, Sales Staff, Office Boys',
     subs: [
       { name: 'Cashier', icon: '💰', from: 550, unit: 'day' },
       { name: 'Sales Boy / Girl', icon: '🛍️', from: 500, unit: 'day' },
@@ -85,7 +85,7 @@ export const CATEGORIES = [
   },
   {
     id: 'gig-jobs', icon: '💼', label: 'Gig Jobs',
-    tagline: 'Part-time, Daily Wage, Contract', count: 4200,
+    tagline: 'Part-time, Daily Wage, Contract',
     subs: [
       { name: 'Part-Time Jobs', icon: '⏰', from: 300, unit: 'day' },
       { name: 'Daily Wage Jobs', icon: '📅', from: 500, unit: 'day' },
@@ -98,65 +98,65 @@ export const CATEGORIES = [
 ];
 
 export const TEAM_SIZES = [
-  { count: 1,   label: '1 Worker',   badge: 'Solo',       multiplier: 1,    cls: 'bg-green-100 text-green-700' },
-  { count: 5,   label: '5 Workers',  badge: 'Small Team', multiplier: 4.5,  cls: 'bg-green-200 text-green-800' },
-  { count: 10,  label: '10 Workers', badge: 'Medium',     multiplier: 8.5,  cls: 'bg-green-300 text-green-900' },
-  { count: 20,  label: '20 Workers', badge: 'Large',      multiplier: 16,   cls: 'bg-green-400 text-white' },
-  { count: 50,  label: '50 Workers', badge: 'Bulk',       multiplier: 38,   cls: 'bg-green-600 text-white' },
-  { count: 999, label: 'Full Team',  badge: 'Enterprise', multiplier: null, cls: 'bg-green-800 text-white' },
+  { count: 1, label: '1 Worker', badge: 'Solo', multiplier: 1, cls: 'bg-green-100 text-green-700' },
+  { count: 5, label: '5 Workers', badge: 'Small Team', multiplier: 4.5, cls: 'bg-green-200 text-green-800' },
+  { count: 10, label: '10 Workers', badge: 'Medium', multiplier: 8.5, cls: 'bg-green-300 text-green-900' },
+  { count: 20, label: '20 Workers', badge: 'Large', multiplier: 16, cls: 'bg-green-400 text-white' },
+  { count: 5, label: '50 Workers', badge: 'Bulk', multiplier: 38, cls: 'bg-green-600 text-white' },
+  { count: 5, label: 'Full Team', badge: 'Enterprise', multiplier: null, cls: 'bg-green-800 text-white' },
 ];
 
 export const WORK_TYPES = [
-  { id: 'construction', icon: '🏗️', label: 'Construction',   desc: 'Civil, masonry, RCC, shuttering' },
-  { id: 'shifting',     icon: '📦', label: 'Shifting',        desc: 'Office & home relocation' },
-  { id: 'events',       icon: '🎪', label: 'Events',          desc: 'Setup, ops, security & cleanup' },
-  { id: 'factory',      icon: '🏭', label: 'Factory',         desc: 'Production, assembly, packing' },
-  { id: 'warehouse',    icon: '🏢', label: 'Warehouse',       desc: 'Inventory, loading, dispatch' },
-  { id: 'retail',       icon: '🛒', label: 'Retail / Season', desc: 'Festive & seasonal staff surge' },
+  { id: 'construction', icon: '🏗️', label: 'Construction', desc: 'Civil, masonry, RCC, shuttering' },
+  { id: 'shifting', icon: '📦', label: 'Shifting', desc: 'Office & home relocation' },
+  { id: 'events', icon: '🎪', label: 'Events', desc: 'Setup, ops, security & cleanup' },
+  { id: 'factory', icon: '🏭', label: 'Factory', desc: 'Production, assembly, packing' },
+  { id: 'warehouse', icon: '🏢', label: 'Warehouse', desc: 'Inventory, loading, dispatch' },
+  { id: 'retail', icon: '🛒', label: 'Retail / Season', desc: 'Festive & seasonal staff surge' },
 ];
 
 export const BOOKING_TYPES = [
-  { id: 'daily',    icon: '📅', label: 'Daily Wage',    desc: 'Pay per day worked' },
-  { id: 'hourly',   icon: '⏱️', label: 'Hourly Labour', desc: 'Flexible hour billing' },
-  { id: 'contract', icon: '📝', label: 'Contract',      desc: 'Fixed monthly terms' },
-  { id: 'team',     icon: '👥', label: 'Team Project',  desc: 'Fixed-price project hire' },
+  { id: 'daily', icon: '📅', label: 'Daily Wage', desc: 'Pay per day worked' },
+  { id: 'hourly', icon: '⏱️', label: 'Hourly Labour', desc: 'Flexible hour billing' },
+  { id: 'contract', icon: '📝', label: 'Contract', desc: 'Fixed monthly terms' },
+  { id: 'team', icon: '👥', label: 'Team Project', desc: 'Fixed-price project hire' },
 ];
 
 export const TRUST = [
-  { icon: '🛡️', title: 'ID Verified',     desc: 'Aadhaar, PAN & photo ID checked for every worker' },
-  { icon: '🧪', title: 'Skill Tested',     desc: 'Practical trade tests before any worker goes live' },
+  { icon: '🛡️', title: 'ID Verified', desc: 'Aadhaar, PAN & photo ID checked for every worker' },
+  { icon: '🧪', title: 'Skill Tested', desc: 'Practical trade tests before any worker goes live' },
   { icon: '🔍', title: 'Background Check', desc: 'Criminal & address verified via govt database' },
-  { icon: '⭐', title: '2-Way Ratings',    desc: 'Transparent reviews with dispute resolution' },
-  { icon: '💰', title: 'Escrow Payment',   desc: 'Funds released only after job completion sign-off' },
-  { icon: '📍', title: 'Live Tracking',    desc: 'Real-time worker GPS & check-in/check-out logs' },
-  { icon: '🏥', title: '₹5L Insurance',   desc: 'Accident cover on every booked job, zero premium' },
-  { icon: '📞', title: '24/7 Support',     desc: 'Dedicated helpline for workers and clients always' },
+  { icon: '⭐', title: '2-Way Ratings', desc: 'Transparent reviews with dispute resolution' },
+  { icon: '💰', title: 'Escrow Payment', desc: 'Funds released only after job completion sign-off' },
+  { icon: '📍', title: 'Live Tracking', desc: 'Real-time worker GPS & check-in/check-out logs' },
+  { icon: '🏥', title: '₹5L Insurance', desc: 'Accident cover on every booked job, zero premium' },
+  { icon: '📞', title: '24/7 Support', desc: 'Dedicated helpline for workers and clients always' },
 ];
 
 export const STATS = [
   { value: '48,000+', label: 'Verified Workers' },
-  { value: '1.2M+',   label: 'Jobs Completed' },
-  { value: '98.4%',   label: 'Satisfaction Rate' },
-  { value: '340+',    label: 'Cities Covered' },
+  { value: '1.2M+', label: 'Jobs Completed' },
+  { value: '98.4%', label: 'Satisfaction Rate' },
+  { value: '340+', label: 'Cities Covered' },
 ];
 
 export const PRICING = [
-  { icon: '📅', tier: 'Daily Wage',    range: '₹500 – ₹1,500',        best: 'Home repair, site work' },
-  { icon: '⏱️', tier: 'Hourly Labour', range: '₹80 – ₹250/hr',        best: 'Shops, events, delivery' },
-  { icon: '📝', tier: 'Contract',      range: '₹18,000 – ₹60,000/mo', best: 'IT roles, supervisors' },
-  { icon: '👥', tier: 'Team Manpower', range: '₹12,000 – ₹2,50,000',  best: 'Events, factories, shifting' },
+  { icon: '📅', tier: 'Daily Wage', range: '₹500 – ₹1,500', best: 'Home repair, site work' },
+  { icon: '⏱️', tier: 'Hourly Labour', range: '₹80 – ₹250/hr', best: 'Shops, events, delivery' },
+  { icon: '📝', tier: 'Contract', range: '₹18,000 – ₹60,000/mo', best: 'IT roles, supervisors' },
+  { icon: '👥', tier: 'Team Manpower', range: '₹12,000 – ₹2,50,000', best: 'Events, factories, shifting' },
 ];
 
 export const DEMO_WORKERS = [
-  { id: 1,  name: 'Rajan Thakur',  role: 'Master Electrician',     rating: 4.9, jobs: 312, exp: '8 yrs',  price: '₹850/day',   badge: 'Top Rated', verified: true, initials: 'RT', cat: 'home-repair' },
-  { id: 2,  name: 'Suresh Kumar',  role: 'Plumber & Pipe Fitter',  rating: 4.7, jobs: 198, exp: '6 yrs',  price: '₹750/day',   badge: 'Pro',        verified: true, initials: 'SK', cat: 'home-repair' },
-  { id: 3,  name: 'Amir Khan',     role: 'CCTV & Security Tech',   rating: 4.8, jobs: 245, exp: '5 yrs',  price: '₹1,100/day', badge: 'Top Rated',  verified: true, initials: 'AK', cat: 'it-services' },
-  { id: 4,  name: 'Priya Sharma',  role: 'IT Support & Networking',rating: 4.9, jobs: 87,  exp: '3 yrs',  price: '₹1,400/day', badge: 'Rising ⭐',  verified: true, initials: 'PS', cat: 'it-services' },
-  { id: 5,  name: 'Ramesh Verma',  role: 'AC Mechanic / HVAC',     rating: 4.6, jobs: 421, exp: '10 yrs', price: '₹950/day',   badge: 'Expert',     verified: true, initials: 'RV', cat: 'repair' },
-  { id: 6,  name: 'Deepa Nair',    role: 'Home Cook & Chef',       rating: 4.8, jobs: 134, exp: '4 yrs',  price: '₹400/day',   badge: 'Pro',        verified: true, initials: 'DN', cat: 'home-help' },
-  { id: 7,  name: 'Dev Raj',       role: 'Construction Supervisor',rating: 4.8, jobs: 156, exp: '12 yrs', price: '₹1,200/day', badge: 'Pro',        verified: true, initials: 'DR', cat: 'manpower' },
-  { id: 8,  name: 'Kavita Singh',  role: 'House Cleaner & Helper', rating: 4.7, jobs: 289, exp: '5 yrs',  price: '₹300/visit', badge: 'Top Rated',  verified: true, initials: 'KS', cat: 'home-help' },
-  { id: 9,  name: 'Mohan Das',     role: 'Carpenter & Furniture',  rating: 4.6, jobs: 201, exp: '9 yrs',  price: '₹600/day',   badge: 'Pro',        verified: true, initials: 'MD', cat: 'home-repair' },
+  { id: 1, name: 'Rajan Thakur', role: 'Master Electrician', rating: 4.9, jobs: 312, exp: '8 yrs', price: '₹850/day', badge: 'Top Rated', verified: true, initials: 'RT', cat: 'home-repair', experience_level: 'experienced', trade: 'Electrician' },
+  { id: 2, name: 'Suresh Kumar', role: 'Plumber & Pipe Fitter', rating: 4.7, jobs: 198, exp: '6 yrs', price: '₹750/day', badge: 'Pro', verified: true, initials: 'SK', cat: 'home-repair', experience_level: 'experienced', trade: 'Plumber' },
+  { id: 3, name: 'Amir Khan', role: 'CCTV & Security Tech', rating: 4.8, jobs: 245, exp: '5 yrs', price: '₹1,100/day', badge: 'Top Rated', verified: true, initials: 'AK', cat: 'it-services', experience_level: 'experienced', trade: 'IT / Computer' },
+  { id: 4, name: 'Priya Sharma', role: 'IT Support & Networking', rating: 4.9, jobs: 87, exp: '3 yrs', price: '₹1,400/day', badge: 'Rising ⭐', verified: true, initials: 'PS', cat: 'it-services', experience_level: 'fresher', trade: 'IT / Computer' },
+  { id: 5, name: 'Ramesh Verma', role: 'AC Mechanic / HVAC', rating: 4.6, jobs: 421, exp: '10 yrs', price: '₹950/day', badge: 'Expert', verified: true, initials: 'RV', cat: 'repair', experience_level: 'experienced', trade: 'Electrician' },
+  { id: 6, name: 'Deepa Nair', role: 'Home Cook & Chef', rating: 4.8, jobs: 134, exp: '4 yrs', price: '₹400/day', badge: 'Pro', verified: true, initials: 'DN', cat: 'home-help', experience_level: 'fresher', trade: 'Cook' },
+  { id: 7, name: 'Dev Raj', role: 'Construction Supervisor', rating: 4.8, jobs: 156, exp: '12 yrs', price: '₹1,200/day', badge: 'Pro', verified: true, initials: 'DR', cat: 'manpower', experience_level: 'experienced', trade: 'Painter' },
+  { id: 8, name: 'Kavita Singh', role: 'House Cleaner & Helper', rating: 4.7, jobs: 289, exp: '5 yrs', price: '₹300/visit', badge: 'Top Rated', verified: true, initials: 'KS', cat: 'home-help', experience_level: 'experienced', trade: 'Housekeeping' },
+  { id: 9, name: 'Mohan Das', role: 'Carpenter & Furniture', rating: 4.6, jobs: 201, exp: '9 yrs', price: '₹600/day', badge: 'Pro', verified: true, initials: 'MD', cat: 'home-repair', experience_level: 'experienced', trade: 'Carpenter' },
 ];
 
 // Language translations
@@ -254,14 +254,16 @@ export const LANG: Record<string, any> = {
       back: 'Back', next: 'Next', submit: 'Submit', saving: 'Saving…',
       skip: 'Skip for now',
       qs: [
-        { q: "What's your full name?",           ph: 'Enter your full name',      type: 'text'      },
-        { q: 'Your date of birth?',              ph: 'Select date of birth',      type: 'date'      },
-        { q: 'Your contact number?',             ph: '10-digit mobile number',    type: 'tel'       },
-        { q: 'What are your skills?',            ph: 'Choose all that apply',     type: 'skills'    },
-        { q: 'Your interests?',                  ph: 'Pick your interests',       type: 'interests' },
-        { q: 'Which state are you from?',        ph: 'Select your state',         type: 'location'  },
-        { q: 'Are you looking for work?',        ph: 'Select your role',          type: 'role'      },
-        { q: 'Upload your Aadhaar card',         ph: 'JPG / PNG, max 5 MB',      type: 'file'      },
+        { q: "What's your full name?", ph: 'Enter your full name', type: 'text' },
+        { q: 'Your date of birth?', ph: 'Select date of birth', type: 'date' },
+        { q: 'Your contact number?', ph: '10-digit mobile number', type: 'tel' },
+        { q: 'What are your skills?', ph: 'Choose all that apply', type: 'skills' },
+        { q: 'What is your trade / job type?', ph: 'Pick the trade you work in', type: 'trade' },
+        { q: 'Your interests?', ph: 'Pick your interests', type: 'interests' },
+        { q: 'Which state are you from?', ph: 'Select your state', type: 'location' },
+        { q: 'How much experience do you have?', ph: 'Choose experienced or fresher', type: 'experience' },
+        { q: 'Are you looking for work?', ph: 'Select your role', type: 'role' },
+        { q: 'Upload your Aadhaar card', ph: 'JPG / PNG, max 5 MB', type: 'file' },
       ],
     },
   },
@@ -358,21 +360,25 @@ export const LANG: Record<string, any> = {
       back: 'वापस', next: 'आगे', submit: 'जमा करें', saving: 'सहेज रहे हैं…',
       skip: 'अभी छोड़ें',
       qs: [
-        { q: 'आपका पूरा नाम क्या है?',       ph: 'अपना पूरा नाम लिखें',       type: 'text'      },
-        { q: 'आपकी जन्म तिथि?',              ph: 'जन्म तिथि चुनें',           type: 'date'      },
-        { q: 'आपका संपर्क नंबर?',             ph: '10 अंकों का मोबाइल नंबर',  type: 'tel'       },
-        { q: 'आपके कौशल क्या हैं?',           ph: 'सभी लागू विकल्प चुनें',    type: 'skills'    },
-        { q: 'आपकी रुचियाँ?',                 ph: 'अपनी रुचियाँ चुनें',       type: 'interests' },
-        { q: 'आप किस राज्य से हैं?',          ph: 'अपना राज्य चुनें',         type: 'location'  },
-        { q: 'क्या आप काम की तलाश में हैं?',  ph: 'अपनी भूमिका चुनें',        type: 'role'      },
-        { q: 'अपना आधार कार्ड अपलोड करें',   ph: 'JPG / PNG, 5MB तक',        type: 'file'      },
+        { q: 'आपका पूरा नाम क्या है?', ph: 'अपना पूरा नाम लिखें', type: 'text' },
+        { q: 'आपकी जन्म तिथि?', ph: 'जन्म तिथि चुनें', type: 'date' },
+        { q: 'आपका संपर्क नंबर?', ph: '10 अंकों का मोबाइल नंबर', type: 'tel' },
+        { q: 'आपके कौशल क्या हैं?', ph: 'सभी लागू विकल्प चुनें', type: 'skills' },
+        { q: 'आपका ट्रेड / नौकरी का प्रकार क्या है?', ph: 'अपना ट्रेड चुनें', type: 'trade' },
+        { q: 'आपकी रुचियाँ?', ph: 'अपनी रुचियाँ चुनें', type: 'interests' },
+        { q: 'आप किस राज्य से हैं?', ph: 'अपना राज्य चुनें', type: 'location' },
+        { q: 'आपके पास कितना अनुभव है?', ph: 'अनुभवी या फ्रेशर चुनें', type: 'experience' },
+        { q: 'क्या आप काम की तलाश में हैं?', ph: 'अपनी भूमिका चुनें', type: 'role' },
+        { q: 'अपना आधार कार्ड अपलोड करें', ph: 'JPG / PNG, 5MB तक', type: 'file' },
       ],
     },
   },
 };
 
-export const SKILLS_EN = ['Cooking','Farming','Carpentry','Tailoring','Driving','Teaching','Nursing','Plumbing','Electrical','IT/Computer','Painting','Masonry','Photography','Music','Welding'];
-export const SKILLS_HI = ['खाना पकाना','खेती','बढ़ईगीरी','सिलाई','ड्राइविंग','शिक्षण','नर्सिंग','प्लंबिंग','इलेक्ट्रिकल','IT/कंप्यूटर','चित्रकारी','राजमिस्त्री','फोटोग्राफी','संगीत','वेल्डिंग'];
-export const INTERESTS_EN = ['Sports','Travel','Reading','Music','Art','Cooking','Technology','Farming','Business','Social Work','Yoga','Cinema','Nature','Fitness'];
-export const INTERESTS_HI = ['खेल','यात्रा','पढ़ना','संगीत','कला','खाना','तकनीक','खेती','व्यापार','सामाजिक कार्य','योग','सिनेमा','प्रकृति','फिटनेस'];
-export const STATES = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Delhi','Jammu & Kashmir','Ladakh'];
+export const SKILLS_EN = ['Cooking', 'Farming', 'Carpentry', 'Tailoring', 'Driving', 'Teaching', 'Nursing', 'Plumbing', 'Electrical', 'IT/Computer', 'Painting', 'Masonry', 'Photography', 'Music', 'Welding'];
+export const SKILLS_HI = ['खाना पकाना', 'खेती', 'बढ़ईगीरी', 'सिलाई', 'ड्राइविंग', 'शिक्षण', 'नर्सिंग', 'प्लंबिंग', 'इलेक्ट्रिकल', 'IT/कंप्यूटर', 'चित्रकारी', 'राजमिस्त्री', 'फोटोग्राफी', 'संगीत', 'वेल्डिंग'];
+export const INTERESTS_EN = ['Sports', 'Travel', 'Reading', 'Music', 'Art', 'Cooking', 'Technology', 'Farming', 'Business', 'Social Work', 'Yoga', 'Cinema', 'Nature', 'Fitness'];
+export const INTERESTS_HI = ['खेल', 'यात्रा', 'पढ़ना', 'संगीत', 'कला', 'खाना', 'तकनीक', 'खेती', 'व्यापार', 'सामाजिक कार्य', 'योग', 'सिनेमा', 'प्रकृति', 'फिटनेस'];
+export const TRADE_TYPES_EN = ['Electrician', 'Plumber', 'Carpenter', 'Painter', 'Cook', 'Driver', 'IT / Computer', 'Housekeeping'];
+export const TRADE_TYPES_HI = ['इलेक्ट्रीशियन', 'प्लंबर', 'बढ़ई', 'पेंटर', 'कुक', 'ड्राइवर', 'IT / कंप्यूटर', 'हाउसकीपिंग'];
+export const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu & Kashmir', 'Ladakh'];

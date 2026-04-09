@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LangContext';
 import { getPb } from '@/lib/pocketbase';
-import { SKILLS_EN, SKILLS_HI, INTERESTS_EN, INTERESTS_HI, STATES } from '@/lib/data';
+import { SKILLS_EN, SKILLS_HI, INTERESTS_EN, INTERESTS_HI, STATES, TRADE_TYPES_EN, TRADE_TYPES_HI } from '@/lib/data';
 
 export default function OnboardingPage() {
   const { user, loading, profile, refreshProfile } = useAuth();
@@ -16,11 +16,22 @@ export default function OnboardingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
-  const [ans, setAns] = useState({ name: '', dob: '', contact: '', skills: [] as string[], interests: [] as string[], location: '', role: '', aadhaar: null as File | null });
+  const [ans, setAns] = useState({ name: '', dob: '', contact: '', skills: [] as string[], interests: [] as string[], location: '', trade: '', experience_level: '', role: '', aadhaar: null as File | null });
 
   useEffect(() => { if (!loading && !user) router.push('/login'); }, [user, loading]);
   useEffect(() => {
-    if (profile) setAns(a => ({ ...a, name: profile.name || '', dob: profile.dob || '', contact: profile.contact || '', skills: profile.skills ? profile.skills.split(', ').filter(Boolean) : [], interests: profile.interests ? profile.interests.split(', ').filter(Boolean) : [], location: profile.location || '', role: profile.role || '' }));
+    if (profile) setAns(a => ({
+      ...a,
+      name: profile.name || '',
+      dob: profile.dob || '',
+      contact: profile.contact || '',
+      skills: profile.skills ? profile.skills.split(', ').filter(Boolean) : [],
+      interests: profile.interests ? profile.interests.split(', ').filter(Boolean) : [],
+      location: profile.location || '',
+      trade: profile.trade || '',
+      experience_level: profile.experience_level || '',
+      role: profile.role || '',
+    }));
   }, [profile]);
 
   const total = ob.qs.length;
@@ -35,6 +46,8 @@ export default function OnboardingPage() {
     if (q.type === 'skills') return ans.skills.length > 0;
     if (q.type === 'interests') return ans.interests.length > 0;
     if (q.type === 'location') return !!ans.location;
+    if (q.type === 'trade') return !!ans.trade;
+    if (q.type === 'experience') return !!ans.experience_level;
     if (q.type === 'role') return !!ans.role;
     return true;
   };
@@ -54,7 +67,7 @@ export default function OnboardingPage() {
       const fd = new FormData();
       fd.append('user', user.id); fd.append('name', ans.name); fd.append('dob', ans.dob);
       fd.append('contact', ans.contact); fd.append('skills', ans.skills.join(', '));
-      fd.append('interests', ans.interests.join(', ')); fd.append('location', ans.location); fd.append('role', ans.role);
+      fd.append('trade', ans.trade); fd.append('interests', ans.interests.join(', ')); fd.append('location', ans.location); fd.append('experience_level', ans.experience_level); fd.append('role', ans.role);
       if (ans.aadhaar) fd.append('aadhaar', ans.aadhaar);
       if (profile?.id) await pb.collection('profiles').update(profile.id, fd);
       else await pb.collection('profiles').create(fd);
@@ -115,6 +128,35 @@ export default function OnboardingPage() {
             {q.type === 'skills' && <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>{skillsDisplay.map((s, i) => <button key={i} onClick={() => toggle2(SKILLS_EN[i], 'skills')} style={chip(ans.skills.includes(SKILLS_EN[i]))}>{s}</button>)}</div>}
             {q.type === 'interests' && <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>{interestsDisplay.map((s, i) => <button key={i} onClick={() => toggle2(INTERESTS_EN[i], 'interests')} style={chip(ans.interests.includes(INTERESTS_EN[i]))}>{s}</button>)}</div>}
             {q.type === 'location' && <select style={inp} value={ans.location} onChange={e => setAns(a => ({ ...a, location: e.target.value }))}><option value="">{lang === 'en' ? '— Select state —' : '— राज्य चुनें —'}</option>{STATES.map(s => <option key={s} value={s}>{s}</option>)}</select>}
+            {q.type === 'trade' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(130px,1fr))', gap: 10 }}>
+                {(lang === 'en' ? TRADE_TYPES_EN : TRADE_TYPES_HI).map((trade, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setAns(a => ({ ...a, trade }))}
+                    style={{ ...chip(ans.trade === trade), width: '100%', padding: '14px 12px', textAlign: 'center' }}
+                  >
+                    {trade}
+                  </button>
+                ))}
+              </div>
+            )}
+            {q.type === 'experience' && (
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                {[
+                  { key: 'experienced', label: lang === 'en' ? 'Experienced (5+ yrs)' : 'अनुभवी (5+ वर्ष)' },
+                  { key: 'fresher', label: lang === 'en' ? 'Fresher (<5 yrs)' : 'ताज़ा (5 वर्ष से कम)' },
+                ].map(item => (
+                  <button
+                    key={item.key}
+                    onClick={() => setAns(a => ({ ...a, experience_level: item.key }))}
+                    style={{ ...chip(ans.experience_level === item.key), flex: 1, padding: '14px 18px', textAlign: 'center' }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
             {q.type === 'role' && <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>{ROLES_DISPLAY.map((r, i) => <button key={i} onClick={() => setAns(a => ({ ...a, role: ROLES_KEYS[i] }))} style={{ ...chip(ans.role === ROLES_KEYS[i]), padding: '12px 18px', textAlign: 'left', borderRadius: 12 }}>{r}</button>)}</div>}
             {q.type === 'file' && (
               <div onClick={() => fileRef.current?.click()} style={{ border: `2px dashed ${ans.aadhaar ? '#16a34a' : '#d1fae5'}`, borderRadius: 16, padding: '36px 24px', textAlign: 'center', cursor: 'pointer', background: ans.aadhaar ? '#f0fdf4' : '#fafafa', transition: 'all 0.2s' }}>

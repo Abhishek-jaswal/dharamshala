@@ -18,14 +18,14 @@ interface WorkersListProps {
 export default function WorkersList({ categoryId, onClose }: WorkersListProps) {
     const [selectedWorker, setSelectedWorker] = useState<any>(null);
 
-    // Filter workers by category
-    const workers = categoryId
+    // Filter workers by category or all verified
+    const workers = categoryId && categoryId !== 'all'
         ? DEMO_WORKERS.filter((w) => w.cat === categoryId)
-        : DEMO_WORKERS;
+        : DEMO_WORKERS.filter((w) => w.verified);
 
     // Get category info
     const category = CATEGORIES.find((c) => c.id === categoryId);
-    const categoryLabel = category?.label || 'All Workers';
+    const categoryLabel = category?.label || (categoryId === 'all' ? 'All Verified Workers' : 'All Workers');
 
     if (!workers.length) {
         return (
