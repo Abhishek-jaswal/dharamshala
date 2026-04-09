@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { useLang } from '@/context/LangContext';
 import { getPb } from '@/lib/pocketbase';
 import { CATEGORIES } from '@/lib/data';
 // import { shareJob, vibrate, vibrateCelebrate } from '@/lib/pwa';
@@ -232,7 +231,7 @@ function ApplicantsDrawer({ job }: { job: any }) {
 }
 
 // ── Single job card ───────────────────────────────────────────────────────────
-function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any; user: any; authLoading: boolean; lang: string; onDelete?: (jobId: string) => void; onEdit?: (job: any) => void }) {
+function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user: any; authLoading: boolean; onDelete?: (jobId: string) => void; onEdit?: (job: any) => void }) {
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -322,7 +321,7 @@ function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any;
       navigator.share({ title: `${job.title} — UrbanServe`, text, url }).catch(() => { });
     } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      setShareLabel(lang === 'hi' ? '✅ कॉपी हो गया!' : '✅ Copied!');
+      setShareLabel('✅ Copied!');
       setTimeout(() => setShareLabel(null), 2000);
     }
   };
@@ -378,7 +377,7 @@ function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any;
 
       {/* My job badge */}
       {isMyJob && (
-        <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ {lang === 'hi' ? 'आपकी जॉब पोस्टिंग' : 'Your Job Posting'}</div>
+        <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ {'Your Job Posting'}</div>
       )}
 
       {/* Job status display */}
@@ -398,24 +397,24 @@ function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any;
           <ApplicantsDrawer job={job} />
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
             <button onClick={handleShare} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.2s' }}>
-              {shareLabel ?? (lang === 'hi' ? '🔗 शेयर करें' : '🔗 Share')}
+              {shareLabel ?? ('🔗 Share')}
             </button>
             <button onClick={() => onEdit?.(job)} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #3b82f6', borderRadius: 10, background: '#eff6ff', color: '#3b82f6', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-              ✏️ {lang === 'hi' ? 'संपादन' : 'Edit'}
+              ✏️ {'Edit'}
             </button>
             <button onClick={async () => {
-              if (!confirm(lang === 'hi' ? 'क्या आप यह नौकरी हटाना चाहते हैं?' : 'Are you sure you want to delete this job?')) return;
+              if (!confirm('Are you sure you want to delete this job?')) return;
               setDeleting(true);
               try {
                 await getPb().collection('jobs').delete(job.id);
                 onDelete?.(job.id);
               } catch (e) {
-                alert(lang === 'hi' ? 'नौकरी हटाने में विफल' : 'Failed to delete job');
+                alert('Failed to delete job');
               } finally {
                 setDeleting(false);
               }
             }} disabled={deleting} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #dc2626', borderRadius: 10, background: '#fef2f2', color: '#dc2626', fontSize: 13, fontWeight: 600, cursor: deleting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: deleting ? 0.6 : 1 }}>
-              🗑️ {deleting ? (lang === 'hi' ? 'हटा रहे हैं…' : 'Deleting…') : (lang === 'hi' ? 'हटाएं' : 'Delete')}
+              🗑️ {deleting ? ('Deleting…') : ('Delete')}
             </button>
           </div>
         </>
@@ -431,12 +430,10 @@ function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any;
               <span style={{ fontSize: 32, flexShrink: 0 }}>📬</span>
               <div>
                 <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 3 }}>
-                  {lang === 'hi' ? '✅ आवेदन भेज दिया गया!' : '✅ Application Sent!'}
+                  {'✅ Application Sent!'}
                 </div>
                 <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.55 }}>
-                  {lang === 'hi'
-                    ? 'नौकरी देने वाला आपकी प्रोफाइल देखेगा और जल्द संपर्क करेगा। अपना फोन नंबर अपडेट रखें।'
-                    : 'The hiring person will review your profile and contact you soon. Make sure your phone number is up to date.'}
+                  {'The hiring person will review your profile and contact you soon. Make sure your phone number is up to date.'}
                 </div>
               </div>
             </div>
@@ -453,16 +450,16 @@ function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any;
                 boxShadow: checking ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
               }}>
               {checking
-                ? (lang === 'hi' ? 'लोड हो रहा है…' : 'Loading…')
+                ? ('Loading…')
                 : applying
-                  ? (lang === 'hi' ? 'आवेदन हो रहा है…' : 'Applying…')
-                  : (lang === 'hi' ? 'अभी आवेदन करें →' : 'Apply Now →')}
+                  ? ('Applying…')
+                  : ('Apply Now →')}
             </button>
           )}
 
           {/* Share button — always visible for non-poster */}
           <button onClick={handleShare} style={{ width: '100%', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 6, transition: 'all 0.2s' }}>
-            {shareLabel ?? (lang === 'hi' ? '🔗 शेयर करें' : '🔗 Share Job')}
+            {shareLabel ?? ('🔗 Share Job')}
           </button>
 
         </>
@@ -474,8 +471,6 @@ function JobCard({ job, user, authLoading, lang, onDelete, onEdit }: { job: any;
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function GigsPage() {
   const { user, loading: authLoading } = useAuth();
-  const { lang, t } = useLang();
-  const g = t.gigs;
   const router = useRouter();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -511,7 +506,7 @@ export default function GigsPage() {
   const handlePost = async () => {
     if (!user) { router.push('/login'); return; }
     if (!form.title || !form.pay || !form.location) {
-      alert(lang === 'hi' ? 'कृपया भरें: नौकरी का शीर्षक, वेतन और स्थान' : 'Please fill: Job title, Pay, and Location');
+      alert('Please fill: Job title, Pay, and Location');
       return;
     }
     setPosting(true);
@@ -526,7 +521,7 @@ export default function GigsPage() {
       }
       setShowPost(false);
       setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
-    } catch (e) { console.error(e); alert(lang === 'hi' ? 'विफल' : 'Failed'); }
+    } catch (e) { console.error(e); alert('Failed'); }
     finally { setPosting(false); }
   };
 
@@ -559,17 +554,15 @@ export default function GigsPage() {
           <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
             <div>
               <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>
-                {lang === 'hi' ? '💼 नौकरी खोजें' : '💼 Find Jobs'}
+                {'💼 Find Jobs'}
               </h1>
               <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
-                {lang === 'hi'
-                  ? `${jobs.length} नौकरियां अभी उपलब्ध · किसी भी कार्ड पर टैप करें`
-                  : `${jobs.length} jobs live right now · Tap any card to apply`}
+                {`${jobs.length} jobs live right now · Tap any card to apply`}
               </p>
             </div>
             <button onClick={() => user ? setShowPost(true) : router.push('/login')}
               className="post-job-hero-btn" style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
-              {lang === 'hi' ? '+ नौकरी पोस्ट करें' : '+ Post a Job'}
+              {'+ Post a Job'}
             </button>
           </div>
         </header>
@@ -579,22 +572,22 @@ export default function GigsPage() {
           <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
             <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
             <input id="job-search" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder={lang === 'hi' ? '🔍  नौकरी, कौशल या शहर खोजें...' : '🔍  Search jobs, skills, or city...'}
+              placeholder={'🔍  Search jobs, skills, or city...'}
               style={{ flex: 1, border: 'none', background: 'transparent', padding: '14px 18px', fontSize: 16, fontFamily: 'inherit', outline: 'none', color: '#0f172a' }} />
             <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-              {lang === 'hi' ? 'खोजें' : 'Search'}
+              {'Search'}
             </button>
           </div>
 
           <div className="pill-scroll" role="tablist" aria-label="Category filter" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
             <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>
-              {lang === 'hi' ? '🌐 सभी श्रेणियां' : '🌐 All Categories'}
+              {'🌐 All Categories'}
             </Pill>
             {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
           </div>
           <div className="pill-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 16, marginBottom: 28 }}>
             <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>
-              {lang === 'hi' ? 'सभी प्रकार' : 'All Types'}
+              {'All Types'}
             </Pill>
             {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
           </div>
@@ -602,23 +595,23 @@ export default function GigsPage() {
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 0', gap: 16 }}>
               <div className="spinner" />
-              <p style={{ color: '#94a3b8', fontSize: 15 }}>{lang === 'hi' ? 'नौकरियां लोड हो रही हैं…' : 'Loading jobs…'}</p>
+              <p style={{ color: '#94a3b8', fontSize: 15 }}>{'Loading jobs…'}</p>
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 0' }}>
               <div style={{ fontSize: 56, marginBottom: 12 }}>🔍</div>
               <p style={{ color: '#334155', fontWeight: 700, fontSize: 18 }}>
-                {lang === 'hi' ? 'कोई नौकरी नहीं मिली' : 'No jobs found'}
+                {'No jobs found'}
               </p>
               <p style={{ color: '#94a3b8', fontSize: 14, marginTop: 6 }}>
                 {jobs.length === 0
-                  ? (lang === 'hi' ? 'पहली नौकरी पोस्ट करें!' : 'Be the first to post a job!')
-                  : (lang === 'hi' ? 'अलग फिल्टर आज़माएं' : 'Try different filters')}
+                  ? ('Be the first to post a job!')
+                  : ('Try different filters')}
               </p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
-              {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} lang={lang} onDelete={handleDeleteJob} onEdit={handleEditJob} />)}
+              {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} onDelete={handleDeleteJob} onEdit={handleEditJob} />)}
             </div>
           )}
         </div>
@@ -633,23 +626,23 @@ export default function GigsPage() {
                 <div>
                   <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>
                     {editingJob
-                      ? (lang === 'hi' ? '✏️ नौकरी संपादित करें' : '✏️ Edit Job')
-                      : (lang === 'hi' ? '📋 नौकरी पोस्ट करें' : '📋 Post a Job')}
+                      ? ('✏️ Edit Job')
+                      : ('📋 Post a Job')}
                   </h2>
                   <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>
                     {editingJob
-                      ? (lang === 'hi' ? 'परिवर्तन करें और सहेजें' : 'Make changes and save')
-                      : (lang === 'hi' ? 'जल्दी से वर्कर खोजने के लिए भरें' : 'Fill details to find workers fast')}
+                      ? ('Make changes and save')
+                      : ('Fill details to find workers fast')}
                   </p>
                 </div>
                 <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false }); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {([
-                  ['title', lang === 'hi' ? 'नौकरी का शीर्षक *' : 'Job Title *', lang === 'hi' ? 'जैसे: घर में प्लंबर चाहिए' : 'e.g. Need Plumber at Home'],
-                  ['pay', lang === 'hi' ? 'वेतन *' : 'Pay *', lang === 'hi' ? 'जैसे: ₹500/दिन' : 'e.g. ₹500/day'],
-                  ['location', lang === 'hi' ? 'स्थान *' : 'Location *', lang === 'hi' ? 'शहर या क्षेत्र' : 'City or Area'],
-                  ['company', lang === 'hi' ? 'कंपनी / दुकान (वैकल्पिक)' : 'Company / Shop (optional)', lang === 'hi' ? 'आपका बिज़नेस नाम' : 'Your business name'],
+                  ['title', 'Job Title *', 'e.g. Need Plumber at Home'],
+                  ['pay', 'Pay *', 'e.g. ₹500/day'],
+                  ['location', 'Location *', 'City or Area'],
+                  ['company', 'Company / Shop (optional)', 'Your business name'],
                 ] as [string, string, string][]).map(([field, label, ph]) => (
                   <div key={field}>
                     <label htmlFor={`post-${field}`} style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>{label}</label>
@@ -659,7 +652,7 @@ export default function GigsPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
                     <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                      {lang === 'hi' ? 'नौकरी का प्रकार' : 'Job Type'}
+                      {'Job Type'}
                     </label>
                     <select style={inp} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                       {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
@@ -667,30 +660,30 @@ export default function GigsPage() {
                   </div>
                   <div>
                     <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                      {lang === 'hi' ? 'श्रेणी' : 'Category'}
+                      {'Category'}
                     </label>
                     <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                      <option value="">{lang === 'hi' ? '— चुनें —' : '— Select —'}</option>
+                      <option value="">{'— Select —'}</option>
                       {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
                   <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                    {lang === 'hi' ? 'आवश्यक कौशल (वैकल्पिक)' : 'Required Skills (optional)'}
+                    {'Required Skills (optional)'}
                   </label>
-                  <input placeholder={lang === 'hi' ? 'जैसे: प्लंबिंग, वायरिंग' : 'e.g. Plumbing, Wiring'} style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
+                  <input placeholder={'e.g. Plumbing, Wiring'} style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
                 </div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
                   <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
                   <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>
-                    {lang === 'hi' ? '🔥 अत्यावश्यक चिह्नित करें' : '🔥 Mark as Urgent'}
+                    {'🔥 Mark as Urgent'}
                   </span>
                 </label>
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
                 <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false }); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
-                  {lang === 'hi' ? 'रद्द करें' : 'Cancel'}
+                  {'Cancel'}
                 </button>
                 <button onClick={handlePost} disabled={posting} style={{
                   flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
@@ -698,10 +691,10 @@ export default function GigsPage() {
                   boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
                 }}>
                   {posting
-                    ? (lang === 'hi' ? 'हो रहा है…' : 'Saving…')
+                    ? ('Saving…')
                     : editingJob
-                      ? (lang === 'hi' ? '✅ अपडेट करें' : '✅ Update Job')
-                      : (lang === 'hi' ? '✅ नौकरी पोस्ट करें' : '✅ Post Job Now')}
+                      ? ('✅ Update Job')
+                      : ('✅ Post Job Now')}
                 </button>
               </div>
             </div>
