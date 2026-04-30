@@ -366,6 +366,17 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
         </div>
       )}
 
+      {/* External apply link */}
+      {job.link && (
+        <a href={job.link} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '9px 14px', fontSize: 13, color: '#2563eb', fontWeight: 600 }}>
+            <span>🔗</span>
+            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>Apply via Link</span>
+            <span style={{ fontSize: 11, opacity: 0.7 }}>↗</span>
+          </div>
+        </a>
+      )}
+
       {/* Applicant count badge (non-poster) */}
       {!isMyJob && applicantCount !== null && applicantCount > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b' }}>
@@ -480,7 +491,7 @@ export default function GigsPage() {
   const [showPost, setShowPost] = useState(false);
   const [posting, setPosting] = useState(false);
   const [editingJob, setEditingJob] = useState<any | null>(null);
-  const [form, setForm] = useState({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
+  const [form, setForm] = useState({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' });
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -520,7 +531,7 @@ export default function GigsPage() {
         await getPb().collection('jobs').create({ ...form, posted_by: user.id });
       }
       setShowPost(false);
-      setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false });
+      setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' });
     } catch (e) { console.error(e); alert('Failed'); }
     finally { setPosting(false); }
   };
@@ -539,6 +550,7 @@ export default function GigsPage() {
       skills: job.skills || '',
       category: job.category || '',
       urgent: job.urgent || false,
+      link: job.link || '',
     });
     setEditingJob(job);
     setShowPost(true);
@@ -635,7 +647,7 @@ export default function GigsPage() {
                       : ('Fill details to find workers fast')}
                   </p>
                 </div>
-                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false }); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
+                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' }); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {([
@@ -674,6 +686,13 @@ export default function GigsPage() {
                   </label>
                   <input placeholder={'e.g. Plumbing, Wiring'} style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
                 </div>
+                <div>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
+                    {'Apply Link (optional)'}
+                  </label>
+                  <input placeholder={'e.g. https://forms.google.com/... or WhatsApp link'} style={inp} value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} />
+                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, marginLeft: 2 }}>Add a link where applicants can apply (Google Form, WhatsApp, etc.)</p>
+                </div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
                   <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
                   <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>
@@ -682,7 +701,7 @@ export default function GigsPage() {
                 </label>
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false }); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
+                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' }); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
                   {'Cancel'}
                 </button>
                 <button onClick={handlePost} disabled={posting} style={{
