@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { getPb } from '@/lib/pocketbase';
 import { CATEGORIES } from '@/lib/data';
-// import { shareJob, vibrate, vibrateCelebrate } from '@/lib/pwa';
 
 const JOB_TYPES = ['Daily Wage', 'Hourly', 'Part-Time', 'Contract', 'Full-Time', 'Team Hire'];
 
@@ -17,6 +16,32 @@ const Pill = ({ active, onClick, children }: any) => (
     color: active ? '#fff' : '#475569',
   }}>{children}</button>
 );
+
+// ── Profile Incomplete Warning Modal ─────────────────────────────────────────
+function ProfileWarningModal({ onClose, onContinue }: { onClose: () => void; onContinue: () => void }) {
+  return (
+    <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(4px)' }}>
+      <div className="slide-down" style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 380, padding: 28, boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
+        <div style={{ fontSize: 48, textAlign: 'center' as const, marginBottom: 16 }}>⚠️</div>
+        <h3 style={{ fontWeight: 900, color: '#0f172a', fontSize: 18, textAlign: 'center' as const, marginBottom: 8 }}>Profile Incomplete</h3>
+        <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.6, textAlign: 'center' as const, marginBottom: 20 }}>
+          You haven't added a <strong>phone number</strong> to your profile. The employer won't be able to contact you!
+        </p>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <a href="/dashboard" style={{ flex: 1, textDecoration: 'none' }}>
+            <button style={{ width: '100%', padding: '12px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+              📱 Add Phone
+            </button>
+          </a>
+          <button onClick={onContinue} style={{ flex: 1, padding: '12px', background: '#f8fafc', color: '#64748b', border: '1.5px solid #e2e8f0', borderRadius: 12, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+            Apply Anyway
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Full profile modal shown when poster clicks applicant name ───────────────
 function ProfileModal({ person, onClose }: { person: any; onClose: () => void }) {
@@ -35,13 +60,10 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
     <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(4px)' }}>
       <div className="slide-down" style={{ background: '#fff', borderRadius: 24, width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' as const, boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
-
         <div style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: '32px 28px 28px', borderRadius: '24px 24px 0 0', position: 'relative' }}>
           <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 8, width: 32, height: 32, fontSize: 16, cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ width: 68, height: 68, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '3px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 26, fontWeight: 900, flexShrink: 0 }}>
-              {initials}
-            </div>
+            <div style={{ width: 68, height: 68, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '3px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 26, fontWeight: 900, flexShrink: 0 }}>{initials}</div>
             <div>
               <div style={{ fontWeight: 900, color: '#fff', fontSize: 22 }}>{name}</div>
               {role && <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, marginTop: 3, textTransform: 'capitalize' as const }}>👤 {role}</div>}
@@ -54,34 +76,22 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
           <div style={{ background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 12, padding: '10px 14px', fontSize: 13, color: '#16a34a', fontWeight: 600 }}>
             ✅ Applied on {applied}
           </div>
-
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>CONTACT</div>
             {phone ? (
               <div style={{ display: 'flex', gap: 10 }}>
                 <a href={`tel:${phone}`} style={{ flex: 1, textDecoration: 'none' }}>
-                  <button style={{ width: '100%', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}>
-                    📞 Call Now
-                  </button>
+                  <button style={{ width: '100%', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}>📞 Call Now</button>
                 </a>
-                <a href={`https://wa.me/91${phone}?text=Hi ${encodeURIComponent(name)}, I saw your job application on UrbanServe. Are you still available?`} target="_blank" rel="noreferrer" style={{ flex: 1, textDecoration: 'none' }}>
-                  <button style={{ width: '100%', background: '#dcfce7', color: '#16a34a', border: '1.5px solid #d1fae5', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    💬 WhatsApp
-                  </button>
+                <a href={`https://wa.me/91${phone}?text=Hi ${encodeURIComponent(name)}, I saw your application on UrbanServe. Are you still available?`} target="_blank" rel="noreferrer" style={{ flex: 1, textDecoration: 'none' }}>
+                  <button style={{ width: '100%', background: '#dcfce7', color: '#16a34a', border: '1.5px solid #d1fae5', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>💬 WhatsApp</button>
                 </a>
               </div>
             ) : (
-              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: '12px 14px', color: '#dc2626', fontSize: 13, fontWeight: 600 }}>
-                ⚠️ This person has not added a phone number yet.
-              </div>
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: '12px 14px', color: '#dc2626', fontSize: 13, fontWeight: 600 }}>⚠️ This person has not added a phone number yet.</div>
             )}
-            {phone && (
-              <div style={{ marginTop: 8, background: '#f8fafc', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#64748b', textAlign: 'center' as const }}>
-                📱 {phone}
-              </div>
-            )}
+            {phone && <div style={{ marginTop: 8, background: '#f8fafc', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#64748b', textAlign: 'center' as const }}>📱 {phone}</div>}
           </div>
-
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>PROFILE DETAILS</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0, background: '#f8fafc', borderRadius: 14, overflow: 'hidden' }}>
@@ -95,7 +105,6 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
                 ))}
             </div>
           </div>
-
           {skills && (
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>🛠 SKILLS</div>
@@ -122,7 +131,7 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
   );
 }
 
-// ── Applicants drawer for the job poster ────────────────────────────────────
+// ── Applicants drawer ────────────────────────────────────────────────────────
 function ApplicantsDrawer({ job }: { job: any }) {
   const [applicants, setApplicants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,9 +147,7 @@ function ApplicantsDrawer({ job }: { job: any }) {
   const load = async () => {
     setLoading(true);
     try {
-      const apps = await getPb().collection('applications').getList(1, 100, {
-        filter: `job="${job.id}"`, sort: '-created',
-      });
+      const apps = await getPb().collection('applications').getList(1, 100, { filter: `job="${job.id}"`, sort: '-created' });
       const rich = await Promise.all(apps.items.map(async (app: any) => {
         try {
           const profile = await getPb().collection('profiles').getFirstListItem(`user="${app.applicant}"`);
@@ -157,8 +164,7 @@ function ApplicantsDrawer({ job }: { job: any }) {
   return (
     <div>
       <button onClick={toggle} style={{
-        width: '100%',
-        background: open ? '#0f172a' : '#f0fdf4',
+        width: '100%', background: open ? '#0f172a' : '#f0fdf4',
         border: `1.5px solid ${open ? '#0f172a' : '#d1fae5'}`,
         borderRadius: 12, padding: '13px', fontSize: 14, fontWeight: 700,
         color: open ? '#fff' : '#16a34a', cursor: 'pointer', fontFamily: 'inherit',
@@ -190,30 +196,24 @@ function ApplicantsDrawer({ job }: { job: any }) {
             const skills = app.profile?.skills;
             const location = app.profile?.location;
             const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
-
             return (
               <div key={i} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '16px 18px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <button onClick={() => setViewProfile(app)}
                     style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, padding: 0, fontFamily: 'inherit' }}>
-                    <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg,#16a34a,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16, flexShrink: 0 }}>
-                      {initials}
-                    </div>
+                    <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg,#16a34a,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16, flexShrink: 0 }}>{initials}</div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
                         {name}
-                        <span style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 99, padding: '1px 7px' }}>View Profile →</span>
+                        <span style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 99, padding: '1px 7px' }}>View →</span>
                       </div>
                       {location && <div style={{ color: '#64748b', fontSize: 12, marginTop: 2 }}>📍 {location}</div>}
                       {skills && <div style={{ color: '#94a3b8', fontSize: 12, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>🛠 {skills}</div>}
                     </div>
                   </button>
-
                   {phone ? (
                     <a href={`tel:${phone}`} style={{ textDecoration: 'none', flexShrink: 0 }}>
-                      <button style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}>
-                        📞 Call
-                      </button>
+                      <button style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}>📞 Call</button>
                     </a>
                   ) : (
                     <span style={{ fontSize: 12, color: '#94a3b8', flexShrink: 0 }}>No phone</span>
@@ -224,32 +224,36 @@ function ApplicantsDrawer({ job }: { job: any }) {
           })}
         </div>
       )}
-
       {viewProfile && <ProfileModal person={viewProfile} onClose={() => setViewProfile(null)} />}
     </div>
   );
 }
 
 // ── Single job card ───────────────────────────────────────────────────────────
-function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user: any; authLoading: boolean; onDelete?: (jobId: string) => void; onEdit?: (job: any) => void }) {
+function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmarked, onBookmark, onStatusChange }: {
+  job: any; user: any; profile: any; authLoading: boolean;
+  onDelete?: (id: string) => void; onEdit?: (job: any) => void;
+  isBookmarked?: boolean; onBookmark?: (id: string) => void;
+  onStatusChange?: (id: string, status: string) => void;
+}) {
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
   const [checking, setChecking] = useState(true);
   const [applicantCount, setApplicantCount] = useState<number | null>(null);
   const [shareLabel, setShareLabel] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [showProfileWarning, setShowProfileWarning] = useState(false);
+  const [waLoading, setWaLoading] = useState(false);
+  const [jobStatus, setJobStatus] = useState(job.status || 'open');
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
 
-  // Determine job status based on applicant count
-  const getJobStatus = () => {
-    if (job.status === 'filled') return { label: 'Hired', icon: '✅', color: '#16a34a', bg: '#f0fdf4' };
-    if (job.status === 'closed') return { label: 'Closed', icon: '❌', color: '#dc2626', bg: '#fef2f2' };
-    if (applicantCount && applicantCount > 0) return { label: 'Under Review', icon: '👀', color: '#f59e0b', bg: '#fef9e7' };
-    return { label: 'Pending', icon: '⏳', color: '#64748b', bg: '#f8fafc' };
+  const getStatusBadge = () => {
+    if (jobStatus === 'filled') return { label: 'Hired ✅', color: '#16a34a', bg: '#f0fdf4' };
+    if (jobStatus === 'closed') return { label: 'Closed ❌', color: '#dc2626', bg: '#fef2f2' };
+    if (applicantCount && applicantCount > 0) return { label: 'Under Review 👀', color: '#f59e0b', bg: '#fef9e7' };
+    return { label: 'Open ⏳', color: '#64748b', bg: '#f8fafc' };
   };
-
-  const jobStatus = getJobStatus();
 
   const timeAgo = (() => {
     const d = (Date.now() - new Date(job.created).getTime()) / 1000;
@@ -258,60 +262,61 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
     return `${Math.floor(d / 86400)}d ago`;
   })();
 
-  // Check if already applied — read localStorage first (instant), then confirm via API
   useEffect(() => {
-    if (authLoading) return; // auth not ready yet
+    if (authLoading) return;
     if (!user || isMyJob) { setChecking(false); return; }
-
-    // ── 1. Instant cache check ────────────────────────────────
     const cacheKey = `applied_${user.id}_${job.id}`;
     if (typeof localStorage !== 'undefined' && localStorage.getItem(cacheKey) === '1') {
-      setApplied(true);
-      setChecking(false);
-      return; // already confirmed from cache, skip API call
+      setApplied(true); setChecking(false); return;
     }
-
-    // ── 2. API check (confirms server-side) ──────────────────
-    getPb().collection('applications')
-      .getList(1, 1, { filter: `job="${job.id}" && applicant="${user.id}"` })
+    getPb().collection('applications').getList(1, 1, { filter: `job="${job.id}" && applicant="${user.id}"` })
       .then(res => {
         if (res.totalItems > 0) {
           setApplied(true);
-          // Persist to localStorage so next refresh is instant
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem(cacheKey, '1');
-          }
+          if (typeof localStorage !== 'undefined') localStorage.setItem(cacheKey, '1');
         }
-      })
-      .catch(() => { })
-      .finally(() => setChecking(false));
+      }).catch(() => { }).finally(() => setChecking(false));
   }, [user, job.id, isMyJob, authLoading]);
 
-  // Fetch applicant count for non-posters
   useEffect(() => {
     if (isMyJob) return;
     getPb().collection('applications').getList(1, 1, { filter: `job="${job.id}"` })
       .then(r => setApplicantCount(r.totalItems)).catch(() => setApplicantCount(0));
   }, [job.id, isMyJob]);
 
-  const handleApply = async () => {
-    if (!user) { window.location.href = '/login'; return; }
+  const doApply = async () => {
     setApplying(true);
     try {
       await getPb().collection('applications').create({ job: job.id, applicant: user.id, status: 'pending' });
       setApplied(true);
-      // Persist so page refresh still shows "Applied"
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
-      }
-      // Haptic feedback — tiny 80ms buzz on success
+      if (typeof localStorage !== 'undefined') localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
       if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(80);
     } catch {
-      setApplied(true); // duplicate = already applied
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
-      }
+      setApplied(true);
+      if (typeof localStorage !== 'undefined') localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
     } finally { setApplying(false); }
+  };
+
+  const handleApply = async () => {
+    if (!user) { window.location.href = '/login'; return; }
+    // Profile completeness check
+    if (!profile?.contact) { setShowProfileWarning(true); return; }
+    await doApply();
+  };
+
+  const handleWhatsAppApply = async () => {
+    if (!user) { window.location.href = '/login'; return; }
+    setWaLoading(true);
+    try {
+      const posterProfile = await getPb().collection('profiles').getFirstListItem(`user="${job.posted_by}"`);
+      if (posterProfile?.contact) {
+        const msg = `Hi! I saw your job post "${job.title}" (${job.pay}) on UrbanServe and I'm interested. Can we discuss?`;
+        window.open(`https://wa.me/91${posterProfile.contact}?text=${encodeURIComponent(msg)}`, '_blank');
+      } else {
+        alert("The poster hasn't added a WhatsApp number yet. Please use the Apply button instead.");
+      }
+    } catch { alert('Could not fetch contact details. Try the Apply button instead.'); }
+    finally { setWaLoading(false); }
   };
 
   const handleShare = async () => {
@@ -326,12 +331,31 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
     }
   };
 
+  const handleUpdateStatus = async (newStatus: string) => {
+    try {
+      await getPb().collection('jobs').update(job.id, { status: newStatus });
+      setJobStatus(newStatus);
+      onStatusChange?.(job.id, newStatus);
+    } catch { alert('Failed to update status.'); }
+  };
+
+  const statusBadge = getStatusBadge();
+
   return (
     <article className="hover-lift" aria-label={job.title} style={{
       background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
       padding: 'clamp(14px,4vw,22px)' as any, boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
       display: 'flex', flexDirection: 'column', gap: 16,
+      opacity: jobStatus === 'closed' ? 0.75 : 1,
     }}>
+
+      {showProfileWarning && (
+        <ProfileWarningModal
+          onClose={() => setShowProfileWarning(false)}
+          onContinue={async () => { setShowProfileWarning(false); await doApply(); }}
+        />
+      )}
+
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ display: 'flex', gap: 12, flex: 1, minWidth: 0 }}>
@@ -343,9 +367,17 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
             {job.company && <div style={{ color: '#94a3b8', fontSize: 13 }}>{job.company}</div>}
           </div>
         </div>
-        <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
           <div style={{ fontWeight: 900, color: '#16a34a', fontSize: 18 }}>{job.pay}</div>
-          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{timeAgo}</div>
+          <div style={{ fontSize: 11, color: '#94a3b8' }}>{timeAgo}</div>
+          {/* Bookmark button */}
+          <button onClick={() => onBookmark?.(job.id)} title={isBookmarked ? 'Remove bookmark' : 'Save job'} style={{
+            background: isBookmarked ? '#fef9ee' : '#f8fafc', border: `1px solid ${isBookmarked ? '#fde68a' : '#e2e8f0'}`,
+            borderRadius: 8, width: 30, height: 30, fontSize: 15, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
+          }}>
+            {isBookmarked ? '🔖' : '🔗'}
+          </button>
         </div>
       </div>
 
@@ -355,6 +387,8 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
         <span style={{ background: '#f0fdf4', color: '#15803d', border: '1px solid #d1fae5', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>📍 {job.location}</span>
         <span style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>{job.type}</span>
         {cat && <span style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>{cat.icon} {cat.label}</span>}
+        {/* Status badge for everyone */}
+        <span style={{ background: statusBadge.bg, color: statusBadge.color, border: `1px solid ${statusBadge.bg}`, borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>{statusBadge.label}</span>
       </div>
 
       {/* Skills */}
@@ -377,9 +411,9 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
         </a>
       )}
 
-      {/* Applicant count badge (non-poster) */}
+      {/* Applicant count (non-poster) */}
       {!isMyJob && applicantCount !== null && applicantCount > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b' }}>
+        <div style={{ fontSize: 12, color: '#64748b' }}>
           <span style={{ background: '#f1f5f9', borderRadius: 99, padding: '3px 10px', fontWeight: 600 }}>
             👥 {applicantCount} {applicantCount === 1 ? 'person' : 'people'} applied
           </span>
@@ -387,92 +421,89 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
       )}
 
       {/* My job badge */}
-      {isMyJob && (
-        <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ {'Your Job Posting'}</div>
-      )}
-
-      {/* Job status display */}
-      {isMyJob && applicantCount !== null && (
-        <div style={{ background: jobStatus.bg, borderRadius: 10, padding: '8px 12px', fontSize: 12, color: jobStatus.color, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span>{jobStatus.icon}</span>
-          <span>
-            {jobStatus.label}
-            {applicantCount > 0 && ` · ${applicantCount} applicant${applicantCount !== 1 ? 's' : ''}`}
-          </span>
-        </div>
-      )}
+      {isMyJob && <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ Your Job Posting</div>}
 
       {/* Action area */}
       {isMyJob ? (
         <>
+          {/* Status management */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            {jobStatus !== 'filled' && (
+              <button onClick={() => handleUpdateStatus('filled')} style={{ flex: 1, padding: '10px', background: '#f0fdf4', color: '#16a34a', border: '1.5px solid #d1fae5', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+                ✅ Mark Hired
+              </button>
+            )}
+            {jobStatus !== 'closed' && (
+              <button onClick={() => handleUpdateStatus('closed')} style={{ flex: 1, padding: '10px', background: '#fef2f2', color: '#dc2626', border: '1.5px solid #fecaca', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+                ❌ Close Job
+              </button>
+            )}
+            {(jobStatus === 'filled' || jobStatus === 'closed') && (
+              <button onClick={() => handleUpdateStatus('open')} style={{ flex: 1, padding: '10px', background: '#eff6ff', color: '#3b82f6', border: '1.5px solid #bfdbfe', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+                🔄 Reopen
+              </button>
+            )}
+          </div>
+
           <ApplicantsDrawer job={job} />
+
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
-            <button onClick={handleShare} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all 0.2s' }}>
-              {shareLabel ?? ('🔗 Share')}
+            <button onClick={handleShare} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              {shareLabel ?? '🔗 Share'}
             </button>
             <button onClick={() => onEdit?.(job)} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #3b82f6', borderRadius: 10, background: '#eff6ff', color: '#3b82f6', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-              ✏️ {'Edit'}
+              ✏️ Edit
             </button>
             <button onClick={async () => {
-              if (!confirm('Are you sure you want to delete this job?')) return;
+              if (!confirm('Delete this job?')) return;
               setDeleting(true);
-              try {
-                await getPb().collection('jobs').delete(job.id);
-                onDelete?.(job.id);
-              } catch (e) {
-                alert('Failed to delete job');
-              } finally {
-                setDeleting(false);
-              }
+              try { await getPb().collection('jobs').delete(job.id); onDelete?.(job.id); }
+              catch { alert('Failed to delete job'); }
+              finally { setDeleting(false); }
             }} disabled={deleting} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #dc2626', borderRadius: 10, background: '#fef2f2', color: '#dc2626', fontSize: 13, fontWeight: 600, cursor: deleting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: deleting ? 0.6 : 1 }}>
-              🗑️ {deleting ? ('Deleting…') : ('Delete')}
+              🗑️ {deleting ? 'Deleting…' : 'Delete'}
             </button>
           </div>
         </>
       ) : (
         <>
           {applied ? (
-            <div style={{
-              background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)',
-              border: '1px solid #bbf7d0',
-              borderRadius: 16, padding: '18px 20px',
-              display: 'flex', gap: 14, alignItems: 'center',
-            }}>
+            <div style={{ background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', border: '1px solid #bbf7d0', borderRadius: 16, padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'center' }}>
               <span style={{ fontSize: 32, flexShrink: 0 }}>📬</span>
               <div>
-                <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 3 }}>
-                  {'✅ Application Sent!'}
-                </div>
-                <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.55 }}>
-                  {'The hiring person will review your profile and contact you soon. Make sure your phone number is up to date.'}
-                </div>
+                <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 3 }}>✅ Application Sent!</div>
+                <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.55 }}>The hiring person will review your profile and contact you soon.</div>
               </div>
             </div>
+          ) : jobStatus === 'filled' || jobStatus === 'closed' ? (
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px', textAlign: 'center' as const, color: '#94a3b8', fontSize: 14, fontWeight: 600 }}>
+              {jobStatus === 'filled' ? '✅ This position has been filled' : '❌ This job is closed'}
+            </div>
           ) : (
-            <button
-              onClick={handleApply}
-              disabled={applying || checking}
-              style={{
-                width: '100%', padding: '14px', border: 'none', borderRadius: 12,
-                fontWeight: 800, fontSize: 15, fontFamily: 'inherit', transition: 'all 0.2s',
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={handleApply} disabled={applying || checking} style={{
+                flex: 2, padding: '14px', border: 'none', borderRadius: 12,
+                fontWeight: 800, fontSize: 15, fontFamily: 'inherit',
                 cursor: (applying || checking) ? 'not-allowed' : 'pointer',
                 background: checking ? '#f8fafc' : '#16a34a',
                 color: checking ? '#94a3b8' : '#fff',
                 boxShadow: checking ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
               }}>
-              {checking
-                ? ('Loading…')
-                : applying
-                  ? ('Applying…')
-                  : ('Apply Now →')}
-            </button>
+                {checking ? 'Loading…' : applying ? 'Applying…' : 'Apply Now →'}
+              </button>
+              <button onClick={handleWhatsAppApply} disabled={waLoading} title="Apply via WhatsApp" style={{
+                flex: 1, padding: '14px', border: '1.5px solid #d1fae5', borderRadius: 12,
+                fontWeight: 700, fontSize: 14, fontFamily: 'inherit', cursor: waLoading ? 'not-allowed' : 'pointer',
+                background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              }}>
+                {waLoading ? '⏳' : '💬 WA'}
+              </button>
+            </div>
           )}
 
-          {/* Share button — always visible for non-poster */}
-          <button onClick={handleShare} style={{ width: '100%', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 6, transition: 'all 0.2s' }}>
-            {shareLabel ?? ('🔗 Share Job')}
+          <button onClick={handleShare} style={{ width: '100%', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 2 }}>
+            {shareLabel ?? '🔗 Share Job'}
           </button>
-
         </>
       )}
     </article>
@@ -481,7 +512,7 @@ function JobCard({ job, user, authLoading, onDelete, onEdit }: { job: any; user:
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function GigsPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -491,7 +522,24 @@ export default function GigsPage() {
   const [showPost, setShowPost] = useState(false);
   const [posting, setPosting] = useState(false);
   const [editingJob, setEditingJob] = useState<any | null>(null);
+  const [showBookmarksOnly, setShowBookmarksOnly] = useState(false);
   const [form, setForm] = useState({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' });
+
+  // Bookmarks — persisted in localStorage
+  const [bookmarks, setBookmarks] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
+    try { return new Set(JSON.parse(localStorage.getItem('us_bookmarks') || '[]') as string[]); }
+    catch { return new Set(); }
+  });
+
+  const toggleBookmark = (jobId: string) => {
+    setBookmarks(prev => {
+      const next = new Set(prev);
+      if (next.has(jobId)) next.delete(jobId); else next.add(jobId);
+      if (typeof localStorage !== 'undefined') localStorage.setItem('us_bookmarks', JSON.stringify(Array.from(next)));
+      return next;
+    });
+  };
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -512,46 +560,32 @@ export default function GigsPage() {
   const filtered = jobs
     .filter(j => catFilter === 'all' || j.category === catFilter)
     .filter(j => typeFilter === 'all' || j.type === typeFilter)
-    .filter(j => !search || j.title?.toLowerCase().includes(search.toLowerCase()) || j.location?.toLowerCase().includes(search.toLowerCase()));
+    .filter(j => !search || j.title?.toLowerCase().includes(search.toLowerCase()) || j.location?.toLowerCase().includes(search.toLowerCase()))
+    .filter(j => !showBookmarksOnly || bookmarks.has(j.id));
+
+  const resetForm = () => setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' });
 
   const handlePost = async () => {
     if (!user) { router.push('/login'); return; }
-    if (!form.title || !form.pay || !form.location) {
-      alert('Please fill: Job title, Pay, and Location');
-      return;
-    }
+    if (!form.title || !form.pay || !form.location) { alert('Please fill: Job title, Pay, and Location'); return; }
     setPosting(true);
     try {
       if (editingJob) {
-        // Update existing job
         await getPb().collection('jobs').update(editingJob.id, { ...form });
         setEditingJob(null);
       } else {
-        // Create new job
         await getPb().collection('jobs').create({ ...form, posted_by: user.id });
       }
       setShowPost(false);
-      setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' });
+      resetForm();
     } catch (e) { console.error(e); alert('Failed'); }
     finally { setPosting(false); }
   };
 
-  const handleDeleteJob = (jobId: string) => {
-    setJobs(jobs.filter(j => j.id !== jobId));
-  };
+  const handleDeleteJob = (jobId: string) => setJobs(jobs.filter(j => j.id !== jobId));
 
   const handleEditJob = (job: any) => {
-    setForm({
-      title: job.title,
-      company: job.company || '',
-      type: job.type,
-      pay: job.pay,
-      location: job.location,
-      skills: job.skills || '',
-      category: job.category || '',
-      urgent: job.urgent || false,
-      link: job.link || '',
-    });
+    setForm({ title: job.title, company: job.company || '', type: job.type, pay: job.pay, location: job.location, skills: job.skills || '', category: job.category || '', urgent: job.urgent || false, link: job.link || '' });
     setEditingJob(job);
     setShowPost(true);
   };
@@ -565,16 +599,14 @@ export default function GigsPage() {
         <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: 'clamp(20px,4vw,40px) clamp(14px,4vw,24px) clamp(28px,5vw,56px)' }}>
           <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
             <div>
-              <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>
-                {'💼 Find Jobs'}
-              </h1>
+              <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>💼 Find Jobs</h1>
               <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
-                {`${jobs.length} jobs live right now · Tap any card to apply`}
+                {jobs.length} jobs live · {bookmarks.size > 0 && `${bookmarks.size} saved · `}Tap any card to apply
               </p>
             </div>
             <button onClick={() => user ? setShowPost(true) : router.push('/login')}
               className="post-job-hero-btn" style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
-              {'+ Post a Job'}
+              + Post a Job
             </button>
           </div>
         </header>
@@ -584,71 +616,75 @@ export default function GigsPage() {
           <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
             <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
             <input id="job-search" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder={'🔍  Search jobs, skills, or city...'}
+              placeholder="🔍  Search jobs, skills, or city..."
               style={{ flex: 1, border: 'none', background: 'transparent', padding: '14px 18px', fontSize: 16, fontFamily: 'inherit', outline: 'none', color: '#0f172a' }} />
-            <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-              {'Search'}
-            </button>
+            <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Search</button>
           </div>
 
-          <div className="pill-scroll" role="tablist" aria-label="Category filter" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
-            <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>
-              {'🌐 All Categories'}
-            </Pill>
+          {/* Bookmark filter row */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
+            <button onClick={() => setShowBookmarksOnly(false)} style={{
+              borderRadius: 99, border: '1.5px solid', fontWeight: 700, fontSize: 13, padding: '7px 14px', cursor: 'pointer', fontFamily: 'inherit',
+              borderColor: !showBookmarksOnly ? '#16a34a' : '#e2e8f0', background: !showBookmarksOnly ? '#16a34a' : '#fff', color: !showBookmarksOnly ? '#fff' : '#475569',
+            }}>🌐 All Jobs</button>
+            <button onClick={() => setShowBookmarksOnly(true)} style={{
+              borderRadius: 99, border: '1.5px solid', fontWeight: 700, fontSize: 13, padding: '7px 14px', cursor: 'pointer', fontFamily: 'inherit',
+              borderColor: showBookmarksOnly ? '#d97706' : '#e2e8f0', background: showBookmarksOnly ? '#fef9ee' : '#fff', color: showBookmarksOnly ? '#d97706' : '#475569',
+            }}>🔖 Saved {bookmarks.size > 0 && `(${bookmarks.size})`}</button>
+          </div>
+
+          {/* Category filter */}
+          <div className="pill-scroll" role="tablist" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
+            <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>🌐 All Categories</Pill>
             {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
           </div>
           <div className="pill-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 16, marginBottom: 28 }}>
-            <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>
-              {'All Types'}
-            </Pill>
+            <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>All Types</Pill>
             {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
           </div>
 
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 0', gap: 16 }}>
               <div className="spinner" />
-              <p style={{ color: '#94a3b8', fontSize: 15 }}>{'Loading jobs…'}</p>
+              <p style={{ color: '#94a3b8', fontSize: 15 }}>Loading jobs…</p>
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 0' }}>
-              <div style={{ fontSize: 56, marginBottom: 12 }}>🔍</div>
+              <div style={{ fontSize: 56, marginBottom: 12 }}>{showBookmarksOnly ? '🔖' : '🔍'}</div>
               <p style={{ color: '#334155', fontWeight: 700, fontSize: 18 }}>
-                {'No jobs found'}
+                {showBookmarksOnly ? 'No saved jobs' : 'No jobs found'}
               </p>
               <p style={{ color: '#94a3b8', fontSize: 14, marginTop: 6 }}>
-                {jobs.length === 0
-                  ? ('Be the first to post a job!')
-                  : ('Try different filters')}
+                {showBookmarksOnly ? 'Tap the 🔗 icon on any job to save it' : jobs.length === 0 ? 'Be the first to post a job!' : 'Try different filters'}
               </p>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
-              {filtered.map(job => <JobCard key={job.id} job={job} user={user} authLoading={authLoading} onDelete={handleDeleteJob} onEdit={handleEditJob} />)}
+              {filtered.map(job => (
+                <JobCard key={job.id} job={job} user={user} profile={profile} authLoading={authLoading}
+                  onDelete={handleDeleteJob} onEdit={handleEditJob}
+                  isBookmarked={bookmarks.has(job.id)} onBookmark={toggleBookmark}
+                  onStatusChange={(id, status) => setJobs(prev => prev.map(j => j.id === id ? { ...j, status } : j))}
+                />
+              ))}
             </div>
           )}
         </div>
 
         {/* Post Job Modal */}
         {showPost && (
-          <div role="dialog" aria-modal="true" aria-label="Post a Job"
+          <div role="dialog" aria-modal="true"
             className="modal-backdrop" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 0, zIndex: 500, backdropFilter: 'blur(4px)' }}
-            onClick={e => { if (e.target === e.currentTarget) setShowPost(false); }}>
+            onClick={e => { if (e.target === e.currentTarget) { setShowPost(false); setEditingJob(null); resetForm(); } }}>
             <div className="slide-up post-modal" style={{ background: '#fff', borderRadius: '20px 20px 0 0', padding: 'clamp(20px,5vw,32px)', width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' as const }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
                 <div>
-                  <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>
-                    {editingJob
-                      ? ('✏️ Edit Job')
-                      : ('📋 Post a Job')}
-                  </h2>
-                  <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>
-                    {editingJob
-                      ? ('Make changes and save')
-                      : ('Fill details to find workers fast')}
-                  </p>
+                  <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>{editingJob ? '✏️ Edit Job' : '📋 Post a Job'}</h2>
+                  <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>{editingJob ? 'Make changes and save' : 'Fill details to find workers fast'}</p>
                 </div>
-                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' }); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
+                <button onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
               </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {([
                   ['title', 'Job Title *', 'e.g. Need Plumber at Home'],
@@ -661,59 +697,49 @@ export default function GigsPage() {
                     <input id={`post-${field}`} placeholder={ph} style={inp} value={(form as any)[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} />
                   </div>
                 ))}
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
-                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                      {'Job Type'}
-                    </label>
+                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Job Type</label>
                     <select style={inp} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                       {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                      {'Category'}
-                    </label>
+                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Category</label>
                     <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                      <option value="">{'— Select —'}</option>
+                      <option value="">— Select —</option>
                       {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
                     </select>
                   </div>
                 </div>
+
                 <div>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                    {'Required Skills (optional)'}
-                  </label>
-                  <input placeholder={'e.g. Plumbing, Wiring'} style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
+                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Required Skills (optional)</label>
+                  <input placeholder="e.g. Plumbing, Wiring" style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
                 </div>
+
                 <div>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>
-                    {'Apply Link (optional)'}
-                  </label>
-                  <input placeholder={'e.g. https://forms.google.com/... or WhatsApp link'} style={inp} value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} />
-                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, marginLeft: 2 }}>Add a link where applicants can apply (Google Form, WhatsApp, etc.)</p>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Apply Link (optional)</label>
+                  <input placeholder="e.g. https://forms.google.com/... or WhatsApp link" style={inp} value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} />
+                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, marginLeft: 2 }}>Add a link where applicants can apply directly</p>
                 </div>
+
                 <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
                   <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>
-                    {'🔥 Mark as Urgent'}
-                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>🔥 Mark as Urgent</span>
                 </label>
               </div>
+
               <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-                <button onClick={() => { setShowPost(false); setEditingJob(null); setForm({ title: '', company: '', type: 'Daily Wage', pay: '', location: '', skills: '', category: '', urgent: false, link: '' }); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>
-                  {'Cancel'}
-                </button>
+                <button onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>Cancel</button>
                 <button onClick={handlePost} disabled={posting} style={{
-                  flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+                  flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15,
+                  cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
                   background: posting ? '#d1fae5' : '#16a34a', color: posting ? '#4b7a5a' : '#fff',
-                  boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)'
+                  boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
                 }}>
-                  {posting
-                    ? ('Saving…')
-                    : editingJob
-                      ? ('✅ Update Job')
-                      : ('✅ Post Job Now')}
+                  {posting ? 'Saving…' : editingJob ? '✅ Update Job' : '✅ Post Job Now'}
                 </button>
               </div>
             </div>
@@ -722,33 +748,13 @@ export default function GigsPage() {
       </div>
 
       <style>{`
-        /* Gigs page responsive styles */
-
-        /* Filter pills */
         .filter-pill { font-size: 12px; padding: 7px 14px; }
-        @media (max-width: 480px) {
-          .filter-pill { font-size: 11px; padding: 6px 11px; }
-        }
-        @media (max-width: 360px) {
-          .filter-pill { font-size: 10px; padding: 5px 9px; }
-        }
-
-        /* Post job hero button */
+        @media (max-width: 480px) { .filter-pill { font-size: 11px; padding: 6px 11px; } }
+        @media (max-width: 360px) { .filter-pill { font-size: 10px; padding: 5px 9px; } }
         .post-job-hero-btn { padding: 11px 20px; font-size: 14px; }
-        @media (max-width: 480px) {
-          .post-job-hero-btn { padding: 10px 16px; font-size: 13px; width: 100%; }
-        }
-
-        /* Modal backdrop — centered on desktop, bottom sheet on mobile */
-        @media (min-width: 540px) {
-          .modal-backdrop { align-items: center !important; padding: 16px !important; }
-          .post-modal { border-radius: 20px !important; }
-        }
-
-        /* Search bar */
-        @media (max-width: 480px) {
-          #job-search { font-size: 14px !important; padding: 12px 12px !important; }
-        }
+        @media (max-width: 480px) { .post-job-hero-btn { padding: 10px 16px; font-size: 13px; width: 100%; } }
+        @media (min-width: 540px) { .modal-backdrop { align-items: center !important; padding: 16px !important; } .post-modal { border-radius: 20px !important; } }
+        @media (max-width: 480px) { #job-search { font-size: 14px !important; padding: 12px 12px !important; } }
       `}</style>
     </>
   );
