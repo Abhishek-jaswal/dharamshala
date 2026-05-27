@@ -491,13 +491,7 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
               }}>
                 {checking ? 'Loading…' : applying ? 'Applying…' : 'Apply Now →'}
               </button>
-              <button onClick={handleWhatsAppApply} disabled={waLoading} title="Apply via WhatsApp" style={{
-                flex: 1, padding: '14px', border: '1.5px solid #d1fae5', borderRadius: 12,
-                fontWeight: 700, fontSize: 14, fontFamily: 'inherit', cursor: waLoading ? 'not-allowed' : 'pointer',
-                background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              }}>
-                {waLoading ? '⏳' : '💬 WA'}
-              </button>
+
             </div>
           )}
 
