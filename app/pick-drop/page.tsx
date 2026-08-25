@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getPb } from '@/lib/pocketbase';
 import { useRouter } from 'next/navigation';
-import GoogleMap from '@/components/GoogleMap';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NOTE FOR SETUP: Create a PocketBase collection called "runners_live" with:
@@ -269,12 +268,7 @@ function CustomerMode({ user }: { user: any }) {
           {mapCoords && (
             <div>
               <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 8 }}>📍 Your Location</label>
-              <GoogleMap
-                center={mapCoords}
-                markers={[{ lat: mapCoords.lat, lng: mapCoords.lng, label: 'P', color: 'red' }]}
-                height="300px"
-                zoom={16}
-              />
+
               <div style={{ fontSize: 11, color: '#64748b', marginTop: 8, textAlign: 'center' }}>
                 Lat: {mapCoords.lat.toFixed(4)} | Lng: {mapCoords.lng.toFixed(4)}
               </div>
@@ -357,20 +351,7 @@ function CustomerMode({ user }: { user: any }) {
           {/* Map showing runners and pickup location */}
           {myCoords && runners.length > 0 && (
             <div style={{ marginBottom: 20 }}>
-              <GoogleMap
-                center={myCoords}
-                markers={[
-                  { lat: myCoords.lat, lng: myCoords.lng, label: 'P', color: 'red' },
-                  ...runners.slice(0, 5).map((r, i) => ({
-                    lat: r.lat || myCoords.lat,
-                    lng: r.lng || myCoords.lng,
-                    label: (i + 1).toString(),
-                    color: 'green' as const,
-                  })),
-                ]}
-                height="300px"
-                zoom={15}
-              />
+
               <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 8, textAlign: 'center' }}>
                 🔴 Red = Pickup Location | 🟢 Green = Available Runners
               </div>

@@ -16,7 +16,6 @@ export function Navbar() {
   const links = [
     { href: '/', icon: '🏠', label: 'Home' },
     { href: '/gigs', icon: '💼', label: 'Jobs' },
-    { href: '/workers', icon: '👷', label: 'Workers' },
     { href: '/pick-drop', icon: '🛵', label: 'Pickup' },
     { href: '/dashboard', icon: '👤', label: 'Profile' },
   ];
