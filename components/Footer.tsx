@@ -24,17 +24,20 @@ export function Footer() {
           </div>
           <div>
             <div style={{ fontWeight: 700, color: '#94a3b8', fontSize: 12, letterSpacing: '0.08em', marginBottom: 16 }}>FOR EMPLOYERS</div>
-            {[['Post a Job', '/gigs'], ['Browse Workers', '/workers'], ['Pick & Drop', '/pick-drop'], ['My Dashboard', '/dashboard']].map(([l, h]) => (
+            {[['Post a Job', '/gigs'], ['Pick & Drop', '/pick-drop'], ['My Dashboard', '/dashboard']].map(([l, h]) => (
               <Link key={h} href={h} style={{ display: 'block', color: '#64748b', fontSize: 14, textDecoration: 'none', marginBottom: 10 }}>{l}</Link>
             ))}
           </div>
           <div>
             <div style={{ fontWeight: 700, color: '#94a3b8', fontSize: 12, letterSpacing: '0.08em', marginBottom: 16 }}>CONTACT</div>
-            <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7 }}>📧 support@urbanserve.in<br />📞 +91 8894727339<br />🕐 Mon–Sat, 9am–6pm</p>
+            <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7 }}>📧 abhignitejaswal@gmail.com<br />📞 +91 97366-04890<br />🕐 Mon–Sat, 9am–6pm</p>
           </div>
         </div>
         <div style={{ borderTop: '1px solid #1e293b', paddingTop: 24, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
-          <p style={{ color: '#475569', fontSize: 13 }}>© 2026 UrbanServe. Made in India 🇮🇳</p>
+          <p style={{ color: '#475569', fontSize: 13 }}>© 2026 UrbanServeu. Made in India 🇮🇳</p>
+          <p style={{ color: '#475569', fontSize: 13 }}>Made By Abhiverse </p>
+
+
           <div style={{ display: 'flex', gap: 16 }}>
             {['Privacy', 'Terms', 'Support'].map(l => (
               <span key={l} style={{ color: '#475569', fontSize: 13, cursor: 'pointer' }}>{l}</span>

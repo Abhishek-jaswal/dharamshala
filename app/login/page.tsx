@@ -40,7 +40,7 @@ export default function LoginPage() {
         </div>
 
         <p style={{ color: '#9ca3af', fontSize: 12, marginTop: 28 }}>
-          By signing in you agree to our Terms of Service.<br />Secure OAuth · Powered by PocketBase
+          By signing in you agree to our Terms of Service.<br />Secure OAuth · Powered by Abhiverse
         </p>
       </div>
     </div>
