@@ -8,33 +8,40 @@ import { CATEGORIES } from '@/lib/data';
 const JOB_TYPES = ['Daily Wage', 'Hourly', 'Part-Time', 'Contract', 'Full-Time', 'Team Hire'];
 
 const Pill = ({ active, onClick, children }: any) => (
-  <button onClick={onClick} className="filter-pill" style={{
-    fontWeight: 600, borderRadius: 99, border: '1.5px solid',
-    whiteSpace: 'nowrap' as const, cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-    borderColor: active ? '#16a34a' : '#e2e8f0',
-    background: active ? '#16a34a' : '#fff',
-    color: active ? '#fff' : '#475569',
-  }}>{children}</button>
+  <button
+    onClick={onClick}
+    className={`filter-pill whitespace-nowrap rounded-full border font-semibold font-inherit transition-colors cursor-pointer ${active
+      ? 'border-green-600 bg-green-600 text-white'
+      : 'border-slate-200 bg-white text-slate-600'
+      }`}
+  >
+    {children}
+  </button>
 );
 
 // ── Profile Incomplete Warning Modal ─────────────────────────────────────────
 function ProfileWarningModal({ onClose, onContinue }: { onClose: () => void; onContinue: () => void }) {
   return (
-    <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(4px)' }}>
-      <div className="slide-down" style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: 380, padding: 28, boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
-        <div style={{ fontSize: 48, textAlign: 'center' as const, marginBottom: 16 }}>⚠️</div>
-        <h3 style={{ fontWeight: 900, color: '#0f172a', fontSize: 18, textAlign: 'center' as const, marginBottom: 8 }}>Profile Incomplete</h3>
-        <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.6, textAlign: 'center' as const, marginBottom: 20 }}>
+    <div
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      className="fixed inset-0 z-[700] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+    >
+      <div className="slide-down w-full max-w-sm rounded-2xl bg-white p-7 shadow-2xl">
+        <div className="mb-4 text-center text-5xl">⚠️</div>
+        <h3 className="mb-2 text-center text-lg font-extrabold text-slate-900">Profile Incomplete</h3>
+        <p className="mb-5 text-center text-sm leading-relaxed text-slate-500">
           You haven't added a <strong>phone number</strong> to your profile. The employer won't be able to contact you!
         </p>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <a href="/dashboard" style={{ flex: 1, textDecoration: 'none' }}>
-            <button style={{ width: '100%', padding: '12px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+        <div className="flex gap-2.5">
+          <a href="/dashboard" className="flex-1 no-underline">
+            <button className="w-full rounded-xl bg-green-600 py-3 text-sm font-extrabold text-white font-inherit cursor-pointer">
               📱 Add Phone
             </button>
           </a>
-          <button onClick={onContinue} style={{ flex: 1, padding: '12px', background: '#f8fafc', color: '#64748b', border: '1.5px solid #e2e8f0', borderRadius: 12, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+          <button
+            onClick={onContinue}
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-3 text-sm font-semibold text-slate-500 font-inherit cursor-pointer"
+          >
             Apply Anyway
           </button>
         </div>
@@ -57,70 +64,104 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
   const applied = new Date(person.created).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
-    <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(4px)' }}>
-      <div className="slide-down" style={{ background: '#fff', borderRadius: 24, width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' as const, boxShadow: '0 24px 80px rgba(0,0,0,0.25)' }}>
-        <div style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: '32px 28px 28px', borderRadius: '24px 24px 0 0', position: 'relative' }}>
-          <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: 8, width: 32, height: 32, fontSize: 16, cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ width: 68, height: 68, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '3px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 26, fontWeight: 900, flexShrink: 0 }}>{initials}</div>
+    <div
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      className="fixed inset-0 z-[600] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+    >
+      <div className="slide-down flex max-h-[90vh] w-full max-w-md flex-col overflow-y-auto rounded-3xl bg-white shadow-2xl">
+        {/* Header */}
+        <div className="relative rounded-t-3xl bg-gradient-to-br from-green-900 to-green-600 px-7 pb-7 pt-8">
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg border-none bg-white/20 text-base text-white cursor-pointer"
+          >
+            ✕
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border-[3px] border-white/40 bg-white/20 text-2xl font-black text-white">
+              {initials}
+            </div>
             <div>
-              <div style={{ fontWeight: 900, color: '#fff', fontSize: 22 }}>{name}</div>
-              {role && <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13, marginTop: 3, textTransform: 'capitalize' as const }}>👤 {role}</div>}
-              {location && <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, marginTop: 2 }}>📍 {location}</div>}
+              <div className="text-xl font-black text-white">{name}</div>
+              {role && <div className="mt-1 text-sm capitalize text-white/75">👤 {role}</div>}
+              {location && <div className="mt-0.5 text-sm text-white/65">📍 {location}</div>}
             </div>
           </div>
         </div>
 
-        <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div style={{ background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 12, padding: '10px 14px', fontSize: 13, color: '#16a34a', fontWeight: 600 }}>
+        <div className="flex flex-col gap-5 px-7 py-6">
+          <div className="rounded-xl border border-green-100 bg-green-50 px-3.5 py-2.5 text-sm font-semibold text-green-600">
             ✅ Applied on {applied}
           </div>
+
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>CONTACT</div>
+            <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">CONTACT</div>
             {phone ? (
-              <div style={{ display: 'flex', gap: 10 }}>
-                <a href={`tel:${phone}`} style={{ flex: 1, textDecoration: 'none' }}>
-                  <button style={{ width: '100%', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}>📞 Call Now</button>
+              <div className="flex gap-2.5">
+                <a href={`tel:${phone}`} className="flex-1 no-underline">
+                  <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 py-3.5 text-[15px] font-extrabold text-white shadow-lg shadow-green-600/30 font-inherit cursor-pointer">
+                    📞 Call Now
+                  </button>
                 </a>
-                <a href={`https://wa.me/91${phone}?text=Hi ${encodeURIComponent(name)}, I saw your application on UrbanServe. Are you still available?`} target="_blank" rel="noreferrer" style={{ flex: 1, textDecoration: 'none' }}>
-                  <button style={{ width: '100%', background: '#dcfce7', color: '#16a34a', border: '1.5px solid #d1fae5', borderRadius: 12, padding: '14px', fontWeight: 800, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>💬 WhatsApp</button>
+                <a
+                  href={`https://wa.me/91${phone}?text=Hi ${encodeURIComponent(name)}, I saw your application on UrbanServe. Are you still available?`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 no-underline"
+                >
+                  <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-green-100 bg-green-50 py-3.5 text-[15px] font-extrabold text-green-600 font-inherit cursor-pointer">
+                    💬 WhatsApp
+                  </button>
                 </a>
               </div>
             ) : (
-              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, padding: '12px 14px', color: '#dc2626', fontSize: 13, fontWeight: 600 }}>⚠️ This person has not added a phone number yet.</div>
+              <div className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-sm font-semibold text-red-600">
+                ⚠️ This person has not added a phone number yet.
+              </div>
             )}
-            {phone && <div style={{ marginTop: 8, background: '#f8fafc', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#64748b', textAlign: 'center' as const }}>📱 {phone}</div>}
+            {phone && (
+              <div className="mt-2 rounded-lg bg-slate-50 px-3.5 py-2.5 text-center text-sm text-slate-500">
+                📱 {phone}
+              </div>
+            )}
           </div>
+
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>PROFILE DETAILS</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0, background: '#f8fafc', borderRadius: 14, overflow: 'hidden' }}>
+            <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">PROFILE DETAILS</div>
+            <div className="flex flex-col overflow-hidden rounded-2xl bg-slate-50">
               {([['📍', 'Location', location], ['🎂', 'Date of Birth', dob], ['👤', 'Role', role]] as [string, string, string | null][])
-                .filter(([, , v]) => v).map(([icon, label, val]) => (
-                  <div key={label} style={{ display: 'flex', gap: 12, padding: '12px 16px', borderBottom: '1px solid #f1f5f9', alignItems: 'center' }}>
-                    <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>
-                    <span style={{ color: '#94a3b8', fontSize: 13, minWidth: 90 }}>{label}</span>
-                    <span style={{ fontWeight: 700, color: '#0f172a', fontSize: 13 }}>{val}</span>
+                .filter(([, , v]) => v)
+                .map(([icon, label, val]) => (
+                  <div key={label} className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 last:border-b-0">
+                    <span className="shrink-0 text-lg">{icon}</span>
+                    <span className="min-w-[90px] text-sm text-slate-400">{label}</span>
+                    <span className="text-sm font-bold text-slate-900">{val}</span>
                   </div>
                 ))}
             </div>
           </div>
+
           {skills && (
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>🛠 SKILLS</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8 }}>
+              <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">🛠 SKILLS</div>
+              <div className="flex flex-wrap gap-2">
                 {skills.split(', ').filter(Boolean).map((s: string) => (
-                  <span key={s} style={{ background: '#f0fdf4', border: '1px solid #d1fae5', color: '#16a34a', borderRadius: 99, padding: '5px 14px', fontSize: 13, fontWeight: 600 }}>{s}</span>
+                  <span key={s} className="rounded-full border border-green-100 bg-green-50 px-3.5 py-1.5 text-sm font-semibold text-green-600">
+                    {s}
+                  </span>
                 ))}
               </div>
             </div>
           )}
+
           {interests && (
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.06em', marginBottom: 10 }}>❤️ INTERESTS</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8 }}>
+              <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">❤️ INTERESTS</div>
+              <div className="flex flex-wrap gap-2">
                 {interests.split(', ').filter(Boolean).map((s: string) => (
-                  <span key={s} style={{ background: '#fef9ee', border: '1px solid #fde68a', color: '#d97706', borderRadius: 99, padding: '5px 14px', fontSize: 13, fontWeight: 600 }}>{s}</span>
+                  <span key={s} className="rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-600">
+                    {s}
+                  </span>
                 ))}
               </div>
             </div>
@@ -163,32 +204,30 @@ function ApplicantsDrawer({ job }: { job: any }) {
 
   return (
     <div>
-      <button onClick={toggle} style={{
-        width: '100%', background: open ? '#0f172a' : '#f0fdf4',
-        border: `1.5px solid ${open ? '#0f172a' : '#d1fae5'}`,
-        borderRadius: 12, padding: '13px', fontSize: 14, fontWeight: 700,
-        color: open ? '#fff' : '#16a34a', cursor: 'pointer', fontFamily: 'inherit',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s',
-      }}>
-        <span style={{ fontSize: 18 }}>👥</span>
+      <button
+        onClick={toggle}
+        className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border py-3.5 text-sm font-bold font-inherit transition-colors ${open ? 'border-slate-900 bg-slate-900 text-white' : 'border-green-100 bg-green-50 text-green-600'
+          }`}
+      >
+        <span className="text-lg">👥</span>
         {open ? '▲ Hide Applicants' : `See Who Applied${count !== null ? ` (${count})` : ''}`}
         {(count ?? 0) > 0 && !open && (
-          <span style={{ background: '#16a34a', color: '#fff', borderRadius: 99, padding: '1px 8px', fontSize: 12, fontWeight: 800 }}>{count}</span>
+          <span className="rounded-full bg-green-600 px-2 py-0.5 text-xs font-extrabold text-white">{count}</span>
         )}
       </button>
 
       {open && (
-        <div className="slide-down" style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="slide-down mt-3 flex flex-col gap-2.5">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '28px' }}>
-              <div className="spinner" style={{ margin: '0 auto 12px' }} />
-              <p style={{ color: '#94a3b8', fontSize: 14 }}>Loading applicants…</p>
+            <div className="p-7 text-center">
+              <div className="spinner mx-auto mb-3" />
+              <p className="text-sm text-slate-400">Loading applicants…</p>
             </div>
           ) : applicants.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '28px 20px', background: '#f8fafc', borderRadius: 12, border: '1px dashed #e2e8f0' }}>
-              <div style={{ fontSize: 40, marginBottom: 10 }}>⏳</div>
-              <div style={{ color: '#64748b', fontSize: 14, fontWeight: 600 }}>No applications yet</div>
-              <div style={{ color: '#94a3b8', fontSize: 13, marginTop: 4 }}>Share your job to get applicants!</div>
+            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-5 py-7 text-center">
+              <div className="mb-2.5 text-4xl">⏳</div>
+              <div className="text-sm font-semibold text-slate-500">No applications yet</div>
+              <div className="mt-1 text-[13px] text-slate-400">Share your job to get applicants!</div>
             </div>
           ) : applicants.map((app: any, i: number) => {
             const name = app.profile?.name || 'Unknown';
@@ -197,26 +236,34 @@ function ApplicantsDrawer({ job }: { job: any }) {
             const location = app.profile?.location;
             const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
             return (
-              <div key={i} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16, padding: '16px 18px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <button onClick={() => setViewProfile(app)}
-                    style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' as const, padding: 0, fontFamily: 'inherit' }}>
-                    <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg,#16a34a,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 16, flexShrink: 0 }}>{initials}</div>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    onClick={() => setViewProfile(app)}
+                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 border-none bg-transparent p-0 text-left font-inherit"
+                  >
+                    <div className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-green-500 text-base font-extrabold text-white">
+                      {initials}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 text-[15px] font-extrabold text-slate-900">
                         {name}
-                        <span style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 99, padding: '1px 7px' }}>View →</span>
+                        <span className="rounded-full border border-green-100 bg-green-50 px-1.5 py-0.5 text-[11px] font-semibold text-green-600">
+                          View →
+                        </span>
                       </div>
-                      {location && <div style={{ color: '#64748b', fontSize: 12, marginTop: 2 }}>📍 {location}</div>}
-                      {skills && <div style={{ color: '#94a3b8', fontSize: 12, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>🛠 {skills}</div>}
+                      {location && <div className="mt-0.5 text-xs text-slate-500">📍 {location}</div>}
+                      {skills && <div className="mt-0.5 truncate text-xs text-slate-400">🛠 {skills}</div>}
                     </div>
                   </button>
                   {phone ? (
-                    <a href={`tel:${phone}`} style={{ textDecoration: 'none', flexShrink: 0 }}>
-                      <button style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}>📞 Call</button>
+                    <a href={`tel:${phone}`} className="shrink-0 no-underline">
+                      <button className="flex items-center gap-1.5 rounded-lg bg-green-600 px-4.5 py-2.5 text-sm font-extrabold text-white font-inherit cursor-pointer">
+                        📞 Call
+                      </button>
                     </a>
                   ) : (
-                    <span style={{ fontSize: 12, color: '#94a3b8', flexShrink: 0 }}>No phone</span>
+                    <span className="shrink-0 text-xs text-slate-400">No phone</span>
                   )}
                 </div>
               </div>
@@ -248,11 +295,12 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
 
+  // Same status logic as before — now returns Tailwind classes instead of hex values
   const getStatusBadge = () => {
-    if (jobStatus === 'filled') return { label: 'Hired ✅', color: '#16a34a', bg: '#f0fdf4' };
-    if (jobStatus === 'closed') return { label: 'Closed ❌', color: '#dc2626', bg: '#fef2f2' };
-    if (applicantCount && applicantCount > 0) return { label: 'Under Review 👀', color: '#f59e0b', bg: '#fef9e7' };
-    return { label: 'Open ⏳', color: '#64748b', bg: '#f8fafc' };
+    if (jobStatus === 'filled') return { label: 'Hired ✅', className: 'bg-green-50 text-green-600' };
+    if (jobStatus === 'closed') return { label: 'Closed ❌', className: 'bg-red-50 text-red-600' };
+    if (applicantCount && applicantCount > 0) return { label: 'Under Review 👀', className: 'bg-amber-50 text-amber-600' };
+    return { label: 'Open ⏳', className: 'bg-slate-100 text-slate-500' };
   };
 
   const timeAgo = (() => {
@@ -342,13 +390,11 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
   const statusBadge = getStatusBadge();
 
   return (
-    <article className="hover-lift" aria-label={job.title} style={{
-      background: '#fff', border: '1px solid #e2e8f0', borderRadius: 16,
-      padding: 'clamp(14px,4vw,22px)' as any, boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-      display: 'flex', flexDirection: 'column', gap: 16,
-      opacity: jobStatus === 'closed' ? 0.75 : 1,
-    }}>
-
+    <article
+      aria-label={job.title}
+      className={`hover-lift flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 ${jobStatus === 'closed' ? 'opacity-75' : ''
+        }`}
+    >
       {showProfileWarning && (
         <ProfileWarningModal
           onClose={() => setShowProfileWarning(false)}
@@ -357,89 +403,107 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
       )}
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-        <div style={{ display: 'flex', gap: 12, flex: 1, minWidth: 0 }}>
-          <div style={{ width: 52, height: 52, background: '#f0fdf4', border: '1px solid #d1fae5', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>
+      <div className="flex justify-between gap-2">
+        <div className="flex min-w-0 flex-1 gap-3">
+          <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl border border-green-100 bg-green-50 text-2xl">
             {cat?.icon || '💼'}
           </div>
-          <div style={{ minWidth: 0 }}>
-            <h2 style={{ fontWeight: 800, color: '#0f172a', fontSize: 16, marginBottom: 2 }}>{job.title}</h2>
-            {job.company && <div style={{ color: '#94a3b8', fontSize: 13 }}>{job.company}</div>}
+          <div className="min-w-0">
+            <h2 className="mb-0.5 text-base font-extrabold text-slate-900">{job.title}</h2>
+            {job.company && <div className="text-[13px] text-slate-400">{job.company}</div>}
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-          <div style={{ fontWeight: 900, color: '#16a34a', fontSize: 18 }}>{job.pay}</div>
-          <div style={{ fontSize: 11, color: '#94a3b8' }}>{timeAgo}</div>
-          {/* Bookmark button */}
-          <button onClick={() => onBookmark?.(job.id)} title={isBookmarked ? 'Remove bookmark' : 'Save job'} style={{
-            background: isBookmarked ? '#fef9ee' : '#f8fafc', border: `1px solid ${isBookmarked ? '#fde68a' : '#e2e8f0'}`,
-            borderRadius: 8, width: 30, height: 30, fontSize: 15, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
-          }}>
+        <div className="flex flex-col items-end gap-1">
+          <div className="text-lg font-black text-green-600">{job.pay}</div>
+          <div className="text-[11px] text-slate-400">{timeAgo}</div>
+          <button
+            onClick={() => onBookmark?.(job.id)}
+            title={isBookmarked ? 'Remove bookmark' : 'Save job'}
+            className={`flex h-[30px] w-[30px] items-center justify-center rounded-lg border text-sm transition-colors ${isBookmarked ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'
+              }`}
+          >
             {isBookmarked ? '🔖' : '🔗'}
           </button>
         </div>
       </div>
 
       {/* Tags */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
-        {job.urgent && <span style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>🔥 Urgent</span>}
-        <span style={{ background: '#f0fdf4', color: '#15803d', border: '1px solid #d1fae5', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>📍 {job.location}</span>
-        <span style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>{job.type}</span>
-        {cat && <span style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 600 }}>{cat.icon} {cat.label}</span>}
-        {/* Status badge for everyone */}
-        <span style={{ background: statusBadge.bg, color: statusBadge.color, border: `1px solid ${statusBadge.bg}`, borderRadius: 99, padding: '3px 10px', fontSize: 12, fontWeight: 700 }}>{statusBadge.label}</span>
+      <div className="flex flex-wrap gap-1.5">
+        {job.urgent && (
+          <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-bold text-red-600">🔥 Urgent</span>
+        )}
+        <span className="rounded-full border border-green-100 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">📍 {job.location}</span>
+        <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">{job.type}</span>
+        {cat && (
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">
+            {cat.icon} {cat.label}
+          </span>
+        )}
+        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${statusBadge.className}`}>{statusBadge.label}</span>
       </div>
 
       {/* Skills */}
       {job.skills && (
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
+        <div className="flex flex-wrap gap-1.5">
           {job.skills.split(',').filter(Boolean).map((s: string) => (
-            <span key={s} style={{ fontSize: 11, background: '#eff6ff', color: '#3b82f6', borderRadius: 6, padding: '3px 8px', fontWeight: 600 }}>{s.trim()}</span>
+            <span key={s} className="rounded-md bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-500">
+              {s.trim()}
+            </span>
           ))}
         </div>
       )}
 
       {/* External apply link */}
       {job.link && (
-        <a href={job.link} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '9px 14px', fontSize: 13, color: '#2563eb', fontWeight: 600 }}>
+        <a href={job.link} target="_blank" rel="noreferrer" className="no-underline">
+          <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-[13px] font-semibold text-blue-600">
             <span>🔗</span>
-            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>Apply via Link</span>
-            <span style={{ fontSize: 11, opacity: 0.7 }}>↗</span>
+            <span className="flex-1 truncate">Apply via Link</span>
+            <span className="text-[11px] opacity-70">↗</span>
           </div>
         </a>
       )}
 
       {/* Applicant count (non-poster) */}
       {!isMyJob && applicantCount !== null && applicantCount > 0 && (
-        <div style={{ fontSize: 12, color: '#64748b' }}>
-          <span style={{ background: '#f1f5f9', borderRadius: 99, padding: '3px 10px', fontWeight: 600 }}>
+        <div className="text-xs text-slate-500">
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 font-semibold">
             👥 {applicantCount} {applicantCount === 1 ? 'person' : 'people'} applied
           </span>
         </div>
       )}
 
       {/* My job badge */}
-      {isMyJob && <div style={{ background: '#f0fdf4', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#16a34a', fontWeight: 700 }}>✅ Your Job Posting</div>}
+      {isMyJob && (
+        <div className="rounded-lg bg-green-50 px-3 py-2 text-xs font-bold text-green-600">✅ Your Job Posting</div>
+      )}
 
       {/* Action area */}
       {isMyJob ? (
         <>
           {/* Status management */}
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="flex gap-2">
             {jobStatus !== 'filled' && (
-              <button onClick={() => handleUpdateStatus('filled')} style={{ flex: 1, padding: '10px', background: '#f0fdf4', color: '#16a34a', border: '1.5px solid #d1fae5', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button
+                onClick={() => handleUpdateStatus('filled')}
+                className="flex-1 cursor-pointer rounded-lg border border-green-100 bg-green-50 py-2.5 text-[13px] font-bold text-green-600 font-inherit"
+              >
                 ✅ Mark Hired
               </button>
             )}
             {jobStatus !== 'closed' && (
-              <button onClick={() => handleUpdateStatus('closed')} style={{ flex: 1, padding: '10px', background: '#fef2f2', color: '#dc2626', border: '1.5px solid #fecaca', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button
+                onClick={() => handleUpdateStatus('closed')}
+                className="flex-1 cursor-pointer rounded-lg border border-red-200 bg-red-50 py-2.5 text-[13px] font-bold text-red-600 font-inherit"
+              >
                 ❌ Close Job
               </button>
             )}
             {(jobStatus === 'filled' || jobStatus === 'closed') && (
-              <button onClick={() => handleUpdateStatus('open')} style={{ flex: 1, padding: '10px', background: '#eff6ff', color: '#3b82f6', border: '1.5px solid #bfdbfe', borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button
+                onClick={() => handleUpdateStatus('open')}
+                className="flex-1 cursor-pointer rounded-lg border border-blue-200 bg-blue-50 py-2.5 text-[13px] font-bold text-blue-500 font-inherit"
+              >
                 🔄 Reopen
               </button>
             )}
@@ -447,20 +511,32 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
 
           <ApplicantsDrawer job={job} />
 
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
-            <button onClick={handleShare} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={handleShare}
+              className={`flex min-w-[100px] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2.5 text-[13px] font-semibold font-inherit ${shareLabel ? 'bg-green-50 text-green-600' : 'bg-white text-slate-500'
+                }`}
+            >
               {shareLabel ?? '🔗 Share'}
             </button>
-            <button onClick={() => onEdit?.(job)} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #3b82f6', borderRadius: 10, background: '#eff6ff', color: '#3b82f6', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <button
+              onClick={() => onEdit?.(job)}
+              className="flex min-w-[100px] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-blue-500 bg-blue-50 py-2.5 text-[13px] font-semibold text-blue-500 font-inherit"
+            >
               ✏️ Edit
             </button>
-            <button onClick={async () => {
-              if (!confirm('Delete this job?')) return;
-              setDeleting(true);
-              try { await getPb().collection('jobs').delete(job.id); onDelete?.(job.id); }
-              catch { alert('Failed to delete job'); }
-              finally { setDeleting(false); }
-            }} disabled={deleting} style={{ flex: 1, minWidth: '100px', padding: '10px', border: '1.5px solid #dc2626', borderRadius: 10, background: '#fef2f2', color: '#dc2626', fontSize: 13, fontWeight: 600, cursor: deleting ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: deleting ? 0.6 : 1 }}>
+            <button
+              onClick={async () => {
+                if (!confirm('Delete this job?')) return;
+                setDeleting(true);
+                try { await getPb().collection('jobs').delete(job.id); onDelete?.(job.id); }
+                catch { alert('Failed to delete job'); }
+                finally { setDeleting(false); }
+              }}
+              disabled={deleting}
+              className={`flex min-w-[100px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-red-600 bg-red-50 py-2.5 text-[13px] font-semibold text-red-600 font-inherit ${deleting ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+                }`}
+            >
               🗑️ {deleting ? 'Deleting…' : 'Delete'}
             </button>
           </div>
@@ -468,34 +544,35 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
       ) : (
         <>
           {applied ? (
-            <div style={{ background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)', border: '1px solid #bbf7d0', borderRadius: 16, padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'center' }}>
-              <span style={{ fontSize: 32, flexShrink: 0 }}>📬</span>
+            <div className="flex items-center gap-3.5 rounded-2xl border border-green-200 bg-gradient-to-br from-green-50 to-green-100 px-5 py-4.5">
+              <span className="shrink-0 text-3xl">📬</span>
               <div>
-                <div style={{ fontWeight: 800, color: '#15803d', fontSize: 14, marginBottom: 3 }}>✅ Application Sent!</div>
-                <div style={{ color: '#4b7a5a', fontSize: 13, lineHeight: 1.55 }}>The hiring person will review your profile and contact you soon.</div>
+                <div className="mb-0.5 text-sm font-extrabold text-green-700">✅ Application Sent!</div>
+                <div className="text-[13px] leading-relaxed text-green-700/80">The hiring person will review your profile and contact you soon.</div>
               </div>
             </div>
           ) : jobStatus === 'filled' || jobStatus === 'closed' ? (
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px', textAlign: 'center' as const, color: '#94a3b8', fontSize: 14, fontWeight: 600 }}>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-center text-sm font-semibold text-slate-400">
               {jobStatus === 'filled' ? '✅ This position has been filled' : '❌ This job is closed'}
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={handleApply} disabled={applying || checking} style={{
-                flex: 2, padding: '14px', border: 'none', borderRadius: 12,
-                fontWeight: 800, fontSize: 15, fontFamily: 'inherit',
-                cursor: (applying || checking) ? 'not-allowed' : 'pointer',
-                background: checking ? '#f8fafc' : '#16a34a',
-                color: checking ? '#94a3b8' : '#fff',
-                boxShadow: checking ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
-              }}>
+            <div className="flex gap-2">
+              <button
+                onClick={handleApply}
+                disabled={applying || checking}
+                className={`flex-[2] rounded-xl border-none py-3.5 text-[15px] font-extrabold font-inherit ${applying || checking ? 'cursor-not-allowed' : 'cursor-pointer'
+                  } ${checking ? 'bg-slate-50 text-slate-400' : 'bg-green-600 text-white shadow-lg shadow-green-600/30'}`}
+              >
                 {checking ? 'Loading…' : applying ? 'Applying…' : 'Apply Now →'}
               </button>
-
             </div>
           )}
 
-          <button onClick={handleShare} style={{ width: '100%', padding: '10px', border: '1.5px solid #e2e8f0', borderRadius: 10, background: shareLabel ? '#f0fdf4' : '#fff', color: shareLabel ? '#16a34a' : '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 2 }}>
+          <button
+            onClick={handleShare}
+            className={`mt-0.5 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2.5 text-[13px] font-semibold font-inherit ${shareLabel ? 'bg-green-50 text-green-600' : 'bg-white text-slate-500'
+              }`}
+          >
             {shareLabel ?? '🔗 Share Job'}
           </button>
         </>
@@ -584,76 +661,95 @@ export default function GigsPage() {
     setShowPost(true);
   };
 
-  const inp: React.CSSProperties = { width: '100%', border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: 14, color: '#0f172a', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' as const, background: '#f8fafc' };
+  // Shared input styling — matches the clean look in the reference screenshots
+  const inputClass =
+    'w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-900 font-inherit outline-none box-border';
 
   return (
     <>
-      <div style={{ fontFamily: "'Outfit',sans-serif", background: '#f8fafc', minHeight: '100vh' }}>
+      <div className="min-h-screen bg-slate-50 font-outfit">
         {/* Hero */}
-        <header style={{ background: 'linear-gradient(135deg,#0f4c25,#16a34a)', padding: 'clamp(20px,4vw,40px) clamp(14px,4vw,24px) clamp(28px,5vw,56px)' }}>
-          <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+        <header className="bg-gradient-to-br from-green-900 to-green-600 px-3.5 py-5 pb-7 sm:px-6 sm:py-10 sm:pb-14">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 style={{ fontSize: 'clamp(18px,5vw,36px)', fontWeight: 900, color: '#fff', marginBottom: 4 }}>💼 Find Jobs</h1>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>
+              <h1 className="mb-1 text-xl font-black text-white sm:text-4xl">💼 Find Jobs</h1>
+              <p className="text-[15px] text-white/70">
                 {jobs.length} jobs live · {bookmarks.size > 0 && `${bookmarks.size} saved · `}Tap any card to apply
               </p>
             </div>
-            <button onClick={() => user ? setShowPost(true) : router.push('/login')}
-              className="post-job-hero-btn" style={{ background: '#fff', color: '#16a34a', border: 'none', borderRadius: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
+            <button
+              onClick={() => user ? setShowPost(true) : router.push('/login')}
+              className="post-job-hero-btn cursor-pointer rounded-xl border-none bg-white font-extrabold text-green-600 shadow-lg font-inherit"
+            >
               + Post a Job
             </button>
           </div>
         </header>
 
-        <div style={{ maxWidth: 1400, margin: '-20px auto 0', padding: '0 clamp(10px,4vw,24px) 48px' }}>
+        <div className="mx-auto max-w-7xl px-2.5 pb-12 pt-0 sm:px-6" style={{ marginTop: -20 }}>
           {/* Search */}
-          <div style={{ background: '#fff', borderRadius: 16, padding: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', marginBottom: 24, display: 'flex', gap: 0 }}>
-            <label htmlFor="job-search" style={{ display: 'none' }}>Search jobs</label>
-            <input id="job-search" value={search} onChange={e => setSearch(e.target.value)}
+          <div className="mb-6 flex gap-0 rounded-2xl bg-white p-1.5 shadow-lg">
+            <label htmlFor="job-search" className="hidden">Search jobs</label>
+            <input
+              id="job-search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
               placeholder="🔍  Search jobs, skills, or city..."
-              style={{ flex: 1, border: 'none', background: 'transparent', padding: '14px 18px', fontSize: 16, fontFamily: 'inherit', outline: 'none', color: '#0f172a' }} />
-            <button aria-label="Search jobs" style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: 12, padding: '0 24px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Search</button>
+              className="flex-1 border-none bg-transparent px-4.5 py-3.5 text-base text-slate-900 outline-none font-inherit"
+            />
+            <button
+              aria-label="Search jobs"
+              className="cursor-pointer rounded-xl border-none bg-green-600 px-6 text-sm font-bold text-white font-inherit"
+            >
+              Search
+            </button>
           </div>
 
           {/* Bookmark filter row */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
-            <button onClick={() => setShowBookmarksOnly(false)} style={{
-              borderRadius: 99, border: '1.5px solid', fontWeight: 700, fontSize: 13, padding: '7px 14px', cursor: 'pointer', fontFamily: 'inherit',
-              borderColor: !showBookmarksOnly ? '#16a34a' : '#e2e8f0', background: !showBookmarksOnly ? '#16a34a' : '#fff', color: !showBookmarksOnly ? '#fff' : '#475569',
-            }}>🌐 All Jobs</button>
-            <button onClick={() => setShowBookmarksOnly(true)} style={{
-              borderRadius: 99, border: '1.5px solid', fontWeight: 700, fontSize: 13, padding: '7px 14px', cursor: 'pointer', fontFamily: 'inherit',
-              borderColor: showBookmarksOnly ? '#d97706' : '#e2e8f0', background: showBookmarksOnly ? '#fef9ee' : '#fff', color: showBookmarksOnly ? '#d97706' : '#475569',
-            }}>🔖 Saved {bookmarks.size > 0 && `(${bookmarks.size})`}</button>
+          <div className="mb-3 flex items-center gap-2">
+            <button
+              onClick={() => setShowBookmarksOnly(false)}
+              className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-bold font-inherit ${!showBookmarksOnly ? 'border-green-600 bg-green-600 text-white' : 'border-slate-200 bg-white text-slate-600'
+                }`}
+            >
+              🌐 All Jobs
+            </button>
+            <button
+              onClick={() => setShowBookmarksOnly(true)}
+              className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-bold font-inherit ${showBookmarksOnly ? 'border-amber-600 bg-amber-50 text-amber-600' : 'border-slate-200 bg-white text-slate-600'
+                }`}
+            >
+              🔖 Saved {bookmarks.size > 0 && `(${bookmarks.size})`}
+            </button>
           </div>
 
           {/* Category filter */}
-          <div className="pill-scroll" role="tablist" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 8 }}>
+          <div role="tablist" className="pill-scroll mb-2 flex gap-2 overflow-x-auto pb-1">
             <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>🌐 All Categories</Pill>
             {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
           </div>
-          <div className="pill-scroll" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 16, marginBottom: 28 }}>
+          <div className="pill-scroll mb-7 flex gap-2 overflow-x-auto pb-4">
             <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>All Types</Pill>
             {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '80px 0', gap: 16 }}>
+            <div className="flex flex-col items-center gap-4 py-20">
               <div className="spinner" />
-              <p style={{ color: '#94a3b8', fontSize: 15 }}>Loading jobs…</p>
+              <p className="text-[15px] text-slate-400">Loading jobs…</p>
             </div>
           ) : filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '80px 0' }}>
-              <div style={{ fontSize: 56, marginBottom: 12 }}>{showBookmarksOnly ? '🔖' : '🔍'}</div>
-              <p style={{ color: '#334155', fontWeight: 700, fontSize: 18 }}>
+            <div className="py-20 text-center">
+              <div className="mb-3 text-5xl">{showBookmarksOnly ? '🔖' : '🔍'}</div>
+              <p className="text-lg font-bold text-slate-700">
                 {showBookmarksOnly ? 'No saved jobs' : 'No jobs found'}
               </p>
-              <p style={{ color: '#94a3b8', fontSize: 14, marginTop: 6 }}>
+              <p className="mt-1.5 text-sm text-slate-400">
                 {showBookmarksOnly ? 'Tap the 🔗 icon on any job to save it' : jobs.length === 0 ? 'Be the first to post a job!' : 'Try different filters'}
               </p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 14 }}>
+            <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))' }}>
               {filtered.map(job => (
                 <JobCard key={job.id} job={job} user={user} profile={profile} authLoading={authLoading}
                   onDelete={handleDeleteJob} onEdit={handleEditJob}
@@ -667,19 +763,27 @@ export default function GigsPage() {
 
         {/* Post Job Modal */}
         {showPost && (
-          <div role="dialog" aria-modal="true"
-            className="modal-backdrop" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 0, zIndex: 500, backdropFilter: 'blur(4px)' }}
-            onClick={e => { if (e.target === e.currentTarget) { setShowPost(false); setEditingJob(null); resetForm(); } }}>
-            <div className="slide-up post-modal" style={{ background: '#fff', borderRadius: '20px 20px 0 0', padding: 'clamp(20px,5vw,32px)', width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' as const }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="modal-backdrop fixed inset-0 z-[500] flex items-end justify-center bg-black/60 backdrop-blur-sm"
+            onClick={e => { if (e.target === e.currentTarget) { setShowPost(false); setEditingJob(null); resetForm(); } }}
+          >
+            <div className="slide-up post-modal max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white p-5 sm:p-8">
+              <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0f172a' }}>{editingJob ? '✏️ Edit Job' : '📋 Post a Job'}</h2>
-                  <p style={{ color: '#94a3b8', fontSize: 13, marginTop: 2 }}>{editingJob ? 'Make changes and save' : 'Fill details to find workers fast'}</p>
+                  <h2 className="text-xl font-black text-slate-900">{editingJob ? '✏️ Edit Job' : '📋 Post a Job'}</h2>
+                  <p className="mt-0.5 text-[13px] text-slate-400">{editingJob ? 'Make changes and save' : 'Fill details to find workers fast'}</p>
                 </div>
-                <button onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: '#64748b' }}>✕</button>
+                <button
+                  onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }}
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-slate-100 text-lg text-slate-500"
+                >
+                  ✕
+                </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div className="flex flex-col gap-4">
                 {([
                   ['title', 'Job Title *', 'e.g. Need Plumber at Home'],
                   ['pay', 'Pay *', 'e.g. ₹500/day'],
@@ -687,21 +791,21 @@ export default function GigsPage() {
                   ['company', 'Company / Shop (optional)', 'Your business name'],
                 ] as [string, string, string][]).map(([field, label, ph]) => (
                   <div key={field}>
-                    <label htmlFor={`post-${field}`} style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>{label}</label>
-                    <input id={`post-${field}`} placeholder={ph} style={inp} value={(form as any)[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} />
+                    <label htmlFor={`post-${field}`} className="mb-1.5 block text-[13px] font-bold text-slate-600">{label}</label>
+                    <input id={`post-${field}`} placeholder={ph} className={inputClass} value={(form as any)[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} />
                   </div>
                 ))}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Job Type</label>
-                    <select style={inp} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                    <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Job Type</label>
+                    <select className={inputClass} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                       {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Category</label>
-                    <select style={inp} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                    <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Category</label>
+                    <select className={inputClass} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
                       <option value="">— Select —</option>
                       {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
                     </select>
@@ -709,30 +813,35 @@ export default function GigsPage() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Required Skills (optional)</label>
-                  <input placeholder="e.g. Plumbing, Wiring" style={inp} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
+                  <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Required Skills (optional)</label>
+                  <input placeholder="e.g. Plumbing, Wiring" className={inputClass} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 6 }}>Apply Link (optional)</label>
-                  <input placeholder="e.g. https://forms.google.com/... or WhatsApp link" style={inp} value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} />
-                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, marginLeft: 2 }}>Add a link where applicants can apply directly</p>
+                  <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Apply Link (optional)</label>
+                  <input placeholder="e.g. https://forms.google.com/... or WhatsApp link" className={inputClass} value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} />
+                  <p className="ml-0.5 mt-1 text-[11px] text-slate-400">Add a link where applicants can apply directly</p>
                 </div>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 14px', background: '#fef2f2', borderRadius: 12, border: '1px solid #fecaca' }}>
-                  <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} style={{ accentColor: '#dc2626', width: 18, height: 18 }} />
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#dc2626' }}>🔥 Mark as Urgent</span>
+                <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3">
+                  <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} className="h-[18px] w-[18px] accent-red-600" />
+                  <span className="text-sm font-bold text-red-600">🔥 Mark as Urgent</span>
                 </label>
               </div>
 
-              <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-                <button onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }} style={{ flex: 1, padding: '14px', border: '1.5px solid #e2e8f0', borderRadius: 12, color: '#475569', fontWeight: 600, fontSize: 14, cursor: 'pointer', background: '#fff', fontFamily: 'inherit' }}>Cancel</button>
-                <button onClick={handlePost} disabled={posting} style={{
-                  flex: 2, padding: '14px', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 15,
-                  cursor: posting ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-                  background: posting ? '#d1fae5' : '#16a34a', color: posting ? '#4b7a5a' : '#fff',
-                  boxShadow: posting ? 'none' : '0 4px 16px rgba(22,163,74,0.3)',
-                }}>
+              <div className="mt-6 flex gap-2.5">
+                <button
+                  onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }}
+                  className="flex-1 cursor-pointer rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-slate-600 font-inherit"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePost}
+                  disabled={posting}
+                  className={`flex-[2] rounded-xl border-none py-3.5 text-[15px] font-extrabold font-inherit ${posting ? 'cursor-not-allowed bg-green-100 text-green-700' : 'cursor-pointer bg-green-600 text-white shadow-lg shadow-green-600/30'
+                    }`}
+                >
                   {posting ? 'Saving…' : editingJob ? '✅ Update Job' : '✅ Post Job Now'}
                 </button>
               </div>
@@ -749,6 +858,14 @@ export default function GigsPage() {
         @media (max-width: 480px) { .post-job-hero-btn { padding: 10px 16px; font-size: 13px; width: 100%; } }
         @media (min-width: 540px) { .modal-backdrop { align-items: center !important; padding: 16px !important; } .post-modal { border-radius: 20px !important; } }
         @media (max-width: 480px) { #job-search { font-size: 14px !important; padding: 12px 12px !important; } }
+        .spinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #16a34a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .slide-down { animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.25s ease-out; }
+        @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .hover-lift { transition: box-shadow 0.15s, transform 0.15s; }
+        .hover-lift:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-1px); }
       `}</style>
     </>
   );
