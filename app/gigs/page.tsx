@@ -34,13 +34,13 @@ function ProfileWarningModal({ onClose, onContinue }: { onClose: () => void; onC
         </p>
         <div className="flex gap-2.5">
           <a href="/dashboard" className="flex-1 no-underline">
-            <button className="w-full rounded-xl bg-green-600 py-3 text-sm font-extrabold text-white font-inherit cursor-pointer">
+            <button className="w-full rounded-full bg-green-600 py-3 text-sm font-bold text-white font-inherit cursor-pointer">
               📱 Add Phone
             </button>
           </a>
           <button
             onClick={onContinue}
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 py-3 text-sm font-semibold text-slate-500 font-inherit cursor-pointer"
+            className="flex-1 rounded-full border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-500 font-inherit cursor-pointer"
           >
             Apply Anyway
           </button>
@@ -69,28 +69,27 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
       className="fixed inset-0 z-[600] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
     >
       <div className="slide-down flex max-h-[90vh] w-full max-w-md flex-col overflow-y-auto rounded-3xl bg-white shadow-2xl">
-        {/* Header */}
-        <div className="relative rounded-t-3xl bg-gradient-to-br from-green-900 to-green-600 px-7 pb-7 pt-8">
+        <div className="relative rounded-t-3xl bg-gradient-to-br from-green-800 to-green-600 px-7 pb-7 pt-8">
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg border-none bg-white/20 text-base text-white cursor-pointer"
+            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border-none bg-white/20 text-base text-white cursor-pointer"
           >
             ✕
           </button>
           <div className="flex items-center gap-4">
-            <div className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border-[3px] border-white/40 bg-white/20 text-2xl font-black text-white">
+            <div className="flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-full border-2 border-white/40 bg-white/15 text-2xl font-bold text-white">
               {initials}
             </div>
             <div>
-              <div className="text-xl font-black text-white">{name}</div>
-              {role && <div className="mt-1 text-sm capitalize text-white/75">👤 {role}</div>}
+              <div className="text-xl font-bold text-white">{name}</div>
+              {role && <div className="mt-1 text-sm capitalize text-white/75">{role}</div>}
               {location && <div className="mt-0.5 text-sm text-white/65">📍 {location}</div>}
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-5 px-7 py-6">
-          <div className="rounded-xl border border-green-100 bg-green-50 px-3.5 py-2.5 text-sm font-semibold text-green-600">
+          <div className="rounded-full bg-green-50 px-4 py-2 text-sm font-semibold text-green-700">
             ✅ Applied on {applied}
           </div>
 
@@ -99,7 +98,7 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
             {phone ? (
               <div className="flex gap-2.5">
                 <a href={`tel:${phone}`} className="flex-1 no-underline">
-                  <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 py-3.5 text-[15px] font-extrabold text-white shadow-lg shadow-green-600/30 font-inherit cursor-pointer">
+                  <button className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-[15px] font-bold text-white font-inherit cursor-pointer">
                     📞 Call Now
                   </button>
                 </a>
@@ -109,13 +108,13 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
                   rel="noreferrer"
                   className="flex-1 no-underline"
                 >
-                  <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-green-100 bg-green-50 py-3.5 text-[15px] font-extrabold text-green-600 font-inherit cursor-pointer">
+                  <button className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white py-3.5 text-[15px] font-bold text-green-700 font-inherit cursor-pointer">
                     💬 WhatsApp
                   </button>
                 </a>
               </div>
             ) : (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-sm font-semibold text-red-600">
+              <div className="rounded-xl bg-red-50 px-3.5 py-3 text-sm font-semibold text-red-600">
                 ⚠️ This person has not added a phone number yet.
               </div>
             )}
@@ -143,10 +142,10 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
 
           {skills && (
             <div>
-              <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">🛠 SKILLS</div>
+              <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">SKILLS</div>
               <div className="flex flex-wrap gap-2">
                 {skills.split(', ').filter(Boolean).map((s: string) => (
-                  <span key={s} className="rounded-full border border-green-100 bg-green-50 px-3.5 py-1.5 text-sm font-semibold text-green-600">
+                  <span key={s} className="rounded-full bg-green-50 px-3.5 py-1.5 text-sm font-semibold text-green-700">
                     {s}
                   </span>
                 ))}
@@ -156,10 +155,10 @@ function ProfileModal({ person, onClose }: { person: any; onClose: () => void })
 
           {interests && (
             <div>
-              <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">❤️ INTERESTS</div>
+              <div className="mb-2.5 text-xs font-bold tracking-wide text-slate-400">INTERESTS</div>
               <div className="flex flex-wrap gap-2">
                 {interests.split(', ').filter(Boolean).map((s: string) => (
-                  <span key={s} className="rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-600">
+                  <span key={s} className="rounded-full bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-700">
                     {s}
                   </span>
                 ))}
@@ -206,18 +205,17 @@ function ApplicantsDrawer({ job }: { job: any }) {
     <div>
       <button
         onClick={toggle}
-        className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border py-3.5 text-sm font-bold font-inherit transition-colors ${open ? 'border-slate-900 bg-slate-900 text-white' : 'border-green-100 bg-green-50 text-green-600'
-          }`}
+        className="flex w-full cursor-pointer items-center gap-2 rounded-xl bg-green-50 px-4 py-3 text-sm font-bold text-slate-800 font-inherit"
       >
-        <span className="text-lg">👥</span>
-        {open ? '▲ Hide Applicants' : `See Who Applied${count !== null ? ` (${count})` : ''}`}
-        {(count ?? 0) > 0 && !open && (
-          <span className="rounded-full bg-green-600 px-2 py-0.5 text-xs font-extrabold text-white">{count}</span>
-        )}
+        <span>👥</span>
+        <span className="flex-1 text-left">
+          {count !== null ? `${count} applicant${count === 1 ? '' : 's'}` : 'Applicants'}
+        </span>
+        <span className={`text-xs transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
       </button>
 
       {open && (
-        <div className="slide-down mt-3 flex flex-col gap-2.5">
+        <div className="slide-down mt-2 flex flex-col gap-2">
           {loading ? (
             <div className="p-7 text-center">
               <div className="spinner mx-auto mb-3" />
@@ -231,42 +229,26 @@ function ApplicantsDrawer({ job }: { job: any }) {
             </div>
           ) : applicants.map((app: any, i: number) => {
             const name = app.profile?.name || 'Unknown';
-            const phone = app.profile?.contact;
             const skills = app.profile?.skills;
             const location = app.profile?.location;
+            const role = app.profile?.role;
             const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+            const subtitle = [role, location].filter(Boolean).join(' · ') || (skills || '');
             return (
-              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <button
-                    onClick={() => setViewProfile(app)}
-                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 border-none bg-transparent p-0 text-left font-inherit"
-                  >
-                    <div className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-green-500 text-base font-extrabold text-white">
-                      {initials}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 text-[15px] font-extrabold text-slate-900">
-                        {name}
-                        <span className="rounded-full border border-green-100 bg-green-50 px-1.5 py-0.5 text-[11px] font-semibold text-green-600">
-                          View →
-                        </span>
-                      </div>
-                      {location && <div className="mt-0.5 text-xs text-slate-500">📍 {location}</div>}
-                      {skills && <div className="mt-0.5 truncate text-xs text-slate-400">🛠 {skills}</div>}
-                    </div>
-                  </button>
-                  {phone ? (
-                    <a href={`tel:${phone}`} className="shrink-0 no-underline">
-                      <button className="flex items-center gap-1.5 rounded-lg bg-green-600 px-4.5 py-2.5 text-sm font-extrabold text-white font-inherit cursor-pointer">
-                        📞 Call
-                      </button>
-                    </a>
-                  ) : (
-                    <span className="shrink-0 text-xs text-slate-400">No phone</span>
-                  )}
+              <button
+                key={i}
+                onClick={() => setViewProfile(app)}
+                className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 text-left font-inherit cursor-pointer"
+              >
+                <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-green-50 text-sm font-bold text-green-700">
+                  {initials}
                 </div>
-              </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-bold text-slate-900">{name}</div>
+                  {subtitle && <div className="truncate text-xs text-slate-400">{subtitle}</div>}
+                </div>
+                <span className="shrink-0 text-sm font-semibold text-green-700">View →</span>
+              </button>
             );
           })}
         </div>
@@ -292,15 +274,15 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
   const [showProfileWarning, setShowProfileWarning] = useState(false);
   const [waLoading, setWaLoading] = useState(false);
   const [jobStatus, setJobStatus] = useState(job.status || 'open');
+  const [toast, setToast] = useState<{ title: string; body: string } | null>(null);
   const isMyJob = user && job.posted_by === user.id;
   const cat = CATEGORIES.find(c => c.id === job.category);
 
-  // Same status logic as before — now returns Tailwind classes instead of hex values
   const getStatusBadge = () => {
-    if (jobStatus === 'filled') return { label: 'Hired ✅', className: 'bg-green-50 text-green-600' };
-    if (jobStatus === 'closed') return { label: 'Closed ❌', className: 'bg-red-50 text-red-600' };
-    if (applicantCount && applicantCount > 0) return { label: 'Under Review 👀', className: 'bg-amber-50 text-amber-600' };
-    return { label: 'Open ⏳', className: 'bg-slate-100 text-slate-500' };
+    if (jobStatus === 'filled') return { label: 'Hired', className: 'bg-green-100 text-green-700' };
+    if (jobStatus === 'closed') return { label: 'Closed', className: 'bg-red-100 text-red-600' };
+    if (applicantCount && applicantCount > 0) return { label: 'Under review', className: 'bg-amber-100 text-amber-700' };
+    return { label: 'Open', className: 'bg-slate-100 text-slate-500' };
   };
 
   const timeAgo = (() => {
@@ -309,6 +291,12 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
     if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
     return `${Math.floor(d / 86400)}d ago`;
   })();
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3200);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -339,9 +327,11 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
       setApplied(true);
       if (typeof localStorage !== 'undefined') localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
       if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(80);
+      setToast({ title: 'Application sent', body: 'The employer will reach out to you soon.' });
     } catch {
       setApplied(true);
       if (typeof localStorage !== 'undefined') localStorage.setItem(`applied_${user.id}_${job.id}`, '1');
+      setToast({ title: 'Application sent', body: 'The employer will reach out to you soon.' });
     } finally { setApplying(false); }
   };
 
@@ -392,7 +382,7 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
   return (
     <article
       aria-label={job.title}
-      className={`hover-lift flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 ${jobStatus === 'closed' ? 'opacity-75' : ''
+      className={`hover-lift flex flex-col gap-4 rounded-2xl border border-slate-200 bg-[#f7fcf8] p-4 sm:p-5 ${jobStatus === 'closed' ? 'opacity-75' : ''
         }`}
     >
       {showProfileWarning && (
@@ -402,25 +392,35 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
         />
       )}
 
+      {toast && (
+        <div className="slide-down fixed bottom-4 right-4 z-[800] flex max-w-xs items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-900 text-xs text-white">✓</div>
+          <div>
+            <div className="text-sm font-bold text-slate-900">{toast.title}</div>
+            <div className="mt-0.5 text-[13px] text-slate-500">{toast.body}</div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex justify-between gap-2">
         <div className="flex min-w-0 flex-1 gap-3">
-          <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl border border-green-100 bg-green-50 text-2xl">
+          <div className="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-xl bg-green-50 text-2xl">
             {cat?.icon || '💼'}
           </div>
           <div className="min-w-0">
-            <h2 className="mb-0.5 text-base font-extrabold text-slate-900">{job.title}</h2>
-            {job.company && <div className="text-[13px] text-slate-400">{job.company}</div>}
+            <h2 className="mb-0.5 text-base font-bold text-slate-900">{job.title}</h2>
+            <div className="text-[13px] text-slate-400">
+              {job.company ? `${job.company} · ` : ''}{timeAgo}
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <div className="text-lg font-black text-green-600">{job.pay}</div>
-          <div className="text-[11px] text-slate-400">{timeAgo}</div>
+        <div className="flex flex-col items-end gap-2">
+          <div className="text-lg font-extrabold text-green-700">{job.pay}</div>
           <button
             onClick={() => onBookmark?.(job.id)}
             title={isBookmarked ? 'Remove bookmark' : 'Save job'}
-            className={`flex h-[30px] w-[30px] items-center justify-center rounded-lg border text-sm transition-colors ${isBookmarked ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'
-              }`}
+            className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 cursor-pointer"
           >
             {isBookmarked ? '🔖' : '🔗'}
           </button>
@@ -430,23 +430,23 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
       {/* Tags */}
       <div className="flex flex-wrap gap-1.5">
         {job.urgent && (
-          <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-bold text-red-600">🔥 Urgent</span>
+          <span className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500">🔥 Urgent</span>
         )}
-        <span className="rounded-full border border-green-100 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">📍 {job.location}</span>
-        <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">{job.type}</span>
+        <span className="flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600">📍 {job.location}</span>
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-800">{job.type}</span>
         {cat && (
-          <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">
+          <span className="flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600">
             {cat.icon} {cat.label}
           </span>
         )}
-        <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${statusBadge.className}`}>{statusBadge.label}</span>
+        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadge.className}`}>{statusBadge.label}</span>
       </div>
 
       {/* Skills */}
       {job.skills && (
         <div className="flex flex-wrap gap-1.5">
           {job.skills.split(',').filter(Boolean).map((s: string) => (
-            <span key={s} className="rounded-md bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-500">
+            <span key={s} className="rounded-full bg-slate-100/70 px-2.5 py-1 text-xs text-slate-500">
               {s.trim()}
             </span>
           ))}
@@ -456,73 +456,44 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
       {/* External apply link */}
       {job.link && (
         <a href={job.link} target="_blank" rel="noreferrer" className="no-underline">
-          <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2.5 text-[13px] font-semibold text-blue-600">
+          <div className="flex items-center gap-2 rounded-xl border border-dashed border-green-200 bg-green-50/60 px-3.5 py-2.5 text-[13px] font-semibold text-green-700">
             <span>🔗</span>
-            <span className="flex-1 truncate">Apply via Link</span>
+            <span className="flex-1 truncate">Apply via employer link</span>
             <span className="text-[11px] opacity-70">↗</span>
           </div>
         </a>
       )}
 
-      {/* Applicant count (non-poster) */}
-      {!isMyJob && applicantCount !== null && applicantCount > 0 && (
-        <div className="text-xs text-slate-500">
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 font-semibold">
-            👥 {applicantCount} {applicantCount === 1 ? 'person' : 'people'} applied
-          </span>
-        </div>
-      )}
-
-      {/* My job badge */}
-      {isMyJob && (
-        <div className="rounded-lg bg-green-50 px-3 py-2 text-xs font-bold text-green-600">✅ Your Job Posting</div>
-      )}
-
-      {/* Action area */}
       {isMyJob ? (
         <>
-          {/* Status management */}
-          <div className="flex gap-2">
+          <ApplicantsDrawer job={job} />
+
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3.5">
             {jobStatus !== 'filled' && (
               <button
                 onClick={() => handleUpdateStatus('filled')}
-                className="flex-1 cursor-pointer rounded-lg border border-green-100 bg-green-50 py-2.5 text-[13px] font-bold text-green-600 font-inherit"
+                className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-800 font-inherit cursor-pointer"
               >
-                ✅ Mark Hired
+                ✓ Mark hired
               </button>
             )}
             {jobStatus !== 'closed' && (
               <button
                 onClick={() => handleUpdateStatus('closed')}
-                className="flex-1 cursor-pointer rounded-lg border border-red-200 bg-red-50 py-2.5 text-[13px] font-bold text-red-600 font-inherit"
+                className="rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-800 font-inherit cursor-pointer"
               >
-                ❌ Close Job
+                Close job
               </button>
             )}
             {(jobStatus === 'filled' || jobStatus === 'closed') && (
               <button
                 onClick={() => handleUpdateStatus('open')}
-                className="flex-1 cursor-pointer rounded-lg border border-blue-200 bg-blue-50 py-2.5 text-[13px] font-bold text-blue-500 font-inherit"
+                className="rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-800 font-inherit cursor-pointer"
               >
                 🔄 Reopen
               </button>
             )}
-          </div>
-
-          <ApplicantsDrawer job={job} />
-
-          <div className="flex flex-wrap gap-2.5">
-            <button
-              onClick={handleShare}
-              className={`flex min-w-[100px] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2.5 text-[13px] font-semibold font-inherit ${shareLabel ? 'bg-green-50 text-green-600' : 'bg-white text-slate-500'
-                }`}
-            >
-              {shareLabel ?? '🔗 Share'}
-            </button>
-            <button
-              onClick={() => onEdit?.(job)}
-              className="flex min-w-[100px] flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-blue-500 bg-blue-50 py-2.5 text-[13px] font-semibold text-blue-500 font-inherit"
-            >
+            <button onClick={() => onEdit?.(job)} className="flex items-center gap-1 px-1 text-[13px] font-semibold text-slate-700 font-inherit cursor-pointer">
               ✏️ Edit
             </button>
             <button
@@ -534,47 +505,57 @@ function JobCard({ job, user, profile, authLoading, onDelete, onEdit, isBookmark
                 finally { setDeleting(false); }
               }}
               disabled={deleting}
-              className={`flex min-w-[100px] flex-1 items-center justify-center gap-1.5 rounded-lg border border-red-600 bg-red-50 py-2.5 text-[13px] font-semibold text-red-600 font-inherit ${deleting ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
-                }`}
+              className={`flex items-center gap-1 px-1 text-[13px] font-semibold text-red-600 font-inherit ${deleting ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
             >
               🗑️ {deleting ? 'Deleting…' : 'Delete'}
+            </button>
+            <button onClick={handleShare} className="flex items-center gap-1 rounded-full px-2 py-1 text-[13px] font-semibold text-slate-700 font-inherit cursor-pointer">
+              {shareLabel ?? '📤 Share'}
             </button>
           </div>
         </>
       ) : (
         <>
           {applied ? (
-            <div className="flex items-center gap-3.5 rounded-2xl border border-green-200 bg-gradient-to-br from-green-50 to-green-100 px-5 py-4.5">
-              <span className="shrink-0 text-3xl">📬</span>
-              <div>
-                <div className="mb-0.5 text-sm font-extrabold text-green-700">✅ Application Sent!</div>
-                <div className="text-[13px] leading-relaxed text-green-700/80">The hiring person will review your profile and contact you soon.</div>
+            <div className="flex items-center gap-2 border-t border-slate-100 pt-3.5">
+              <div className="flex-1 rounded-full bg-green-50 px-4 py-3 text-sm font-semibold text-green-700">
+                ✅ Application sent — the employer will contact you.
               </div>
+              <button onClick={handleShare} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-500 cursor-pointer">📤</button>
             </div>
           ) : jobStatus === 'filled' || jobStatus === 'closed' ? (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-center text-sm font-semibold text-slate-400">
-              {jobStatus === 'filled' ? '✅ This position has been filled' : '❌ This job is closed'}
+            <div className="flex items-center gap-2 border-t border-slate-100 pt-3.5">
+              <div className="flex-1 rounded-full bg-slate-100 px-4 py-3 text-center text-sm font-semibold text-slate-400">
+                {jobStatus === 'filled' ? 'This position has been filled' : 'This job is closed'}
+              </div>
+              <button onClick={handleShare} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-500 cursor-pointer">📤</button>
             </div>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2 border-t border-slate-100 pt-3.5">
               <button
                 onClick={handleApply}
                 disabled={applying || checking}
-                className={`flex-[2] rounded-xl border-none py-3.5 text-[15px] font-extrabold font-inherit ${applying || checking ? 'cursor-not-allowed' : 'cursor-pointer'
-                  } ${checking ? 'bg-slate-50 text-slate-400' : 'bg-green-600 text-white shadow-lg shadow-green-600/30'}`}
+                className={`flex-1 rounded-full border-none py-3 text-[15px] font-bold font-inherit ${applying || checking ? 'cursor-not-allowed' : 'cursor-pointer'
+                  } ${checking ? 'bg-slate-100 text-slate-400' : 'bg-green-600 text-white'}`}
               >
-                {checking ? 'Loading…' : applying ? 'Applying…' : 'Apply Now →'}
+                {checking ? 'Loading…' : applying ? 'Applying…' : 'Apply now'}
               </button>
+              <button
+                onClick={handleWhatsAppApply}
+                disabled={waLoading}
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-3 text-[15px] font-semibold text-slate-800 font-inherit cursor-pointer"
+              >
+                📞 {waLoading ? '…' : 'Contact'}
+              </button>
+              <button onClick={handleShare} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-slate-500 cursor-pointer">📤</button>
             </div>
           )}
 
-          <button
-            onClick={handleShare}
-            className={`mt-0.5 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2.5 text-[13px] font-semibold font-inherit ${shareLabel ? 'bg-green-50 text-green-600' : 'bg-white text-slate-500'
-              }`}
-          >
-            {shareLabel ?? '🔗 Share Job'}
-          </button>
+          {applicantCount !== null && applicantCount > 0 && (
+            <div className="-mt-2 text-xs text-slate-400">
+              {applicantCount} {applicantCount === 1 ? 'person' : 'people'} already applied
+            </div>
+          )}
         </>
       )}
     </article>
@@ -661,75 +642,83 @@ export default function GigsPage() {
     setShowPost(true);
   };
 
-  // Shared input styling — matches the clean look in the reference screenshots
   const inputClass =
     'w-full rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-900 font-inherit outline-none box-border';
 
   return (
     <>
-      <div className="min-h-screen bg-slate-50 font-outfit">
+      <div className="min-h-screen bg-[#f7faf5] font-outfit">
         {/* Hero */}
-        <header className="bg-gradient-to-br from-green-900 to-green-600 px-3.5 py-5 pb-7 sm:px-6 sm:py-10 sm:pb-14">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="mb-1 text-xl font-black text-white sm:text-4xl">💼 Find Jobs</h1>
-              <p className="text-[15px] text-white/70">
-                {jobs.length} jobs live · {bookmarks.size > 0 && `${bookmarks.size} saved · `}Tap any card to apply
-              </p>
+        <header className="relative bg-gradient-to-br from-green-900 to-green-600 px-4 pb-24 pt-8 sm:px-8 sm:pt-12">
+          <div className="mx-auto max-w-5xl">
+            <span className="inline-block rounded-full border border-white/30 px-3 py-1 text-xs font-medium text-white">
+              {jobs.length} gigs hiring right now
+            </span>
+            <h1 className="mt-4 text-3xl font-extrabold leading-tight text-white sm:text-5xl">Local work, matched fast.</h1>
+            <p className="mt-3 max-w-xl text-[15px] text-white/80">
+              Daily wage, hourly and contract gigs near you — apply in one tap, or post a job and hear from workers today.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button
+                onClick={() => user ? setShowPost(true) : router.push('/login')}
+                className="cursor-pointer rounded-full border-none bg-white px-5 py-2.5 text-sm font-bold text-green-700 font-inherit"
+              >
+                + Post a job
+              </button>
+              <button
+                onClick={() => setShowBookmarksOnly(true)}
+                className="cursor-pointer rounded-full border border-white/40 bg-transparent px-5 py-2.5 text-sm font-bold text-white font-inherit"
+              >
+                🔖 Saved ({bookmarks.size})
+              </button>
             </div>
-            <button
-              onClick={() => user ? setShowPost(true) : router.push('/login')}
-              className="post-job-hero-btn cursor-pointer rounded-xl border-none bg-white font-extrabold text-green-600 shadow-lg font-inherit"
-            >
-              + Post a Job
-            </button>
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl px-2.5 pb-12 pt-0 sm:px-6" style={{ marginTop: -20 }}>
+        <div className="mx-auto max-w-5xl px-4 pb-12 sm:px-8" style={{ marginTop: -64 }}>
           {/* Search */}
-          <div className="mb-6 flex gap-0 rounded-2xl bg-white p-1.5 shadow-lg">
-            <label htmlFor="job-search" className="hidden">Search jobs</label>
-            <input
-              id="job-search"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="🔍  Search jobs, skills, or city..."
-              className="flex-1 border-none bg-transparent px-4.5 py-3.5 text-base text-slate-900 outline-none font-inherit"
-            />
-            <button
-              aria-label="Search jobs"
-              className="cursor-pointer rounded-xl border-none bg-green-600 px-6 text-sm font-bold text-white font-inherit"
-            >
-              Search
-            </button>
+          <div className="rounded-2xl bg-white p-2 shadow-lg">
+            <div className="relative">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+              <label htmlFor="job-search" className="hidden">Search jobs</label>
+              <input
+                id="job-search"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search jobs, skills or city"
+                className="w-full rounded-xl border-none bg-transparent py-3.5 pl-11 pr-4 text-[15px] text-slate-900 outline-none font-inherit"
+              />
+            </div>
           </div>
 
-          {/* Bookmark filter row */}
-          <div className="mb-3 flex items-center gap-2">
-            <button
-              onClick={() => setShowBookmarksOnly(false)}
-              className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-bold font-inherit ${!showBookmarksOnly ? 'border-green-600 bg-green-600 text-white' : 'border-slate-200 bg-white text-slate-600'
-                }`}
-            >
-              🌐 All Jobs
-            </button>
-            <button
-              onClick={() => setShowBookmarksOnly(true)}
-              className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-bold font-inherit ${showBookmarksOnly ? 'border-amber-600 bg-amber-50 text-amber-600' : 'border-slate-200 bg-white text-slate-600'
-                }`}
-            >
-              🔖 Saved {bookmarks.size > 0 && `(${bookmarks.size})`}
-            </button>
+          {/* All jobs / Saved toggle + results count */}
+          <div className="mb-3 mt-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowBookmarksOnly(false)}
+                className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-semibold font-inherit cursor-pointer ${!showBookmarksOnly ? 'border-green-600 bg-green-600 text-white' : 'border-slate-200 bg-white text-slate-600'
+                  }`}
+              >
+                🌐 All jobs
+              </button>
+              <button
+                onClick={() => setShowBookmarksOnly(true)}
+                className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-semibold font-inherit cursor-pointer ${showBookmarksOnly ? 'border-green-600 bg-green-600 text-white' : 'border-slate-200 bg-white text-slate-600'
+                  }`}
+              >
+                🔖 Saved
+              </button>
+            </div>
+            <div className="text-sm text-slate-400">{filtered.length} results</div>
           </div>
 
           {/* Category filter */}
           <div role="tablist" className="pill-scroll mb-2 flex gap-2 overflow-x-auto pb-1">
-            <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>🌐 All Categories</Pill>
+            <Pill active={catFilter === 'all'} onClick={() => setCatFilter('all')}>🌐 All categories</Pill>
             {CATEGORIES.map(c => <Pill key={c.id} active={catFilter === c.id} onClick={() => setCatFilter(c.id)}>{c.icon} {c.label}</Pill>)}
           </div>
           <div className="pill-scroll mb-7 flex gap-2 overflow-x-auto pb-4">
-            <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>All Types</Pill>
+            <Pill active={typeFilter === 'all'} onClick={() => setTypeFilter('all')}>All types</Pill>
             {JOB_TYPES.map(tt => <Pill key={tt} active={typeFilter === tt} onClick={() => setTypeFilter(tt)}>{tt}</Pill>)}
           </div>
 
@@ -749,7 +738,7 @@ export default function GigsPage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))' }}>
+            <div className="grid gap-3.5" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,340px),1fr))' }}>
               {filtered.map(job => (
                 <JobCard key={job.id} job={job} user={user} profile={profile} authLoading={authLoading}
                   onDelete={handleDeleteJob} onEdit={handleEditJob}
@@ -772,8 +761,8 @@ export default function GigsPage() {
             <div className="slide-up post-modal max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white p-5 sm:p-8">
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-black text-slate-900">{editingJob ? '✏️ Edit Job' : '📋 Post a Job'}</h2>
-                  <p className="mt-0.5 text-[13px] text-slate-400">{editingJob ? 'Make changes and save' : 'Fill details to find workers fast'}</p>
+                  <h2 className="text-xl font-black text-slate-900">{editingJob ? 'Edit job' : 'Post a job'}</h2>
+                  <p className="mt-0.5 text-[13px] text-slate-400">{editingJob ? 'Update the details and save your changes.' : 'Fill details to find workers fast'}</p>
                 </div>
                 <button
                   onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }}
@@ -785,10 +774,10 @@ export default function GigsPage() {
 
               <div className="flex flex-col gap-4">
                 {([
-                  ['title', 'Job Title *', 'e.g. Need Plumber at Home'],
+                  ['title', 'Job title *', 'e.g. Need Plumber at Home'],
                   ['pay', 'Pay *', 'e.g. ₹500/day'],
                   ['location', 'Location *', 'City or Area'],
-                  ['company', 'Company / Shop (optional)', 'Your business name'],
+                  ['company', 'Company / shop (optional)', 'Your business name'],
                 ] as [string, string, string][]).map(([field, label, ph]) => (
                   <div key={field}>
                     <label htmlFor={`post-${field}`} className="mb-1.5 block text-[13px] font-bold text-slate-600">{label}</label>
@@ -798,7 +787,7 @@ export default function GigsPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Job Type</label>
+                    <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Job type</label>
                     <select className={inputClass} value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                       {JOB_TYPES.map(tt => <option key={tt}>{tt}</option>)}
                     </select>
@@ -813,36 +802,36 @@ export default function GigsPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Required Skills (optional)</label>
+                  <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Required skills (optional)</label>
                   <input placeholder="e.g. Plumbing, Wiring" className={inputClass} value={form.skills} onChange={e => setForm(f => ({ ...f, skills: e.target.value }))} />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Apply Link (optional)</label>
+                  <label className="mb-1.5 block text-[13px] font-bold text-slate-600">Apply link (optional)</label>
                   <input placeholder="e.g. https://forms.google.com/... or WhatsApp link" className={inputClass} value={form.link} onChange={e => setForm(f => ({ ...f, link: e.target.value }))} />
                   <p className="ml-0.5 mt-1 text-[11px] text-slate-400">Add a link where applicants can apply directly</p>
                 </div>
 
-                <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3">
+                <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-red-100 bg-red-50 px-3.5 py-3">
                   <input type="checkbox" checked={form.urgent} onChange={e => setForm(f => ({ ...f, urgent: e.target.checked }))} className="h-[18px] w-[18px] accent-red-600" />
-                  <span className="text-sm font-bold text-red-600">🔥 Mark as Urgent</span>
+                  <span className="text-sm font-bold text-red-600">🔥 Mark as urgent</span>
                 </label>
               </div>
 
               <div className="mt-6 flex gap-2.5">
                 <button
                   onClick={() => { setShowPost(false); setEditingJob(null); resetForm(); }}
-                  className="flex-1 cursor-pointer rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-semibold text-slate-600 font-inherit"
+                  className="flex-1 cursor-pointer rounded-full border border-slate-200 bg-white py-3.5 text-sm font-semibold text-slate-600 font-inherit"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handlePost}
                   disabled={posting}
-                  className={`flex-[2] rounded-xl border-none py-3.5 text-[15px] font-extrabold font-inherit ${posting ? 'cursor-not-allowed bg-green-100 text-green-700' : 'cursor-pointer bg-green-600 text-white shadow-lg shadow-green-600/30'
+                  className={`flex-[2] rounded-full border-none py-3.5 text-[15px] font-bold font-inherit ${posting ? 'cursor-not-allowed bg-green-100 text-green-700' : 'cursor-pointer bg-green-600 text-white'
                     }`}
                 >
-                  {posting ? 'Saving…' : editingJob ? '✅ Update Job' : '✅ Post Job Now'}
+                  {posting ? 'Saving…' : editingJob ? 'Update job' : 'Post job now'}
                 </button>
               </div>
             </div>
@@ -851,13 +840,9 @@ export default function GigsPage() {
       </div>
 
       <style>{`
-        .filter-pill { font-size: 12px; padding: 7px 14px; }
-        @media (max-width: 480px) { .filter-pill { font-size: 11px; padding: 6px 11px; } }
-        @media (max-width: 360px) { .filter-pill { font-size: 10px; padding: 5px 9px; } }
-        .post-job-hero-btn { padding: 11px 20px; font-size: 14px; }
-        @media (max-width: 480px) { .post-job-hero-btn { padding: 10px 16px; font-size: 13px; width: 100%; } }
+        .filter-pill { font-size: 13px; padding: 8px 15px; }
+        @media (max-width: 480px) { .filter-pill { font-size: 12px; padding: 7px 12px; } }
         @media (min-width: 540px) { .modal-backdrop { align-items: center !important; padding: 16px !important; } .post-modal { border-radius: 20px !important; } }
-        @media (max-width: 480px) { #job-search { font-size: 14px !important; padding: 12px 12px !important; } }
         .spinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #16a34a; border-radius: 50%; animation: spin 0.7s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .slide-down { animation: slideDown 0.2s ease-out; }
@@ -865,7 +850,7 @@ export default function GigsPage() {
         .slide-up { animation: slideUp 0.25s ease-out; }
         @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .hover-lift { transition: box-shadow 0.15s, transform 0.15s; }
-        .hover-lift:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-1px); }
+        .hover-lift:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.06); transform: translateY(-1px); }
       `}</style>
     </>
   );
