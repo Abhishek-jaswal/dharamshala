@@ -21,7 +21,7 @@ export default function WorkerCard({ worker, onViewDetails }: WorkerCardProps) {
       className="hover-lift"
       style={{
         background: getBackgroundColor(worker.rating),
-        border: '1px solid #e2e8f0',
+        border: worker.featured ? '1.5px solid #16a34a' : '1px solid #e2e8f0',
         borderRadius: 16,
         padding: '18px 16px',
         cursor: 'pointer',
@@ -29,8 +29,31 @@ export default function WorkerCard({ worker, onViewDetails }: WorkerCardProps) {
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
+        position: 'relative',
+        boxShadow: worker.featured ? '0 4px 16px rgba(22,163,74,0.15)' : undefined,
       }}
     >
+      {/* Featured ribbon — shown for Pro/Business subscribers (see app/premium) */}
+      {worker.featured && (
+        <div
+          style={{
+            position: 'absolute',
+            top: -9,
+            left: 14,
+            background: 'linear-gradient(135deg,#16a34a,#22c55e)',
+            color: '#fff',
+            fontSize: 10,
+            fontWeight: 800,
+            padding: '3px 10px',
+            borderRadius: 99,
+            letterSpacing: '0.03em',
+            boxShadow: '0 2px 8px rgba(22,163,74,0.4)',
+          }}
+        >
+          🚀 FEATURED
+        </div>
+      )}
+
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
         <div
           style={{

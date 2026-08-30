@@ -71,6 +71,16 @@ export function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {user ? (
               <>
+                <Link href="/earnings" aria-label="My Earnings" title="My Earnings" className="desk-post-btn" style={{
+                  display: 'none', alignItems: 'center', gap: 5,
+                  color: active('/earnings') ? '#16a34a' : '#475569', fontWeight: 700,
+                  padding: '7px 10px', borderRadius: 9, textDecoration: 'none', fontSize: 13,
+                }}>💰 Earnings</Link>
+                <Link href="/premium" aria-label="Go Premium" title="Go Premium" style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  background: 'linear-gradient(135deg,#16a34a,#22c55e)', color: '#fff', fontWeight: 800,
+                  padding: '6px 12px', borderRadius: 9, textDecoration: 'none', fontSize: 12,
+                }}>🚀 <span className="desk-name" style={{ display: 'none' }}>Premium</span></Link>
                 <Link href="/gigs" className="desk-post-btn" style={{
                   background: '#16a34a', color: '#fff', fontWeight: 700,
                   padding: '7px 14px', borderRadius: 9, textDecoration: 'none', fontSize: 13,
@@ -112,18 +122,23 @@ export function Navbar() {
           <div className="slide-down" style={{
             background: '#fff', borderTop: '1px solid #f1f5f9', padding: '10px 16px 14px',
           }}>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <Link href="/earnings" onClick={() => setOpen(false)} style={{
+                flex: 1, textAlign: 'center' as const, padding: '10px',
+                background: '#f0fdf4', color: '#16a34a', borderRadius: 10,
+                fontWeight: 700, textDecoration: 'none', fontSize: 14, border: '1px solid #d1fae5',
+              }}>💰 Earnings</Link>
               <Link href="/gigs" onClick={() => setOpen(false)} style={{
                 flex: 1, textAlign: 'center' as const, padding: '10px',
                 background: '#16a34a', color: '#fff', borderRadius: 10,
                 fontWeight: 700, textDecoration: 'none', fontSize: 14,
               }}>+ Post Job</Link>
-              <button onClick={() => { logout(); router.push('/'); setOpen(false); }} style={{
-                flex: 1, padding: '10px', border: '1px solid #fecaca', borderRadius: 10,
-                color: '#dc2626', background: '#fff', fontWeight: 600, cursor: 'pointer',
-                fontFamily: 'inherit', fontSize: 14,
-              }}>Logout</button>
             </div>
+            <button onClick={() => { logout(); router.push('/'); setOpen(false); }} style={{
+              width: '100%', padding: '10px', border: '1px solid #fecaca', borderRadius: 10,
+              color: '#dc2626', background: '#fff', fontWeight: 600, cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: 14,
+            }}>Logout</button>
           </div>
         )}
       </nav>

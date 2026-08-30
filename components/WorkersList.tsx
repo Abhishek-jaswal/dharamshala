@@ -19,9 +19,16 @@ export default function WorkersList({ categoryId, onClose }: WorkersListProps) {
     const [selectedWorker, setSelectedWorker] = useState<any>(null);
 
     // Filter workers by category or all verified
-    const workers = categoryId && categoryId !== 'all'
+    const filtered = categoryId && categoryId !== 'all'
         ? DEMO_WORKERS.filter((w) => w.cat === categoryId)
         : DEMO_WORKERS.filter((w) => w.verified);
+
+    // Featured (Pro/Business subscribers, see app/premium) always surface first —
+    // this is the core value professionals pay for.
+    const workers = [...filtered].sort((a: any, b: any) => {
+        if (!!b.featured !== !!a.featured) return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+        return (b.rating || 0) - (a.rating || 0);
+    });
 
     // Get category info
     const category = CATEGORIES.find((c) => c.id === categoryId);

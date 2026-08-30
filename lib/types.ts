@@ -21,6 +21,39 @@ export type Profile = {
   created: string;
   updated: string;
   // aadhaar is a hidden field — never returned in list responses
+
+  // ── Monetization fields ──────────────────────────────────────────────
+  plan?: 'free' | 'pro' | 'business';   // current subscription plan, mirrors latest `subscriptions` record
+  plan_expires?: string;                 // ISO date; plan is treated as 'free' once this has passed
+  featured?: boolean;                    // true while an active paid plan boosts search/category placement
+  total_earnings?: number;               // running total credited from completed jobs (₹), updated on job completion
+};
+
+export type Subscription = {
+  id: string;
+  user: string;                          // Relation → users
+  plan: 'pro' | 'business';
+  status: 'active' | 'expired' | 'cancelled' | 'pending_payment';
+  amount: number;                        // ₹ amount charged for this cycle
+  billing_cycle: 'monthly' | 'yearly';
+  started_at: string;
+  expires_at: string;
+  payment_ref?: string;                  // gateway transaction/order id (e.g. Razorpay)
+  created: string;
+  updated: string;
+};
+
+export type Earning = {
+  id: string;
+  user: string;                          // Relation → users (the professional who earned this)
+  job?: string;                          // Relation → jobs, optional (e.g. Pick & Drop payouts won't have one yet)
+  application?: string;                  // Relation → applications
+  amount: number;                        // ₹ amount earned for this completed job
+  status: 'pending' | 'credited' | 'withdrawn';
+  note?: string;
+  created: string;
+  updated: string;
+  expand?: { job?: Job };
 };
 
 export type Job = {

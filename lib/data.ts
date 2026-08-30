@@ -129,7 +129,6 @@ export const TRUST = [
   { icon: '⭐', title: '2-Way Ratings', desc: 'Transparent reviews with dispute resolution' },
   { icon: '💰', title: 'Escrow Payment', desc: 'Funds released only after job completion sign-off' },
   { icon: '📍', title: 'Live Tracking', desc: 'Real-time worker GPS & check-in/check-out logs' },
-  { icon: '🏥', title: '₹5L Insurance', desc: 'Accident cover on every booked job, zero premium' },
   { icon: '📞', title: '24/7 Support', desc: 'Dedicated helpline for workers and clients always' },
 ];
 
@@ -381,4 +380,94 @@ export const INTERESTS_EN = ['Sports', 'Travel', 'Reading', 'Music', 'Art', 'Coo
 export const INTERESTS_HI = ['खेल', 'यात्रा', 'पढ़ना', 'संगीत', 'कला', 'खाना', 'तकनीक', 'खेती', 'व्यापार', 'सामाजिक कार्य', 'योग', 'सिनेमा', 'प्रकृति', 'फिटनेस'];
 export const TRADE_TYPES_EN = ['Electrician', 'Plumber', 'Carpenter', 'Painter', 'Cook', 'Driver', 'IT / Computer', 'Housekeeping'];
 export const TRADE_TYPES_HI = ['इलेक्ट्रीशियन', 'प्लंबर', 'बढ़ई', 'पेंटर', 'कुक', 'ड्राइवर', 'IT / कंप्यूटर', 'हाउसकीपिंग'];
+
+// ── Monetization: Professional Subscription Plans ─────────────────────────
+// Drives app/premium (upgrade page) and the "featured" badge shown on
+// WorkerCard. Prices are illustrative — wire the real amount to your payment
+// gateway (see NEXT_PUBLIC_RAZORPAY_KEY_ID in .env.example) before going live.
+export type PlanId = 'free' | 'pro' | 'business';
+
+export const SUBSCRIPTION_PLANS: {
+  id: PlanId;
+  name: string;
+  nameHi: string;
+  price: number;          // ₹ per month
+  yearlyPrice: number;    // ₹ per year (discounted)
+  tagline: string;
+  taglineHi: string;
+  color: string;
+  features: string[];
+  featuresHi: string[];
+}[] = [
+  {
+    id: 'free',
+    name: 'Free',
+    nameHi: 'फ्री',
+    price: 0,
+    yearlyPrice: 0,
+    tagline: 'Get started and get discovered',
+    taglineHi: 'शुरुआत करें और खोजे जाएं',
+    color: '#64748b',
+    features: [
+      'Public profile & verification badge',
+      'Apply to unlimited jobs',
+      'Standard search placement',
+      'Ratings & reviews',
+    ],
+    featuresHi: [
+      'सार्वजनिक प्रोफाइल और सत्यापन बैज',
+      'असीमित नौकरियों के लिए आवेदन',
+      'सामान्य सर्च प्लेसमेंट',
+      'रेटिंग और समीक्षाएं',
+    ],
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    nameHi: 'प्रो',
+    price: 199,
+    yearlyPrice: 1999,
+    tagline: 'Get seen first, get hired faster',
+    taglineHi: 'पहले दिखें, जल्दी काम पाएं',
+    color: '#16a34a',
+    features: [
+      'Everything in Free',
+      '🚀 Featured badge on your profile',
+      'Top placement in category & search results',
+      'Priority customer support',
+      'Earnings analytics dashboard',
+    ],
+    featuresHi: [
+      'फ्री की सभी सुविधाएं',
+      '🚀 आपकी प्रोफाइल पर फीचर्ड बैज',
+      'श्रेणी और खोज परिणामों में टॉप प्लेसमेंट',
+      'प्राथमिकता ग्राहक सहायता',
+      'कमाई एनालिटिक्स डैशबोर्ड',
+    ],
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    nameHi: 'बिज़नेस',
+    price: 499,
+    yearlyPrice: 4999,
+    tagline: 'For teams hiring workforce at scale',
+    taglineHi: 'बड़े पैमाने पर वर्कफोर्स हायर करने के लिए',
+    color: '#0f4c25',
+    features: [
+      'Everything in Pro',
+      'Post unlimited jobs with urgent tags',
+      'Bulk workforce hiring tools',
+      'Dedicated account manager',
+      'Recurring service scheduling',
+    ],
+    featuresHi: [
+      'प्रो की सभी सुविधाएं',
+      'अर्जेंट टैग के साथ असीमित नौकरियां पोस्ट करें',
+      'बल्क वर्कफोर्स हायरिंग टूल्स',
+      'समर्पित अकाउंट मैनेजर',
+      'रिकरिंग सर्विस शेड्यूलिंग',
+    ],
+  },
+];
 export const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu & Kashmir', 'Ladakh'];
