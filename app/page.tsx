@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES, DEMO_WORKERS, TRADE_TYPES_EN, TRADE_TYPES_HI } from '@/lib/data';
 import WorkersList from '@/components/WorkersList';
+import AIServiceFinder from '@/components/AIServiceFinder';
 
 const STATS = [
   { icon: '👷', val: '20+', label: 'Workers Available' },
@@ -68,6 +69,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── AI SERVICE FINDER (natural-language discovery) ─────── */}
+      <AIServiceFinder onMatch={(categoryId) => setSelectedCategory(categoryId)} />
 
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
       <section style={{ background: '#fff', padding: '56px 24px' }}>

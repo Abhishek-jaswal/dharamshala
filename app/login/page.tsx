@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
-  const { user, loading, loginWithGoogle, loginWithGithub } = useAuth();
+  const { user, loading, loginWithGoogle, } = useAuth();
   const router = useRouter();
 
   // After login go straight to jobs page

@@ -176,6 +176,45 @@ export default function DashboardPage() {
             </p>
           </div>
 
+          {/* ── Plan / Earnings card ── */}
+          <div style={{
+            ...card,
+            background: profile?.plan === 'pro' || profile?.plan === 'business'
+              ? 'linear-gradient(135deg,#0f4c25,#16a34a)' : card.background,
+            border: profile?.plan === 'pro' || profile?.plan === 'business' ? 'none' : card.border,
+          }}>
+            {profile?.plan === 'pro' || profile?.plan === 'business' ? (
+              <>
+                <div style={{ fontWeight: 900, color: '#fff', fontSize: 16, marginBottom: 4 }}>
+                  🚀 {profile.plan === 'business' ? 'Business' : 'Pro'} {lang === 'hi' ? 'प्लान सक्रिय' : 'Plan Active'}
+                </div>
+                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, marginBottom: 16 }}>
+                  {lang === 'hi' ? 'आपकी प्रोफाइल फीचर्ड है और पहले दिखाई जा रही है।' : 'Your profile is featured and shown first to customers.'}
+                </p>
+                <Link href="/earnings" style={{ display: 'block', textAlign: 'center' as const, background: '#fff', color: '#16a34a', fontWeight: 800, fontSize: 13, padding: '10px', borderRadius: 10, textDecoration: 'none' }}>
+                  {lang === 'hi' ? '💰 मेरी कमाई देखें' : '💰 View My Earnings'}
+                </Link>
+              </>
+            ) : (
+              <>
+                <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 16, marginBottom: 4 }}>
+                  {lang === 'hi' ? '📦 फ्री प्लान पर हैं' : '📦 You\u2019re on the Free plan'}
+                </div>
+                <p style={{ color: '#64748b', fontSize: 13, marginBottom: 16 }}>
+                  {lang === 'hi' ? 'फीचर्ड बनें और ज़्यादा ग्राहकों तक पहुंचें।' : 'Get featured and reach more customers first.'}
+                </p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Link href="/earnings" style={{ flex: 1, textAlign: 'center' as const, background: '#f0fdf4', color: '#16a34a', fontWeight: 700, fontSize: 13, padding: '10px', borderRadius: 10, textDecoration: 'none', border: '1px solid #d1fae5' }}>
+                    💰 {lang === 'hi' ? 'कमाई' : 'Earnings'}
+                  </Link>
+                  <Link href="/premium" style={{ flex: 1, textAlign: 'center' as const, background: '#16a34a', color: '#fff', fontWeight: 700, fontSize: 13, padding: '10px', borderRadius: 10, textDecoration: 'none' }}>
+                    🚀 {lang === 'hi' ? 'अपग्रेड' : 'Upgrade'}
+                  </Link>
+                </div>
+              </>
+            )}
+          </div>
+
           {/* ── Aadhaar card preview ── */}
           {aadhaarUrl && (
             <div style={card}>
